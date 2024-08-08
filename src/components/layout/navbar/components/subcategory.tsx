@@ -1,0 +1,38 @@
+import Link from "next/link";
+import {List} from "flowbite-react";
+import {ProductCategory} from "@/hooks/product-categories/useProductCategories";
+
+const Subcategory = ({
+  subcategory,
+  productCategories
+}: {
+  subcategory: ProductCategory,
+  productCategories?: ProductCategory[]
+}) => {
+  const collectionProductCategories = productCategories?.filter(
+    pc => pc.parent === subcategory.id
+  )
+
+  return (
+    <>
+      <li key={subcategory.id}>
+        <Link href={`/category/${subcategory.slug}`} className="mb-2 font-semibold text-gray-900">
+          {subcategory.name}
+        </Link>
+      </li>
+      {!!collectionProductCategories?.length && (
+        <List>
+          {collectionProductCategories?.map(collection => (
+            <List.Item key={collection.id}>
+              <Link href={`/category/${collection.slug}`} className="hover:text-primary-600 dark:hover:text-primary-500">
+                {collection.name}
+              </Link>
+            </List.Item>
+          ))}
+        </List>
+      )}
+    </>
+  )
+}
+
+export default Subcategory;

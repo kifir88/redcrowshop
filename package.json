@@ -6,21 +6,34 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "generate-types": "curl https://admin.redcrow.kz/wp-json -o schema.yaml && yarn run openapi --input ./schema.yaml --output ./src/types/generated --exportServices=false --exportCore=false --useUnionTypes"
   },
   "dependencies": {
+    "@headlessui/react": "^2.1.2",
+    "@heroicons/react": "^2.1.5",
+    "@tanstack/react-query": "^5.51.23",
+    "@types/woocommerce__woocommerce-rest-api": "^1.0.5",
+    "@woocommerce/woocommerce-rest-api": "^1.0.1",
+    "clsx": "^2.1.1",
+    "flowbite-react": "^0.10.1",
+    "framer-motion": "^11.3.24",
+    "lucide-react": "^0.426.0",
+    "next": "14.2.5",
+    "query-string": "^9.1.0",
     "react": "^18",
     "react-dom": "^18",
-    "next": "14.2.5"
+    "tailwind-merge": "^2.4.0"
   },
   "devDependencies": {
-    "typescript": "^5",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "eslint": "^8",
+    "eslint-config-next": "14.2.5",
+    "openapi-typescript-codegen": "^0.29.0",
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
-    "eslint": "^8",
-    "eslint-config-next": "14.2.5"
+    "typescript": "^5"
   }
 }
