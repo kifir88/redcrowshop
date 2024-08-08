@@ -5,7 +5,7 @@ import { Disclosure } from "@headlessui/react";
 import qs from "query-string";
 import { motion } from "framer-motion";
 import useProductCategories, {ProductCategory} from "@/hooks/product-categories/useProductCategories";
-import Collection from "@/components/layout/navbar/components/collection";
+import Collection from "@/components/ui/components/collection";
 
 function DropdownMenu({
   navItem,

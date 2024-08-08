@@ -4,8 +4,8 @@ import {useState} from "react";
 import Image from "next/image";
 import useProductCategories from "@/hooks/product-categories/useProductCategories";
 import {cn} from "@/libs/utils";
+import DropdownMenu from "@/components/ui/components/dropdown-menu";
 
-import DropdownMenu from "@/components/layout/navbar/components/dropdown-menu";
 
 const Navbar = () => {
   const {data, isLoading, isError} = useProductCategories({
