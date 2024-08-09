@@ -15,3 +15,6 @@ export const fetchProducts = (params?: any) => {
 export const fetchProductCategories = (params?: any) => {
   return wooCommerceApiInstance.get("products/categories", params)
 }
+export const fetchProductCategory = (productCategoryId: number) => {
+  return wooCommerceApiInstance.get(`products/categories/${productCategoryId}`)
+}
