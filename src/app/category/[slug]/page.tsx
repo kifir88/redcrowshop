@@ -3,15 +3,12 @@ import {
   DisclosureButton,
   DisclosurePanel,
 } from '@headlessui/react'
-import {type AxiosResponse} from "axios";
 import { FunnelIcon, MinusIcon, PlusIcon } from '@heroicons/react/20/solid'
 import CategoryListSortMenu from "@/components/pages/category/category-list-sort-menu";
 import {fetchProductCategories, fetchProducts} from "@/libs/woocommerce-rest-api";
-import {ProductCategory} from "@/hooks/product-categories/useProductCategories";
-import {getAllCategoryIdsBySlug} from "@/libs/helper-functions";
-import Link from "next/link";
-import {Product} from "@/types/woo-commerce/product";
 import ProductCard from "@/components/pages/category/product-card";
+import Breadcrumb from "@/components/breadcrumb";
+import {getCategoryHierarchyBySlug} from "@/libs/helper-functions";
 
 const subCategories = [
   { name: 'Totes', href: '#' },
@@ -63,17 +60,24 @@ export default async function CategorySlag({
 }: {
   params: { slug: string }
 }) {
-  const productCategoriesData: AxiosResponse<ProductCategory[]> = await fetchProductCategories()
+  const productCategoriesData = await fetchProductCategories()
   const currentProductCategory = productCategoriesData?.data.find(
     pc => pc.slug === slug
   )
-  const productsData: AxiosResponse<Product[]> = await fetchProducts({
+  const productsData = await fetchProducts({
     category: currentProductCategory?.id,
   })
 
+  const breadCrumbItems = getCategoryHierarchyBySlug(productCategoriesData?.data, slug)
+    .map(pc => ({name: pc.name, href: `/category/${pc.slug}`}))
+
   return (
     <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-      <div className="flex items-baseline justify-between border-b border-gray-200 pb-6 pt-24">
+      <div>
+        <Breadcrumb items={breadCrumbItems} />
+      </div>
+
+      <div className="flex items-baseline justify-between border-b border-gray-200 pb-6 pt-10">
         <h1 className="text-4xl font-bold tracking-tight text-gray-900">
           {currentProductCategory?.name}
         </h1>

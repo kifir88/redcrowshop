@@ -3,14 +3,7 @@
 import {useQuery} from "@tanstack/react-query";
 import {type AxiosResponse} from "axios";
 import {fetchProductCategories} from "@/libs/woocommerce-rest-api";
-
-export interface ProductCategory {
-  id: number;
-  name: string;
-  slug: string;
-  count: number;
-  parent: number;
-}
+import {ProductCategory} from "@/types/woo-commerce/product-category";
 
 export default function useProductCategories({
   orderby,

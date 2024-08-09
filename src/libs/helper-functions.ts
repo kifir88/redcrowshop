@@ -1,4 +1,4 @@
-import {ProductCategory} from "@/hooks/product-categories/useProductCategories";
+import {ProductCategory} from "@/types/woo-commerce/product-category";
 
 const getAllCategoryIds = (categories: ProductCategory[], parentId: number): number[] => {
   const result: number[] = [];
@@ -35,4 +35,24 @@ export const getAllCategoryIdsBySlug = (categories: ProductCategory[], parentSlu
   }
 
   return result;
+}
+
+export const getCategoryHierarchyBySlug = (categories: ProductCategory[], slug: string): ProductCategory[] => {
+  const hierarchy: ProductCategory[] = [];
+
+  function findParent(currentSlug: string) {
+    const category = categories.find(cat => cat.slug === currentSlug);
+    if (category) {
+      hierarchy.unshift(category); // Add category to the beginning of the array
+      if (category.parent !== 0) {
+        const parentCategory = categories.find(cat => cat.id === category.parent);
+        if (parentCategory) {
+          findParent(parentCategory.slug); // Recursively find parent categories
+        }
+      }
+    }
+  }
+
+  findParent(slug);
+  return hierarchy;
 }

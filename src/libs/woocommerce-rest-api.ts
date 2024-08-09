@@ -1,4 +1,7 @@
 import WooCommerceRestApi, { type WooCommerceRestApiOptions } from "@woocommerce/woocommerce-rest-api";
+import {type AxiosResponse} from "axios";
+import {Product} from "@/types/woo-commerce/product";
+import {ProductCategory} from "@/types/woo-commerce/product-category";
 
 const options: WooCommerceRestApiOptions = {
   url: "https://admin.redcrow.kz/",
@@ -9,10 +12,10 @@ const options: WooCommerceRestApiOptions = {
 
 export const wooCommerceApiInstance = new WooCommerceRestApi(options);
 
-export const fetchProducts = (params?: any) => {
+export const fetchProducts = (params?: any): Promise<AxiosResponse<Product[]>> => {
   return wooCommerceApiInstance.get("products", params)
 }
-export const fetchProductCategories = (params?: any) => {
+export const fetchProductCategories = (params?: any): Promise<AxiosResponse<ProductCategory[]>> => {
   return wooCommerceApiInstance.get("products/categories", params)
 }
 export const fetchProductCategory = (productCategoryId: number) => {
