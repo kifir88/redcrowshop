@@ -35,7 +35,6 @@ export default function useProductCategories({
   return useQuery({
     queryKey: ["product-categories", orderby, exclude, parent],
     queryFn,
-    refetchOnMount: false,
     refetchOnReconnect: false,
     refetchOnWindowFocus: false,
   })

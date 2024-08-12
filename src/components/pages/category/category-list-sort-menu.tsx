@@ -3,16 +3,72 @@
 import {Menu, MenuButton, MenuItem, MenuItems} from "@headlessui/react";
 import {ChevronDownIcon} from "@heroicons/react/20/solid";
 import {cn} from "@/libs/utils";
+import {usePathname, useRouter, useSearchParams} from "next/navigation";
+import qs from "query-string";
 
 const sortOptions = [
-  { name: 'По умолчанию', href: '#', current: true },
-  { name: 'По цене: от низкой к высокой', href: '#', current: false },
-  { name: 'По цене: от высокой к низкой', href: '#', current: false },
-  { name: 'По названию: По возрастанию', href: '#', current: false },
-  { name: 'По названию: По убыванию', href: '#', current: false },
+  {
+    name: 'По умолчанию',
+    value: {
+      order: null,
+      orderby: null,
+    }
+  },
+  {
+    name: 'По цене: от низкой к высокой',
+    value: {
+      order: 'asc',
+      orderby: 'price'
+    },
+  },
+  {
+    name: 'По цене: от высокой к низкой',
+    value: {
+      order: 'desc',
+      orderby: 'price'
+    },
+  },
+  {
+    name: 'По названию: По возрастанию',
+    value: {
+      order: 'asc',
+      orderby: 'title'
+    },
+  },
+  {
+    name: 'По названию: По убыванию',
+    value: {
+      order: 'desc',
+      orderby: 'title'
+    },
+  },
 ]
 
 const CategoryListSortMenu = () => {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  const orderParam = searchParams.get("order");
+  const orderbyParam = searchParams.get("orderby");
+
+  const handleSelectOption = (params: Record<string, string | null>) => {
+    const currentParams = qs.parse(searchParams.toString());
+
+    const newParams = {
+      ...currentParams,
+      ...params,
+    };
+
+    const url = qs.stringifyUrl({
+      url: pathname,
+      query: newParams,
+    }, { skipEmptyString: true, skipNull: true });
+
+    router.push(url);
+  };
+
+
   return (
     <Menu as="div" className="relative inline-block text-left">
       <div>
@@ -30,19 +86,23 @@ const CategoryListSortMenu = () => {
         className="absolute right-0 z-10 mt-2 w-60 origin-top-right rounded-md bg-white shadow-2xl ring-1 ring-black ring-opacity-5 transition focus:outline-none data-[closed]:scale-95 data-[closed]:transform data-[closed]:opacity-0 data-[enter]:duration-100 data-[leave]:duration-75 data-[enter]:ease-out data-[leave]:ease-in"
       >
         <div className="py-1">
-          {sortOptions.map((option) => (
-            <MenuItem key={option.name}>
-              <a
-                href={option.href}
-                className={cn(
-                  option.current ? 'font-medium text-gray-900' : 'text-gray-500',
-                  'block px-4 py-2 text-sm data-[focus]:bg-gray-100',
-                )}
-              >
-                {option.name}
-              </a>
-            </MenuItem>
-          ))}
+          {sortOptions.map(({ name, value}) => {
+            const isActive = orderParam === value?.order && orderbyParam === value?.orderby;
+
+            return (
+              <MenuItem key={name}>
+                <button
+                  className={cn(
+                    isActive ? 'font-medium text-gray-900' : 'text-gray-500',
+                    'block px-4 py-2 w-full text-left text-sm data-[focus]:bg-gray-100',
+                  )}
+                  onClick={() => handleSelectOption(value)}
+                >
+                  {name}
+                </button>
+              </MenuItem>
+            )
+          })}
         </div>
       </MenuItems>
     </Menu>

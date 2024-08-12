@@ -7,15 +7,23 @@ import Filters from "@/components/pages/category/filters";
 
 export default async function CategorySlag({
   params: { slug },
+  searchParams,
 }: {
-  params: { slug: string }
+  params: { slug: string },
+  searchParams: Record<string, string | string[]>
 }) {
-  const productCategoriesData = await fetchProductCategories()
+  const productCategoriesData = await fetchProductCategories({
+    exclude: [320]
+  })
   const currentProductCategory = productCategoriesData?.data.find(
     pc => pc.slug === slug
   )
+
+  const orderFiltersExist = searchParams?.order && searchParams?.orderby;
   const productsData = await fetchProducts({
     category: currentProductCategory?.id,
+    order: orderFiltersExist ? searchParams?.order : undefined,
+    orderby: orderFiltersExist ? searchParams?.orderby : undefined,
   })
 
   const breadCrumbItems = getCategoryHierarchyBySlug(productCategoriesData?.data, slug)
