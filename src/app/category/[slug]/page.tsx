@@ -13,18 +13,33 @@ export default async function CategorySlag({
   searchParams: Record<string, string | string[]>
 }) {
   const productCategoriesData = await fetchProductCategories({
-    exclude: [320]
+    exclude: [320],
   })
   const currentProductCategory = productCategoriesData?.data.find(
     pc => pc.slug === slug
   )
+
+  const remainingSearchParams = searchParams
+  console.log(remainingSearchParams, "remainingSearchParams")
 
   const orderFiltersExist = searchParams?.order && searchParams?.orderby;
   const productsData = await fetchProducts({
     category: currentProductCategory?.id,
     order: orderFiltersExist ? searchParams?.order : undefined,
     orderby: orderFiltersExist ? searchParams?.orderby : undefined,
+    attribute: ["pa_tsvet"].join(","),
+    attribute_term: [309].join(",")
   })
+
+
+  // const uniqueProductAttributes = Array.from(
+  //   new Set(
+  //     productsData?.data
+  //       .map(p => p.attributes)
+  //       .flat()
+  //       .map(a => a.id)
+  //   )
+  // );
 
   const breadCrumbItems = getCategoryHierarchyBySlug(productCategoriesData?.data, slug)
     .map(pc => ({name: pc.name, href: `/category/${pc.slug}`}))
@@ -42,19 +57,6 @@ export default async function CategorySlag({
 
         <div className="flex items-center">
           <CategoryListSortMenu />
-
-          {/*<button type="button" className="-m-2 ml-5 p-2 text-gray-400 hover:text-gray-500 sm:ml-7">*/}
-          {/*  <span className="sr-only">View grid</span>*/}
-          {/*  <Squares2X2Icon aria-hidden="true" className="h-5 w-5" />*/}
-          {/*</button>*/}
-          {/*<button*/}
-          {/*  type="button"*/}
-          {/*  // onClick={() => setMobileFiltersOpen(true)}*/}
-          {/*  className="-m-2 ml-4 p-2 text-gray-400 hover:text-gray-500 sm:ml-6 lg:hidden"*/}
-          {/*>*/}
-          {/*  <span className="sr-only">Filters</span>*/}
-          {/*  <FunnelIcon aria-hidden="true" className="h-5 w-5" />*/}
-          {/*</button>*/}
         </div>
       </div>
 
@@ -68,7 +70,7 @@ export default async function CategorySlag({
           <Filters />
 
           {/* Product grid */}
-          <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:col-span-3 lg:gap-x-8">
+          <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 md:grid-cols-3 lg:col-span-3 lg:gap-x-8">
             {productsData?.data.map((product) => (
               <ProductCard
                 key={product.id}

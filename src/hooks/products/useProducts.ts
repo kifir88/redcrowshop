@@ -5,9 +5,11 @@ import {fetchProducts} from "@/libs/woocommerce-rest-api";
 
 export default function useProducts({
   enabled = true,
+  page,
   slug,
   include,
 }: {
+  page?: number,
   enabled?: boolean,
   slug?: string,
   include?: string[],
@@ -15,6 +17,9 @@ export default function useProducts({
   const queryFn = () => {
     const params: Record<string, string> = {}
 
+    if (page) {
+      params.page = String(page);
+    }
     if (slug) {
       params.slug = slug;
     }
@@ -26,7 +31,7 @@ export default function useProducts({
   }
 
   return useQuery({
-    queryKey: ["products", slug, include, enabled],
+    queryKey: ["products", page, slug, include, enabled],
     queryFn,
     enabled,
   })
