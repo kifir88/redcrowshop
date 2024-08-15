@@ -4,6 +4,7 @@ import ProductCard from "@/components/pages/category/product-card";
 import Breadcrumb from "@/components/breadcrumb";
 import {getCategoryHierarchyBySlug} from "@/libs/helper-functions";
 import Filters from "@/components/pages/category/filters";
+import CategoryListPagination from "@/components/pages/category/category-list-pagination";
 
 export default async function Category({
   params: { slug },
@@ -20,6 +21,7 @@ export default async function Category({
   )
 
   const {
+    page: pageParam,
     order: orderSearchParam,
     orderby: orderbySearchParam,
     ...attributeSearchParams
@@ -37,18 +39,11 @@ export default async function Category({
     category: currentProductCategory?.id,
     order: orderFiltersExist ? orderSearchParam : undefined,
     orderby: orderFiltersExist ? orderbySearchParam : undefined,
+    page: pageParam ? Number(pageParam) : undefined,
     ...formattedSearchParams,
   })
 
-
-  // const uniqueProductAttributes = Array.from(
-  //   new Set(
-  //     productsData?.data
-  //       .map(p => p.attributes)
-  //       .flat()
-  //       .map(a => a.id)
-  //   )
-  // );
+  const totalPages: string = productsData?.headers["x-wp-totalpages"]
 
   const breadCrumbItems = getCategoryHierarchyBySlug(productCategoriesData?.data, slug)
     .map(pc => ({name: pc.name, href: `/category/${pc.slug}`}))
@@ -87,6 +82,13 @@ export default async function Category({
               />
             ))}
           </div>
+
+          <div />
+
+          <CategoryListPagination
+            currentPage={pageParam || "1"}
+            totalPages={totalPages}
+          />
         </div>
       </section>
     </main>

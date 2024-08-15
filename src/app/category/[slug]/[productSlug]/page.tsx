@@ -100,9 +100,8 @@ export default async function Product({
 
               <div
                 className="prose prose-sm mt-4 text-gray-500"
-              >
-                {productData.description || "Нет описания."}
-              </div>
+                dangerouslySetInnerHTML={{__html: productData.description || "Нет описания."}}
+              />
             </div>
 
             {/*<div className="mt-8 border-t border-gray-200 pt-8">*/}

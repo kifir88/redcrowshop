@@ -1,8 +1,7 @@
 'use client';
 
 import {useMemo, useState} from "react";
-import {Button, List, MegaMenu, Navbar as FBNavbar} from 'flowbite-react';
-import { HiArrowRight, HiChevronDown } from 'react-icons/hi';
+import {Button, MegaMenu, Navbar as FBNavbar} from 'flowbite-react';
 import Image from "next/image";
 import useProductCategories from "@/hooks/product-categories/useProductCategories";
 import Link from "next/link";
