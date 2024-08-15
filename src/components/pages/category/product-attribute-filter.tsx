@@ -8,6 +8,7 @@ import {Spinner} from "flowbite-react";
 import {cn} from "@/libs/utils";
 import {usePathname, useRouter, useSearchParams} from "next/navigation";
 import qs from "query-string";
+import ProductAttributeTermCheckbox from "@/components/pages/category/product-attribute-term-checkbox";
 
 const ProductAttributeFilter = ({productAttribute}: {productAttribute: ProductAttribute}) => {
   const router = useRouter();
@@ -76,28 +77,15 @@ const ProductAttributeFilter = ({productAttribute}: {productAttribute: ProductAt
       </h3>
       <DisclosurePanel className="pt-6">
         <div className="space-y-4">
-          {data?.data.map((pat, optionIdx) => {
-            const isActive = !!productAttributeTerms?.includes(pat.name);
-
-            return (
-              <div key={pat.slug} className="flex items-center">
-                <input
-                  id={`filter-${pat.id}-${optionIdx}`}
-                  name={`${pat.id}[]`}
-                  type="checkbox"
-                  className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                  checked={isActive}
-                  onChange={() => handleSelectOption(pat.name)}
-                />
-                <label
-                  htmlFor={`filter-${pat.id}-${optionIdx}`}
-                  className="ml-3 text-sm text-gray-600 w-full cursor-pointer"
-                >
-                  {pat.name}
-                </label>
-              </div>
+          {data?.data.map((pat) => (
+            <ProductAttributeTermCheckbox
+              key={pat.slug}
+              pat={pat}
+              isActive={!!productAttributeTerms?.includes(pat.name)}
+              onChange={() => handleSelectOption(pat.name)}
+            />
             )
-          })}
+          )}
         </div>
       </DisclosurePanel>
     </Disclosure>

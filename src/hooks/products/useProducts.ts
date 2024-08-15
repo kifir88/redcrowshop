@@ -8,18 +8,14 @@ export default function useProducts({
   page,
   slug,
   include,
-  attributes,
 }: {
   page?: number,
   enabled?: boolean,
   slug?: string,
   include?: string[],
-  attributes: Record<string, string>
 }) {
   const queryFn = () => {
-    const params: Record<string, string> = {
-      ...attributes
-    }
+    const params: Record<string, string> = {}
 
     if (page) {
       params.page = String(page);
@@ -35,7 +31,7 @@ export default function useProducts({
   }
 
   return useQuery({
-    queryKey: ["products", page, slug, include, enabled, attributes],
+    queryKey: ["products", page, slug, include, enabled],
     queryFn,
     enabled,
   })
