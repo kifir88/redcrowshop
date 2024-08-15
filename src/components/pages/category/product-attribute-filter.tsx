@@ -20,7 +20,8 @@ const ProductAttributeFilter = ({productAttribute}: {productAttribute: ProductAt
     isError
   } = useProductAttributeTerms(productAttribute.id)
 
-  const productAttributeParam = searchParams.get(productAttribute.slug);
+  const productAttributeParam = searchParams.get(productAttribute.name);
+  const productAttributeTerms = productAttributeParam?.split(",")
 
   const handleSelectOption = (productAttributeTermSlug: string) => {
     const currentParams = qs.parse(searchParams.toString());
@@ -28,13 +29,14 @@ const ProductAttributeFilter = ({productAttribute}: {productAttribute: ProductAt
     const previousAttributeValues = productAttributeParam
       ? productAttributeParam.split(",")
       : [];
+
     const newAttributeValues = previousAttributeValues.includes(productAttributeTermSlug)
       ? previousAttributeValues.filter(v => v !== productAttributeTermSlug)
       : [...previousAttributeValues, productAttributeTermSlug]
 
     const newParams = {
       ...currentParams,
-      [productAttribute.slug]: newAttributeValues.join(","),
+      [productAttribute.name]: newAttributeValues.join(","),
     };
 
     const url = qs.stringifyUrl({
@@ -75,7 +77,7 @@ const ProductAttributeFilter = ({productAttribute}: {productAttribute: ProductAt
       <DisclosurePanel className="pt-6">
         <div className="space-y-4">
           {data?.data.map((pat, optionIdx) => {
-            const isActive = !!productAttributeParam?.includes(pat.slug);
+            const isActive = !!productAttributeTerms?.includes(pat.name);
 
             return (
               <div key={pat.slug} className="flex items-center">
@@ -85,9 +87,12 @@ const ProductAttributeFilter = ({productAttribute}: {productAttribute: ProductAt
                   type="checkbox"
                   className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
                   checked={isActive}
-                  onChange={() => handleSelectOption(pat.slug)}
+                  onChange={() => handleSelectOption(pat.name)}
                 />
-                <label htmlFor={`filter-${pat.id}-${optionIdx}`} className="ml-3 text-sm text-gray-600 w-full">
+                <label
+                  htmlFor={`filter-${pat.id}-${optionIdx}`}
+                  className="ml-3 text-sm text-gray-600 w-full cursor-pointer"
+                >
                   {pat.name}
                 </label>
               </div>

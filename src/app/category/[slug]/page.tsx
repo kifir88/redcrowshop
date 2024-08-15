@@ -5,12 +5,12 @@ import Breadcrumb from "@/components/breadcrumb";
 import {getCategoryHierarchyBySlug} from "@/libs/helper-functions";
 import Filters from "@/components/pages/category/filters";
 
-export default async function CategorySlag({
+export default async function Category({
   params: { slug },
   searchParams,
 }: {
   params: { slug: string },
-  searchParams: Record<string, string | string[]>
+  searchParams: Record<string, string>
 }) {
   const productCategoriesData = await fetchProductCategories({
     exclude: [320],
@@ -19,16 +19,25 @@ export default async function CategorySlag({
     pc => pc.slug === slug
   )
 
-  const remainingSearchParams = searchParams
-  console.log(remainingSearchParams, "remainingSearchParams")
+  const {
+    order: orderSearchParam,
+    orderby: orderbySearchParam,
+    ...attributeSearchParams
+  } = searchParams;
 
-  const orderFiltersExist = searchParams?.order && searchParams?.orderby;
+  const formattedSearchParams = Object
+    .entries(attributeSearchParams)
+    .reduce((acc, [key, value]) => {
+      acc[`attr-${key}`] = value;
+      return acc;
+    }, {} as Record<string, string>);
+
+  const orderFiltersExist = orderSearchParam && orderbySearchParam;
   const productsData = await fetchProducts({
     category: currentProductCategory?.id,
-    order: orderFiltersExist ? searchParams?.order : undefined,
-    orderby: orderFiltersExist ? searchParams?.orderby : undefined,
-    attribute: ["pa_tsvet"].join(","),
-    attribute_term: [309].join(",")
+    order: orderFiltersExist ? orderSearchParam : undefined,
+    orderby: orderFiltersExist ? orderbySearchParam : undefined,
+    ...formattedSearchParams,
   })
 
 
