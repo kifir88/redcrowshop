@@ -26,11 +26,10 @@ const ProductCard = ({product}: {product: Product}) => {
       </div>
       <h3 className="mt-4 font-medium text-gray-900">{product.name}</h3>
       <p className="italic text-gray-500">{product.categories[0]?.name}</p>
-      <p className="mt-2 font-medium text-gray-900">
-        {product.price || product.sale_price || product.regular_price || 0}
-        {" "}
-        {"₸"}
-      </p>
+      <div
+        className="mt-2 font-medium text-gray-900"
+        dangerouslySetInnerHTML={{__html: product.price_html}}
+      />
     </Link>
   )
 }
