@@ -21,23 +21,25 @@ export default function ProductImageAttribute({
     initialValues: {}
   })
 
-  const productImage = useMemo(() => {
-    return productVariations
-      .find(pv => pv.attributes.every((attribute) => {
-        return form.values[attribute.id] && form.values[attribute.id].name === attribute.option;
-      }))
-      ?.image
-      || product.images[0];
-  }, [form.values, product.images, productVariations])
+  const selectedProductVariation = productVariations
+    .find(pv => pv.attributes.every((attribute) => {
+      return form.values[attribute.id] && form.values[attribute.id].name === attribute.option;
+    }))
+
+  const selectedProductVariationImage = selectedProductVariation?.image || product.images[0]
 
   return (
     <>
       {/* Image gallery */}
-      <ProductImagesCarousel productImage={productImage} />
+      <ProductImagesCarousel productImage={selectedProductVariationImage} />
 
       <div className="mt-8 lg:col-span-5">
         {/* Attribute pickers  */}
-        <ProductDetailAttributesForm attributes={product.attributes} form={form} />
+        <ProductDetailAttributesForm
+          product={product}
+          selectedProductVariation={selectedProductVariation}
+          form={form}
+        />
 
         {/* Product details */}
         <div className="mt-10">

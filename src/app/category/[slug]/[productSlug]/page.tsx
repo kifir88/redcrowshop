@@ -1,8 +1,6 @@
-import ProductDetailAttributesForm from "@/components/pages/product/product-detail-attributes-form";
 import {fetchProductCategories, fetchProducts, fetchProductVariations} from "@/libs/woocommerce-rest-api";
 import Breadcrumb from "@/components/breadcrumb";
 import {getCategoryHierarchyBySlug} from "@/libs/helper-functions";
-import ProductImagesCarousel from "@/components/pages/product/product-images-carousel";
 import ProductCard from "@/components/pages/category/product-card";
 import ProductImageAttribute from "@/components/pages/product/product-image-attribute";
 
@@ -25,6 +23,7 @@ export default async function Product({
   })
   const productVariationsData = await fetchProductVariations(productData.id, {
     parent: productData.id,
+    per_page: 50
   })
 
   const breadCrumbItems = getCategoryHierarchyBySlug(productCategoriesData?.data, slug)
