@@ -4,6 +4,7 @@ import {Product} from "@/types/woo-commerce/product";
 import {ProductCategory} from "@/types/woo-commerce/product-category";
 import {ProductAttribute} from "@/types/woo-commerce/product-attrubute";
 import {ProductAttributeTerm} from "@/types/woo-commerce/product-attribute-term";
+import {ProductVariation} from "@/types/woo-commerce/product-variation";
 
 const options: WooCommerceRestApiOptions = {
   url: "https://admin.redcrow.kz/",
@@ -28,4 +29,7 @@ export const fetchProductAttributes = (params?: any): Promise<AxiosResponse<Prod
 }
 export const fetchProductAttributeTerms = (attributeId: string, params?: any): Promise<AxiosResponse<ProductAttributeTerm[]>> => {
   return wooCommerceApiInstance.get(`products/attributes/${attributeId}/terms`, params)
+}
+export const fetchProductVariations = (productId: number, params?: any): Promise<AxiosResponse<ProductVariation[]>> => {
+  return wooCommerceApiInstance.get(`products/${productId}/variations`, params)
 }

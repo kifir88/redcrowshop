@@ -11,6 +11,7 @@ export interface AutoCompleteProps extends Pick<ListboxProps, 'value' | 'onChang
   items: {
     label: string;
     value: string;
+    disabled?: boolean;
   }[];
   isLoading?: boolean;
 }

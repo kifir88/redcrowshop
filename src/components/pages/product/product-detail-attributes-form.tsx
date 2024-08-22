@@ -2,20 +2,18 @@
 
 import {Attribute} from "@/types/woo-commerce/product";
 import AttributeAutoComplete from "@/components/fields/attribute-auto-complete";
-import {useForm} from "@mantine/form";
+import {useForm, UseFormReturnType} from "@mantine/form";
+import {ProductAttributeTerm} from "@/types/woo-commerce/product-attribute-term";
 
-type FormValues = Record<string, string | undefined>;
+type FormValues = Record<string, ProductAttributeTerm>;
 
 export default function ProductDetailAttributesForm({
+  form,
   attributes,
 }: {
-  attributes: Attribute[]
+  form: UseFormReturnType<FormValues>;
+  attributes: Attribute[];
 }) {
-
-  const form = useForm<FormValues>({
-    initialValues: {}
-  })
-
   const isAddToCartButtonDisabled = Object
     .keys(form.values)
     .length !== attributes.length;
@@ -33,7 +31,7 @@ export default function ProductDetailAttributesForm({
             attribute={a}
             value={form.values[a.id]}
             onChange={value => {
-              form.setFieldValue(String(a.id), String(value))
+              form.setFieldValue(String(a.id), value)
             }}
           />
         </div>

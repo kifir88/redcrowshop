@@ -2,10 +2,10 @@
 
 import {Product} from "@/types/woo-commerce/product";
 import Link from "next/link";
-import {usePathname} from "next/navigation";
+import {useParams} from "next/navigation";
 
 const ProductCard = ({product}: {product: Product}) => {
-  const pathname = usePathname();
+  const params = useParams();
 
   const image = product.images[0];
   const imageSrc = image?.src || "/category/product-image-placeholder.png";
@@ -14,7 +14,7 @@ const ProductCard = ({product}: {product: Product}) => {
   return (
     <Link
       key={product.id}
-      href={`${pathname}/${product.slug}`}
+      href={`/category/${params.slug}/${product.slug}`}
       className="group text-sm"
     >
       <div className="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-lg bg-gray-100 group-hover:opacity-75">
