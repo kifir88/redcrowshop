@@ -4,7 +4,6 @@ import ProductImagesCarousel from "@/components/pages/product/product-images-car
 import ProductDetailAttributesForm from "@/components/pages/product/product-detail-attributes-form";
 import {Product} from "@/types/woo-commerce/product";
 import {ProductVariation} from "@/types/woo-commerce/product-variation";
-import {useMemo} from "react";
 import {useForm} from "@mantine/form";
 import {ProductAttributeTerm} from "@/types/woo-commerce/product-attribute-term";
 

@@ -7,6 +7,7 @@ import useProductCategories from "@/hooks/product-categories/useProductCategorie
 import Link from "next/link";
 import Subcategory from "@/components/layout/navbar/components/subcategory";
 import {ShoppingBagIcon} from "lucide-react";
+import ShoppingCartButton from "@/components/layout/navbar/components/shopping-cart-button";
 
 export default function Navbar() {
   const { data } = useProductCategories({});
@@ -53,9 +54,7 @@ export default function Navbar() {
         ))}
 
         <div className="order-2 hidden items-center md:flex">
-          <Button color="gray" pill>
-            <ShoppingBagIcon className="h-5 w-5" />
-          </Button>
+          <ShoppingCartButton />
         </div>
       </FBNavbar.Collapse>
       <MegaMenu.Dropdown

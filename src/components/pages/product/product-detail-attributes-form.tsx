@@ -26,7 +26,7 @@ export default function ProductDetailAttributesForm({
     .keys(form.values)
     .length !== product.attributes.length;
 
-  const handleSubmit = (formValue: FormValues) => {
+  const handleSubmit = (formValues: FormValues) => {
     if (selectedProductVariation) {
       const productVariationFromCart = cartValues.find(
         (cv) => cv.productVariationId === selectedProductVariation.id
@@ -47,12 +47,22 @@ export default function ProductDetailAttributesForm({
           productVariationId: selectedProductVariation.id,
           name: product.name,
           quantity: 1,
+          price: Number(selectedProductVariation.price),
           imageSrc: selectedProductVariation.image?.src as string,
+          imageAlt: selectedProductVariation.image?.alt as string,
+          attributes: Object.keys(formValues).map(attributeId => {
+            const attributeName = product.attributes
+              .find(a => a.id === Number(attributeId))
+              ?.name;
+            const attributeVariation = formValues[attributeId].name;
+
+            return `${attributeName} ${attributeVariation}`
+          }),
         };
         setCartValues((prevValue) => [...prevValue, newCartItem]);
       }
     }
-  }
+  };
 
   return (
     <form onSubmit={form.onSubmit(handleSubmit)}>

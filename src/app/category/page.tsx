@@ -1,4 +1,4 @@
-export default function Category() {
+export default function CategoryPage() {
   return (
     <div>
 
