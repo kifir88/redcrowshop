@@ -3,8 +3,9 @@ import Breadcrumb from "@/components/breadcrumb";
 import {getCategoryHierarchyBySlug} from "@/libs/helper-functions";
 import ProductCard from "@/components/pages/category/product-card";
 import ProductImageAttribute from "@/components/pages/product/product-image-attribute";
+import {Product} from "@/types/woo-commerce/product";
 
-export default async function Product({
+export default async function ProductPage({
   params: { slug, productSlug },
 }: {
   params: { slug: string, productSlug: string },
@@ -61,7 +62,7 @@ export default async function Product({
           Вам также может понравится
         </h1>
         <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 md:grid-cols-3 lg:col-span-3 lg:gap-x-8">
-          {productsRecommendedData?.data.map((product) => (
+          {productsRecommendedData?.data.map((product: Product) => (
             <ProductCard
               key={product.id}
               product={product}

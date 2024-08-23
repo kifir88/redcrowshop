@@ -5,8 +5,10 @@ import Breadcrumb from "@/components/breadcrumb";
 import {getCategoryHierarchyBySlug} from "@/libs/helper-functions";
 import Filters from "@/components/pages/category/filters";
 import CategoryListPagination from "@/components/pages/category/category-list-pagination";
+import {ProductCategory} from "@/types/woo-commerce/product-category";
+import {Product} from "@/types/woo-commerce/product";
 
-export default async function Category({
+export default async function ProductCategoryPage({
   params: { slug },
   searchParams,
 }: {
@@ -17,7 +19,7 @@ export default async function Category({
     exclude: [320],
   })
   const currentProductCategory = productCategoriesData?.data.find(
-    pc => pc.slug === slug
+    (pc: ProductCategory) => pc.slug === slug
   )
 
   const {
@@ -71,11 +73,11 @@ export default async function Category({
 
         <div className="grid grid-cols-1 gap-x-8 gap-y-10 lg:grid-cols-4">
           {/* Filters */}
-          <Filters />
+          <Filters productSlug={slug} />
 
           {/* Product grid */}
           <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 md:grid-cols-3 lg:col-span-3 lg:gap-x-8">
-            {productsData?.data.map((product) => (
+            {productsData?.data.map((product: Product) => (
               <ProductCard
                 key={product.id}
                 product={product}

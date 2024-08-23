@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import qs from "query-string";
-import useProductCategories, {ProductCategory} from "@/hooks/product-categories/useProductCategories";
+import useProductCategories from "@/hooks/product-categories/useProductCategories";
+import {ProductCategory} from "@/types/woo-commerce/product-category";
 
 const Collection = ({
   category,

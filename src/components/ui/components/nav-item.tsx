@@ -1,7 +1,7 @@
 'use client';
 
-import {ProductCategory} from "@/hooks/product-categories/useProductCategories";
 import Link from "next/link";
+import {ProductCategory} from "@/types/woo-commerce/product-category";
 
 const NavItem = ({productCategory}: {productCategory: ProductCategory}) => {
 

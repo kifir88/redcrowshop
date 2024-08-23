@@ -4,8 +4,9 @@ import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import { Disclosure } from "@headlessui/react";
 import qs from "query-string";
 import { motion } from "framer-motion";
-import useProductCategories, {ProductCategory} from "@/hooks/product-categories/useProductCategories";
+import useProductCategories from "@/hooks/product-categories/useProductCategories";
 import Collection from "@/components/ui/components/collection";
+import {ProductCategory} from "@/types/woo-commerce/product-category";
 
 function DropdownMenu({
   navItem,
