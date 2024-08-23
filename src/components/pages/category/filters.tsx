@@ -1,12 +1,14 @@
 'use client'
 
-import useProductAttributes from "@/hooks/product-attributes/useProductAttributes";
+import useCustomProductAttributes from "@/hooks/product-attributes/useCustomProductAttributes";
 import {useMemo} from "react";
 import ProductAttributeFilter from "@/components/pages/category/product-attribute-filter";
 import {Spinner} from "flowbite-react";
 
-const Filters = () => {
-  const {data, isLoading} = useProductAttributes()
+const Filters = ({productSlug}: {productSlug: string}) => {
+  const {data, isLoading} = useCustomProductAttributes({
+    categoryName: productSlug,
+  })
 
   const productAttributes = useMemo(() => {
     return data?.data.filter(pa => !pa.slug.includes("pa_yookassa"))
@@ -20,8 +22,8 @@ const Filters = () => {
         </div>
       )}
 
-      {productAttributes?.map(pa => (
-        <ProductAttributeFilter key={pa.slug} productAttribute={pa} />
+      {productAttributes?.map(cpa => (
+        <ProductAttributeFilter key={cpa.slug} customProductAttribute={cpa} />
       ))}
     </form>
   )

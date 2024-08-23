@@ -1,6 +1,6 @@
 import Link from "next/link";
 import {List} from "flowbite-react";
-import {ProductCategory} from "@/hooks/product-categories/useProductCategories";
+import {ProductCategory} from "@/types/woo-commerce/product-category";
 
 const Subcategory = ({
   subcategory,
