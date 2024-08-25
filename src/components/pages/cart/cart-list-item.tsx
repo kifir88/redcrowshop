@@ -5,14 +5,14 @@ import {useLocalStorage} from "usehooks-ts";
 import {useCallback} from "react";
 
 const MinusSvg = (
-  <svg className="h-2.5 w-2.5 text-gray-900 dark:text-white" aria-hidden="true"
+  <svg className="h-2.5 w-2.5 text-gray-900" aria-hidden="true"
        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 2">
     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
           d="M1 1h16"/>
   </svg>
 )
 const PlusSvg = (
-  <svg className="h-2.5 w-2.5 text-gray-900 dark:text-white" aria-hidden="true"
+  <svg className="h-2.5 w-2.5 text-gray-900" aria-hidden="true"
        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
           d="M9 1v16M1 9h16"/>

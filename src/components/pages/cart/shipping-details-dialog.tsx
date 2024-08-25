@@ -12,6 +12,7 @@ import {useLocalStorage} from "usehooks-ts";
 import {CartItem} from "@/types/cart";
 import toast from "react-hot-toast";
 import {Button} from "flowbite-react";
+import {useRouter} from "next/navigation";
 
 interface ShippingDetailsDialogProps {
   isOpen: boolean;
@@ -35,7 +36,8 @@ export default function ShippingDetailsDialog({
   isOpen,
   closeModal,
 }: ShippingDetailsDialogProps) {
-  const [cartItems] = useLocalStorage<CartItem[]>("cartItems", [])
+  const router = useRouter();
+  const [cartItems, _, clearCartItems] = useLocalStorage<CartItem[]>("cartItems", [])
 
   const countryData = CountryList.getData();
 
@@ -90,10 +92,11 @@ export default function ShippingDetailsDialog({
         toast.error(`${e.response?.data}`)
       },
       onSuccess: () => {
+        clearCartItems()
+        router.push("/orders")
         toast.success("Заказ успешно создан")
       },
     })
-    console.log(address, "payload")
   }
 
   return (

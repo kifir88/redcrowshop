@@ -6,6 +6,7 @@ import {ProductAttribute} from "@/types/woo-commerce/product-attribute";
 import {ProductAttributeTerm} from "@/types/woo-commerce/product-attribute-term";
 import {ProductVariation} from "@/types/woo-commerce/product-variation";
 import {CustomProductAttribute} from "@/types/woo-commerce/custom-product-attribute";
+import {Order} from "@/types/woo-commerce/order";
 
 const options: WooCommerceRestApiOptions = {
   url: "https://admin.redcrow.kz/",
@@ -48,4 +49,7 @@ export const fetchProductAttributeTerms = (attributeId: string, params?: any): P
 }
 export const fetchProductVariations = (productId: number, params?: any): Promise<AxiosResponse<ProductVariation[]>> => {
   return wooCommerceApiInstance.get(`products/${productId}/variations`, params)
+}
+export const fetchOrders = (params?: any): Promise<AxiosResponse<Order[]>> => {
+  return wooCommerceApiInstance.get("orders", params)
 }
