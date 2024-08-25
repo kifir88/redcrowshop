@@ -56,3 +56,11 @@ export const getCategoryHierarchyBySlug = (categories: ProductCategory[], slug: 
   findParent(slug);
   return hierarchy;
 }
+
+export const formatPriceToKZT = (amount: number): string => {
+  return amount.toLocaleString('kk-KZ', {
+    style: 'decimal',
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }) + ' ₸';
+};

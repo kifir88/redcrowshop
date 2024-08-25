@@ -1,4 +1,5 @@
 export interface CartItem {
+  productId: number;
   productVariationId: number;
   name: string;
   price: number;

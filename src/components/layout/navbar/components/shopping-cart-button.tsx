@@ -49,6 +49,7 @@ export default function ShoppingCartButton() {
                   </h3>
                   <p className="text-gray-500">{product.attributes.join(" - ")}</p>
                   <p className="font-normal text-gray-500">{`Количество: ${product.quantity}`}</p>
+                  <p className="font-normal text-gray-500">{`Цена: ${product.price} ₸`}</p>
                 </div>
               </li>
             ))}

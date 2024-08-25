@@ -44,6 +44,7 @@ export default function ProductDetailAttributesForm({
       } else {
         // Add new item to the cart
         const newCartItem = {
+          productId: product.id,
           productVariationId: selectedProductVariation.id,
           name: product.name,
           quantity: 1,
