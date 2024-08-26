@@ -4,9 +4,12 @@ import { v4 as uuidv4 } from "uuid";
 
 // Initialize YooKassa instance
 const yookassaApiInstance = new YooCheckout({
-  shopId: "446054",
-  secretKey: "test_N7eB5Ia5aKOzj0t0ESbg7ZDUPPaTdjedm3p_vzUZVaA",
-  debug: true,
+  // TODO test credits only for DEV mode
+  // shopId: "446054",
+  // secretKey: "test_N7eB5Ia5aKOzj0t0ESbg7ZDUPPaTdjedm3p_vzUZVaA",
+  shopId: process.env.YOOKASSA_SHOP_ID as string,
+  secretKey: process.env.YOOKASSA_SECRET_KEY as string,
+  // debug: true,
 });
 
 export async function GET(req: NextRequest) {
