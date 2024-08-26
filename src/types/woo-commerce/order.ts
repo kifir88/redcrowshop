@@ -1,3 +1,5 @@
+import {Image} from "@/types/woo-commerce/product";
+
 export type Currency =
   | "AED" | "AFN" | "ALL" | "AMD" | "ANG" | "AOA" | "ARS" | "AUD" | "AWG" | "AZN"
   | "BAM" | "BBD" | "BDT" | "BGN" | "BHD" | "BIF" | "BMD" | "BND" | "BOB" | "BRL"
@@ -109,6 +111,7 @@ export interface LineItem {
   meta_data: MetaData[];
   sku: string;
   price: string;
+  image: Image
 }
 
 export interface TaxLine {

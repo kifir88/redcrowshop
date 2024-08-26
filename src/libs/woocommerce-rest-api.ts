@@ -53,3 +53,6 @@ export const fetchProductVariations = (productId: number, params?: any): Promise
 export const fetchOrders = (params?: any): Promise<AxiosResponse<Order[]>> => {
   return wooCommerceApiInstance.get("orders", params)
 }
+export const fetchOrder = (orderId: string): Promise<AxiosResponse<Order>> => {
+  return wooCommerceApiInstance.get(`orders/${orderId}`)
+}

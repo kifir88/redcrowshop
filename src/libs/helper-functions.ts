@@ -57,7 +57,7 @@ export const getCategoryHierarchyBySlug = (categories: ProductCategory[], slug: 
   return hierarchy;
 }
 
-export const formatPriceToKZT = (amount: number): string => {
+export const formatPriceToKZT = (amount: number | String): string => {
   return amount.toLocaleString('kk-KZ', {
     style: 'decimal',
     minimumFractionDigits: 2,

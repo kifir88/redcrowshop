@@ -2,9 +2,14 @@
 
 import useOrders from "@/hooks/order/useOrders";
 import OrderRowItem from "@/components/pages/orders/order-row-item";
+import OrderPaymentDialog from "@/components/pages/orders/order-payment-dialog";
+import {useState} from "react";
+import {Order} from "@/types/woo-commerce/order";
 
 export default function OrdersPage() {
   const { data, isLoading } = useOrders({})
+
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
 
   return (
     <section className="bg-white py-8 antialiased md:py-16">
@@ -17,12 +22,20 @@ export default function OrdersPage() {
           <div className="mt-6 flow-root sm:mt-8">
             <div className="divide-y divide-gray-200 dark:divide-gray-700">
               {data?.data.map(order => (
-                <OrderRowItem key={order.id} order={order} />
+                <OrderRowItem
+                  key={order.id}
+                  order={order}
+                  handleOpenPaymentModal={() => setSelectedOrder(order)}
+                />
               ))}
             </div>
           </div>
 
-          {/*<Pagination currentPage={} /> /*/}
+          <OrderPaymentDialog
+            isOpen={!!selectedOrder}
+            order={selectedOrder as Order}
+            onClose={() => setSelectedOrder(null)}
+          />
         </div>
       </div>
     </section>

@@ -12,7 +12,7 @@ dayjs.extend(utc)
 dayjs.extend(timezone)
 dayjs.locale('ru');
 
-export default function OrderRowItem({order}: {order: Order}) {
+export default function OrderRowItem({order, handleOpenPaymentModal}: {order: Order, handleOpenPaymentModal: () => void}) {
   const formattedCreatedDate = dayjs
     .utc(order.date_created)
     .local()
@@ -52,7 +52,7 @@ export default function OrderRowItem({order}: {order: Order}) {
 
       <div className="w-full grid sm:grid-cols-2 lg:flex lg:w-64 lg:items-center lg:justify-end gap-4">
         {!order.date_paid && (
-          <Button color="dark">
+          <Button color="dark" onClick={handleOpenPaymentModal}>
             Оплатить
           </Button>
         )}
