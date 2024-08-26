@@ -91,9 +91,9 @@ export default function ShippingDetailsDialog({
         console.error(e, "create-order-error")
         toast.error(`${e.response?.data}`)
       },
-      onSuccess: () => {
+      onSuccess: (res) => {
         clearCartItems()
-        router.push("/orders")
+        router.push(`/orders/${res.data.id}`)
         toast.success("Заказ успешно создан")
       },
     })

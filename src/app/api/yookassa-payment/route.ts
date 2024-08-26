@@ -25,9 +25,9 @@ export async function POST(req: NextRequest) {
     const yookassaCreatePayload: ICreatePayment = {
       amount: {
         value: order.total,
-        // TODO
-        // currency: order.currency,
-        currency: "RUB",
+        // TODO for tests only RUB
+        // currency: "RUB",
+        currency: order.currency,
       },
       payment_method_data: {
         type: "bank_card",

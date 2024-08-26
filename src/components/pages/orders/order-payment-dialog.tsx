@@ -34,10 +34,11 @@ export default function OrderPaymentDialog({
         order: order,
       }, {
         onError: () => {
-          toast.error("Ошибка оплаты. Попробуйте позже.")
+          toast.error("Ошибка оплаты с помощю YooMoney. Попробуйте позже.")
         },
         onSuccess: (res) => {
-          console.log(res, 'res')
+          const confirmationUrl = res.data.payment.confirmation.confirmation_url;
+          window.location.assign(confirmationUrl);
         }
       })
     }
@@ -117,6 +118,7 @@ export default function OrderPaymentDialog({
                         color="dark"
                         fullSized
                         disabled={!selectedOption}
+                        isProcessing={yookassaCreatePaymentMutation.isPending}
                         onClick={handleConfirmClick}
                       >
                         Подвтердить

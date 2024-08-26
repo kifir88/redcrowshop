@@ -56,3 +56,6 @@ export const fetchOrders = (params?: any): Promise<AxiosResponse<Order[]>> => {
 export const fetchOrder = (orderId: string): Promise<AxiosResponse<Order>> => {
   return wooCommerceApiInstance.get(`orders/${orderId}`)
 }
+export const updateOrder = (orderId: string, payload: any): Promise<AxiosResponse<Order>> => {
+  return wooCommerceApiInstance.put(`orders/${orderId}`, payload)
+}

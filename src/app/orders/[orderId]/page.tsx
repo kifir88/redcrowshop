@@ -1,22 +1,51 @@
-import {fetchOrder} from "@/libs/woocommerce-rest-api";
+import {fetchOrder, updateOrder} from "@/libs/woocommerce-rest-api";
 import {formatPriceToKZT} from "@/libs/helper-functions";
-import {Button} from "flowbite-react";
-import {Order} from "@/types/woo-commerce/order";
-import OrderPaymentDialog from "@/components/pages/orders/order-payment-dialog";
 import OrderPaymentButton from "@/components/pages/order-detail/order-payment-button";
+import {Order} from "@/types/woo-commerce/order";
+import {Badge} from "flowbite-react";
 
 export default async function OrderDetail({
-  params: { orderId }
+  params: { orderId },
+  searchParams: {
+    paymentOption,
+    paymentId,
+  },
 }: {
-  params: { orderId: string }
+  params: {
+    orderId: string;
+  };
+  searchParams: {
+    paymentOption?: string;
+    paymentId?: string;
+  }
 }) {
-  const orderData = await fetchOrder(orderId)
+  let orderData = await fetchOrder(orderId)
+
+  if (paymentOption && paymentId && !orderData.data.date_paid_gmt) {
+    const payload: Partial<Order> = {
+      payment_method: paymentOption,
+      transaction_id: paymentId,
+      status: "completed",
+    }
+    orderData = await updateOrder(orderId, payload)
+  }
 
   return (
     <section className="bg-white py-8 antialiased dark:bg-gray-900 md:py-16">
       <form action="#" className="mx-auto max-w-screen-xl px-4 2xl:px-0">
         <div className="mx-auto max-w-3xl">
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl">Заказ {orderData?.data.number}</h2>
+          <div className="flex items-center gap-4">
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl">
+              Заказ {orderData?.data.number}
+            </h2>
+
+            {!!orderData.data.date_paid_gmt && (
+              <Badge size="lg" color="green">
+                Заказ оплачен
+              </Badge>
+            )}
+          </div>
+
 
           <div className="mt-6 space-y-4 border-b border-t border-gray-200 py-8 dark:border-gray-700 sm:mt-8">
             <h4 className="text-lg font-semibold text-gray-900 dark:text-white">Информация об оплате и доставке</h4>
@@ -46,16 +75,16 @@ export default async function OrderDetail({
                     <tr key={li.id}>
                       <td className="whitespace-nowrap py-4 md:w-[384px]">
                         <div className="flex items-center gap-4">
-                          <a href="#" className="flex items-center aspect-square w-10 h-10 shrink-0">
+                          <div className="flex items-center aspect-square w-10 h-10 shrink-0">
                             <img
                               className="h-auto w-full max-h-full dark:hidden"
                               src={li.image.src}
                               alt={li.image.alt}
                             />
-                          </a>
-                          <a href="#" className="hover:underline">
+                          </div>
+                          <div className="hover:underline">
                             {li.name}
-                          </a>
+                          </div>
                         </div>
                       </td>
 
