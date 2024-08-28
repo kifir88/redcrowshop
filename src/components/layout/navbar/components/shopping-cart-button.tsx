@@ -5,6 +5,7 @@ import { Popover, PopoverButton, PopoverPanel } from '@headlessui/react'
 import {useLocalStorage} from "usehooks-ts";
 import {CartItem} from "@/types/cart";
 import Link from "next/link";
+import {Button} from "flowbite-react";
 
 export default function ShoppingCartButton() {
   const [cartItems] = useLocalStorage<CartItem[]>("cartItems", [])
@@ -92,9 +93,13 @@ export default function ShoppingCartButton() {
           {/*</button>*/}
 
           <p className="mt-6 text-center">
-            <Link href="/cart" className="text-sm font-medium text-indigo-600 hover:text-indigo-500">
+            <Button
+              as={Link}
+              href="/cart"
+              color="dark"
+            >
               Перейти в корзину
-            </Link>
+            </Button>
           </p>
         </form>
       </PopoverPanel>
