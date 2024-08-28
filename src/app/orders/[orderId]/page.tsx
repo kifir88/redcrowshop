@@ -25,7 +25,7 @@ export default async function OrderDetail({
     const payload: Partial<Order> = {
       payment_method: paymentOption,
       transaction_id: paymentId,
-      status: "completed",
+      status: "processing",
     }
     orderData = await updateOrder(orderId, payload)
   }
