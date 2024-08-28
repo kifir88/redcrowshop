@@ -2,11 +2,23 @@
 
 import {Carousel} from "flowbite-react";
 import CarouselItem from "@/components/pages/home/carousel-item";
+import {ChevronLeft, ChevronRight} from "lucide-react";
 
 export default function HeroCarousel({strapiSlider}: {strapiSlider: StrapiSliderApiResponse}) {
   return (
     <main className="">
-      <Carousel>
+      <Carousel
+        leftControl={(
+          <div>
+            <ChevronLeft className="size-10" strokeWidth={1.2} />
+          </div>
+        )}
+        rightControl={(
+          <div>
+            <ChevronRight className="size-10" strokeWidth={1.2} />
+          </div>
+        )}
+      >
         {strapiSlider.data.map(ai => (
           <CarouselItem key={ai.id} em={ai.attributes} locale="ru" />
         ))}
