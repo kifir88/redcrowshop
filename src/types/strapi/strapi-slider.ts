@@ -49,7 +49,7 @@ interface Localization {
   data: any[]; // Adjust type if specific structure exists
 }
 
-interface Attributes {
+export interface StrapiSliderAttributes {
   title: string;
   heading: string;
   description: string;
@@ -72,7 +72,7 @@ interface Attributes {
 
 interface Item {
   id: number;
-  attributes: Attributes;
+  attributes: StrapiSliderAttributes;
 }
 
 interface Meta {

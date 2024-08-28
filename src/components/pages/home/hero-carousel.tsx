@@ -21,7 +21,7 @@ export default function HeroCarousel({strapiSlider}: {strapiSlider: StrapiSlider
         )}
       >
         {strapiSlider.data.map(ai => (
-          <CarouselItem key={ai.id} em={ai.attributes} locale="ru" />
+          <CarouselItem key={ai.id} item={ai.attributes} locale="ru" />
         ))}
       </Carousel>
     </main>

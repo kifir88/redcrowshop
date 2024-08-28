@@ -1,5 +1,6 @@
 import {cn} from "@/libs/utils";
 import Link from "next/link";
+import {StrapiSliderAttributes} from "@/types/strapi/strapi-slider";
 
 const getContent = (
   locale: string,
@@ -19,69 +20,69 @@ const getContent = (
 };
 
 export default function CarouselItem({
-  em,
+  item,
   locale,
 }: {
-  em: Attributes;
+  item: StrapiSliderAttributes;
   locale: string;
 }) {
-  const imgSrc = process.env.NEXT_PUBLIC_STRAPI_API_URL + em.image.data.attributes.url;
+  const imgSrc = process.env.NEXT_PUBLIC_STRAPI_API_URL + item.image.data.attributes.url;
 
   const heading = getContent(
     locale,
-    em.locale,
-    em.heading,
-    em.localizations.data[0]?.attributes.heading
+    item.locale,
+    item.heading,
+    item.localizations.data[0]?.attributes.heading
   );
 
   const title = getContent(
     locale,
-    em.locale,
-    em.title,
-    em.localizations.data[0]?.attributes.title
+    item.locale,
+    item.title,
+    item.localizations.data[0]?.attributes.title
   );
 
   const description = getContent(
     locale,
-    em.locale,
-    em.description,
-    em.localizations.data[0]?.attributes.description
+    item.locale,
+    item.description,
+    item.localizations.data[0]?.attributes.description
   );
 
   const btnContent = getContent(
     locale,
-    em.locale,
-    em.btnContent,
-    em.localizations.data[0]?.attributes.btnContent
+    item.locale,
+    item.btnContent,
+    item.localizations.data[0]?.attributes.btnContent
   );
 
   return (
     <div
       className="flex h-[272px] w-full items-center justify-evenly px-6 sm:h-[634px]"
-      style={{ backgroundColor: em.bgHexColor }}
+      style={{ backgroundColor: item.bgHexColor }}
     >
       <img
         className={cn(
           `w-1/3 object-contain`,
-          em.isLeft ? "order-1" : "order-2"
+          item.isLeft ? "order-1" : "order-2"
         )}
         src={imgSrc}
         width={1920}
         height={1200}
-        alt={em.title || "carousel image"}
+        alt={item.title || "carousel image"}
       />
       <div
         className={`flex flex-col justify-center pb-10 ${
-          em.isLeft ? "order-2 text-right" : "order-1 text-left"
+          item.isLeft ? "order-2 text-right" : "order-1 text-left"
         }`}
-        style={{ color: em.textHexColor2 }}
+        style={{ color: item.textHexColor2 }}
       >
         <h1 className="font-fancy text-[16px] sm:text-[28px] md:text-[40px]">
           {heading}
         </h1>
         <h2
           className="text-[16px] font-bold uppercase sm:text-[30px] md:text-[60px]"
-          style={{ color: em.textHexColor1 }}
+          style={{ color: item.textHexColor1 }}
         >
           {title}
         </h2>
@@ -89,12 +90,12 @@ export default function CarouselItem({
           {description}
         </h5>
         <Link
-          href={em.href || "/shop"}
+          href={item.href || "/shop"}
           className={cn(
             `w-fit px-2 py-2 text-[12px] font-bold uppercase sm:py-5 sm:px-11`,
-            em.isLeft && "ml-auto"
+            item.isLeft && "ml-auto"
           )}
-          style={{ backgroundColor: em.btnColor, color: em.btnTextColor }}
+          style={{ backgroundColor: item.btnColor, color: item.btnTextColor }}
         >
           {btnContent}
         </Link>
