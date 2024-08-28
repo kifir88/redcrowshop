@@ -4,6 +4,7 @@ import useCustomProductAttributes from "@/hooks/product-attributes/useCustomProd
 import {useMemo} from "react";
 import ProductAttributeFilter from "@/components/pages/category/product-attribute-filter";
 import {Spinner} from "flowbite-react";
+import SearchInput from "@/components/pages/category/search-input";
 
 const Filters = ({productSlug}: {productSlug: string}) => {
   const {data, isLoading} = useCustomProductAttributes({
@@ -21,6 +22,8 @@ const Filters = ({productSlug}: {productSlug: string}) => {
           <Spinner />
         </div>
       )}
+
+      <SearchInput />
 
       {productAttributes?.map(cpa => (
         <ProductAttributeFilter key={cpa.slug} customProductAttribute={cpa} />

@@ -23,6 +23,7 @@ export default async function ProductCategoryPage({
   )
 
   const {
+    search: searchParam,
     page: pageParam,
     order: orderSearchParam,
     orderby: orderbySearchParam,
@@ -42,6 +43,7 @@ export default async function ProductCategoryPage({
     order: orderFiltersExist ? orderSearchParam : undefined,
     orderby: orderFiltersExist ? orderbySearchParam : undefined,
     page: pageParam ? Number(pageParam) : undefined,
+    search: searchParam ? searchParam : undefined,
     ...formattedSearchParams,
   })
 
@@ -56,7 +58,7 @@ export default async function ProductCategoryPage({
         <Breadcrumb items={breadCrumbItems} />
       </div>
 
-      <div className="flex items-baseline justify-between border-b border-gray-200 pb-6 pt-10">
+      <div className="flex items-baseline justify-between pb-6 pt-10">
         <h1 className="text-4xl font-bold tracking-tight text-gray-900">
           {currentProductCategory?.name}
         </h1>
