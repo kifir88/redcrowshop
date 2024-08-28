@@ -3,6 +3,7 @@
 import {Carousel} from "flowbite-react";
 import CarouselItem from "@/components/pages/home/carousel-item";
 import {ChevronLeft, ChevronRight} from "lucide-react";
+import {StrapiSliderApiResponse} from "@/types/strapi/strapi-slider";
 
 export default function HeroCarousel({strapiSlider}: {strapiSlider: StrapiSliderApiResponse}) {
   return (

@@ -86,7 +86,7 @@ interface Pagination {
   total: number;
 }
 
-interface StrapiSliderApiResponse {
+export interface StrapiSliderApiResponse {
   data: Item[];
   meta: Meta;
 }

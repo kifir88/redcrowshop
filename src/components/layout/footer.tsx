@@ -1,8 +1,10 @@
-
 import { Footer as FBFooter, FooterCopyright, FooterLink, FooterLinkGroup } from "flowbite-react";
 import {SITE_DATA} from "@/metadata/site-data";
+import {fetchFooterPages} from "@/libs/strapi-rest-api";
 
-export default function Footer() {
+export default async function Footer() {
+  const footerPagesData = await fetchFooterPages()
+
   return (
     <>
       <div className="border-t-2 rounded-none border-gray-300" />
@@ -17,9 +19,11 @@ export default function Footer() {
             </div>
             <div>
               <FooterLinkGroup col>
-                <FooterLink href="/contacts">Контакты</FooterLink>
-                <FooterLink href="/delivery">Доставка</FooterLink>
-                <FooterLink href="/offerta">Оферта</FooterLink>
+                {footerPagesData.data.data.map(i => (
+                  <FooterLink key={i.id} href={`/info/${i.attributes.slug}`}>
+                    {i.attributes.name}
+                  </FooterLink>
+                ))}
               </FooterLinkGroup>
             </div>
           </div>
