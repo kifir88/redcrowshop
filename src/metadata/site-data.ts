@@ -24,4 +24,7 @@ export const SITE_DATA = {
   foot_locator: "Магазины",
   foot_enjoy: "Подпишитесь на нашу рассылку",
   foot_subscribe: "подписаться",
+
+  instagram: "https://www.instagram.com/redcrowstyle",
+  whatsapp: "https://wa.me/77770197765",
 };

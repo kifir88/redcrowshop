@@ -2,10 +2,11 @@ import type { Metadata } from "next";
 import {Roboto} from "next/font/google";
 import Providers from "@/app/providers";
 import Navbar from "@/components/layout/navbar";
+import Footer from "@/components/layout/footer";
 import {ThemeModeScript} from "flowbite-react";
+import {SITE_DATA} from "@/metadata/site-data";
 
 import "./globals.css";
-import {SITE_DATA} from "@/metadata/site-data";
 
 const roboto = Roboto({
   subsets: ["latin", "cyrillic", "cyrillic-ext"],
@@ -32,6 +33,7 @@ export default function RootLayout({
           <main>
             <Navbar />
             {children}
+            <Footer />
           </main>
         </Providers>
       </body>
