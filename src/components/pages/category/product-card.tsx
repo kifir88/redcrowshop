@@ -5,16 +5,16 @@ import Link from "next/link";
 import {useParams} from "next/navigation";
 
 const ProductCard = ({product}: {product: Product}) => {
-  const params = useParams();
-
   const image = product.images[0];
   const imageSrc = image?.src || "/category/product-image-placeholder.png";
   const imageAlt = image?.alt || "placeholder";
 
+  const categorySlug = product.categories[0].slug;
+
   return (
     <Link
       key={product.id}
-      href={`/category/${params.slug}/${product.slug}`}
+      href={`/category/${categorySlug}/${product.slug}`}
       className="group text-sm"
     >
       <div className="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-lg bg-gray-100 group-hover:opacity-75">
