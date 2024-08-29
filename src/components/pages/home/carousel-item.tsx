@@ -72,9 +72,11 @@ export default function CarouselItem({
         alt={item.title || "carousel image"}
       />
       <div
-        className={`flex flex-col justify-center pb-10 ${
-          item.isLeft ? "order-2 text-right" : "order-1 text-left"
-        }`}
+        className={cn(
+          `flex flex-col justify-center pb-10`,
+          // item.isLeft ? "order-2 text-right" : "order-1 text-left"
+          item.isLeft ? "order-2" : "order-1 text-left"
+        )}
         style={{ color: item.textHexColor2 }}
       >
         <h1 className="font-fancy text-[16px] sm:text-[28px] md:text-[40px]">
@@ -86,14 +88,14 @@ export default function CarouselItem({
         >
           {title}
         </h2>
-        <h5 className="max-w-[200px] text-[9px] font-normal sm:max-w-[270px] sm:text-[14px] md:max-w-lg md:text-[18px]">
+        <h5 className="text-balance max-w-[200px] text-[9px] font-normal sm:max-w-[270px] sm:text-[14px] md:max-w-lg md:text-[18px]">
           {description}
         </h5>
         <Link
           href={item.href || "/shop"}
           className={cn(
-            `w-fit px-2 py-2 text-[12px] font-bold uppercase sm:py-5 sm:px-11`,
-            item.isLeft && "ml-auto"
+            `mt-4 w-fit px-2 py-2 text-[12px] font-bold uppercase sm:py-5 sm:px-11`,
+            // item.isLeft && "ml-auto"
           )}
           style={{ backgroundColor: item.btnColor, color: item.btnTextColor }}
         >
