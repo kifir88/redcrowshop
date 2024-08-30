@@ -1,5 +1,9 @@
 import CategoryListSortMenu from "@/components/pages/category/category-list-sort-menu";
-import {fetchProductCategories, fetchProducts} from "@/libs/woocommerce-rest-api";
+import {
+  fetchCustomProductCategoryMaxPrice,
+  fetchProductCategories,
+  fetchProducts
+} from "@/libs/woocommerce-rest-api";
 import ProductCard from "@/components/pages/category/product-card";
 import Breadcrumb from "@/components/breadcrumb";
 import {getCategoryHierarchyBySlug} from "@/libs/helper-functions";
@@ -20,6 +24,10 @@ export default async function ProductCategoryPage({
   const productCategoriesData = await fetchProductCategories({
     exclude: [320],
   })
+  const productCategoryMaxPrice = await fetchCustomProductCategoryMaxPrice(slug)
+
+  console.log(productCategoryMaxPrice.data, "productCategoryMaxPrice")
+
   const currentProductCategory = productCategoriesData?.data.find(
     (pc: ProductCategory) => pc.slug === slug
   )

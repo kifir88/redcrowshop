@@ -5,6 +5,7 @@ import {useMemo} from "react";
 import ProductAttributeFilter from "@/components/pages/category/product-attribute-filter";
 import {Spinner} from "flowbite-react";
 import SearchInput from "@/components/pages/category/search-input";
+import PriceSliderFilter from "@/components/pages/category/price-slider-filter";
 
 const Filters = ({productSlug, className}: {productSlug: string; className: string}) => {
   const {data, isLoading} = useCustomProductAttributes({
@@ -28,6 +29,8 @@ const Filters = ({productSlug, className}: {productSlug: string; className: stri
       {productAttributes?.map(cpa => (
         <ProductAttributeFilter key={cpa.slug} customProductAttribute={cpa} />
       ))}
+
+      <PriceSliderFilter />
     </form>
   )
 }

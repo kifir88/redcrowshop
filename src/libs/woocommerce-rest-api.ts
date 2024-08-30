@@ -20,14 +20,24 @@ const custom_v1_options: WooCommerceRestApiOptions = {
   consumerSecret: "cs_8b64a8187c67dbeb6e0ccf618069d0b69b4dd690",
   version: "custom/v1" as any,
 };
+const custom_api_v1_options: WooCommerceRestApiOptions = {
+  url: "https://admin.redcrow.kz/",
+  consumerKey: "ck_901883160cd3f891e2eaa4b88e28b4b0198c9682",
+  consumerSecret: "cs_8b64a8187c67dbeb6e0ccf618069d0b69b4dd690",
+  version: "custom-api/v1" as any,
+};
 
 export const wooCommerceApiInstance = new WooCommerceRestApi(options);
 export const wooCommerceCustomV1ApiInstance = new WooCommerceRestApi(custom_v1_options);
+export const wooCommerceCustomApiV1ApiInstance = new WooCommerceRestApi(custom_api_v1_options);
 
 // API custom/v1
 
 export const fetchCustomProductAttributes = (params?: any): Promise<AxiosResponse<CustomProductAttribute[]>> => {
   return wooCommerceCustomV1ApiInstance.get("product-attributes", params)
+}
+export const fetchCustomProductCategoryMaxPrice = (productCategorySlug: string) => {
+  return wooCommerceCustomApiV1ApiInstance.get(`max-price?category_slug=${productCategorySlug}`)
 }
 
 // API wc/v3
