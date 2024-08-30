@@ -5,7 +5,10 @@ import MobileMenu from "@/components/layout/navbar/components/mobile-menu";
 import {cn} from "@/libs/utils";
 
 export default async function Navbar() {
-  const productCategoriesData = await fetchProductCategories();
+  const productCategoriesData = await fetchProductCategories({
+    order: "desc",
+    orderby: "name"
+  });
 
   return (
     <>

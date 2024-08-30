@@ -47,11 +47,17 @@ export default function MobileMenu({productCategories}: {productCategories: Prod
       <Drawer open={isOpen} onClose={handleClose}>
         <Drawer.Header
           title="Меню"
-          // titleIcon={HiCalendar}
-          // titleIcon={null}
         />
         <Drawer.Items>
-          <ul className="space-y-4 sm:mb-4 md:mb-0">
+          <ul className="mt-4 space-y-4 sm:mb-4 md:mb-0">
+            <Link
+              href={`/shop`}
+              className="font-semibold text-gray-900"
+              onClick={handleClose}
+            >
+              Магазин
+            </Link>
+
             {parentCategories?.map(pc => {
               const selectedSubcategories = productCategories
                 .filter(subPc => subPc.parent === pc.id); // Changed variable name here
@@ -61,6 +67,7 @@ export default function MobileMenu({productCategories}: {productCategories: Prod
                   <Link
                     href={`/category/${pc.slug}`}
                     className="font-semibold text-gray-900"
+                    onClick={handleClose}
                   >
                     {pc.name}
                   </Link>
@@ -70,6 +77,7 @@ export default function MobileMenu({productCategories}: {productCategories: Prod
                         key={subcategory.id}
                         subcategory={subcategory}
                         productCategories={productCategories}
+                        handleCloseMobileMenu={handleClose}
                       />
                     ))}
                   </ul>

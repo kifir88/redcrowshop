@@ -24,8 +24,7 @@ export default function NavbarDropdown({productCategories}: {productCategories: 
   const handleSelectProductCategory = (productCategoryId: number) => {
     setSelectedProductId(productCategoryId);
   };
-
-  const handleMouseLeave = () => {
+  const handleClearSelectedProductCategory = () => {
     setSelectedProductId(null);
   };
 
@@ -40,17 +39,24 @@ export default function NavbarDropdown({productCategories}: {productCategories: 
         />
       </Navbar.Brand>
 
-      <Navbar.Collapse>
-        {parentCategories?.map((pc) => (
-          <MegaMenu.DropdownToggle
-            key={pc.id}
-            onMouseEnter={() => handleSelectProductCategory(pc.id)}
-          >
-            <Link href={`/category/${pc.slug}`}>
-              {pc.name}
-            </Link>
-          </MegaMenu.DropdownToggle>
-        ))}
+      <Navbar.Collapse className="flex flex-1">
+        <div className="flex flex-1 justify-evenly gap-10 ml-10">
+          <Link href={`/shop`} onMouseEnter={handleClearSelectedProductCategory}>
+            Магазин
+          </Link>
+
+          {parentCategories?.map((pc) => (
+            <MegaMenu.DropdownToggle
+              key={pc.id}
+              onMouseEnter={() => handleSelectProductCategory(pc.id)}
+              className="w-auto"
+            >
+              <Link href={`/category/${pc.slug}`}>
+                {pc.name}
+              </Link>
+            </MegaMenu.DropdownToggle>
+          ))}
+        </div>
 
         <div className="order-2 hidden items-center md:flex">
           <ShoppingCartButton />
@@ -58,7 +64,7 @@ export default function NavbarDropdown({productCategories}: {productCategories: 
       </Navbar.Collapse>
       <MegaMenu.Dropdown
         hidden={!selectedProductId}
-        onMouseLeave={handleMouseLeave}
+        onMouseLeave={handleClearSelectedProductCategory}
         className="w-full"
       >
         <div
