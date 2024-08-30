@@ -18,7 +18,7 @@ export default function NavbarDropdown({productCategories}: {productCategories: 
 
   const selectedSubcategories = useMemo(() => {
     return productCategories.filter(pc => pc.parent === selectedProductId)
-  }, [selectedProductId])
+  }, [productCategories, selectedProductId])
 
   const handleSelectProductCategory = (productCategoryId: number) => {
     setSelectedProductId(productCategoryId);

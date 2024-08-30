@@ -16,7 +16,7 @@ const Subcategory = ({
   return (
     <>
       <li key={subcategory.id}>
-        <Link href={`/category/${subcategory.slug}`} className="mb-2 font-semibold text-gray-900">
+        <Link href={`/category/${subcategory.slug}`} className="mb-2 md:font-semibold text-gray-700 md:text-gray-900">
           {subcategory.name}
         </Link>
       </li>
