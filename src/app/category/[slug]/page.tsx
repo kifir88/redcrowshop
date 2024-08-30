@@ -7,6 +7,8 @@ import Filters from "@/components/pages/category/filters";
 import CategoryListPagination from "@/components/pages/category/category-list-pagination";
 import {ProductCategory} from "@/types/woo-commerce/product-category";
 import {Product} from "@/types/woo-commerce/product";
+import {cn} from "@/libs/utils";
+import MobileFilters from "@/components/pages/category/mobile-filters";
 
 export default async function ProductCategoryPage({
   params: { slug },
@@ -71,13 +73,20 @@ export default async function ProductCategoryPage({
         </h2>
 
         <div className="grid grid-cols-1 gap-x-8 gap-y-10 lg:grid-cols-4">
-          {/* Filters */}
-          <Filters productSlug={slug} />
+          {/* Desktop Filters */}
+          <Filters productSlug={slug} className="hidden lg:block" />
 
           {/* Product grid */}
           <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 md:grid-cols-3 lg:col-span-3 lg:gap-x-8">
-            <div className="col-span-1 sm:col-span-2 md:col-span-3 lg:col-span-3">
+            <div
+              className={cn(
+                "col-span-1 sm:col-span-2 md:col-span-3 lg:col-span-3",
+                "flex justify-between items-center"
+              )}
+            >
               <CategoryListSortMenu/>
+
+              <MobileFilters productSlug={slug} />
             </div>
 
             {productsData?.data.map((product: Product) => (

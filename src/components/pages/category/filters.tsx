@@ -6,7 +6,7 @@ import ProductAttributeFilter from "@/components/pages/category/product-attribut
 import {Spinner} from "flowbite-react";
 import SearchInput from "@/components/pages/category/search-input";
 
-const Filters = ({productSlug}: {productSlug: string}) => {
+const Filters = ({productSlug, className}: {productSlug: string; className: string}) => {
   const {data, isLoading} = useCustomProductAttributes({
     categoryName: productSlug,
   })
@@ -16,7 +16,7 @@ const Filters = ({productSlug}: {productSlug: string}) => {
   }, [data?.data])
 
   return (
-    <form className="hidden lg:block">
+    <form className={className}>
       {isLoading && (
         <div className="flex w-full justify-center">
           <Spinner />
