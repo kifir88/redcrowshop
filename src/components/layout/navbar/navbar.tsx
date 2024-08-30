@@ -9,7 +9,7 @@ export default async function Navbar() {
 
   return (
     <>
-      <div className="relative h-[72px] z-50">
+      <div className="relative md:h-[72px] z-50">
         <MegaMenu
           className={cn(
             "absolute left-0 top-0 right-0 hidden md:block",
