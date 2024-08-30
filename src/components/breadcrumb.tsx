@@ -25,14 +25,12 @@ const Breadcrumb = ({
 }) => {
   const pathname = usePathname()
 
-
-
   return (
     <nav aria-label="Breadcrumb" className={className}>
       <ol role="list" className="flex items-center space-x-4 py-4">
         <li>
           <div className="flex items-center">
-            <Link href="/category" className="text-sm font-medium text-gray-700">
+            <Link href="/shop" className="text-sm font-medium text-gray-700">
               Магазин
             </Link>
           </div>

@@ -4,10 +4,12 @@ import {Product} from "@/types/woo-commerce/product";
 import AttributeAutoComplete from "@/components/fields/attribute-auto-complete";
 import {UseFormReturnType} from "@mantine/form";
 import {ProductAttributeTerm} from "@/types/woo-commerce/product-attribute-term";
-import {cn} from "@/libs/utils";
 import {ProductVariation} from "@/types/woo-commerce/product-variation";
 import {useLocalStorage} from "usehooks-ts";
 import {CartItem} from "@/types/cart";
+import {Button, Toast} from "flowbite-react";
+import Link from "next/link";
+import toast from "react-hot-toast";
 
 type FormValues = Record<string, ProductAttributeTerm>;
 
@@ -25,6 +27,28 @@ export default function ProductDetailAttributesForm({
   const isAddToCartButtonDisabled = Object
     .keys(form.values)
     .length !== product.attributes.length;
+
+  const showCartToast = () => {
+    toast.custom((t) => (
+      <Toast className={`${t.visible ? 'animate-enter' : 'animate-leave'}`}>
+        <div className="text-sm font-normal">Товар добавлен в корзину.</div>
+        <div className="ml-auto flex items-center space-x-2">
+          <div>
+            <Button
+              as={Link}
+              href="/cart"
+              size="sm"
+              color="dark"
+              onClick={() => toast.dismiss(t.id)}
+            >
+              Перейти
+            </Button>
+          </div>
+          <Toast.Toggle onClick={() => toast.dismiss(t.id)} />
+        </div>
+      </Toast>
+    ))
+  }
 
   const handleSubmit = (formValues: FormValues) => {
     if (selectedProductVariation) {
@@ -63,6 +87,8 @@ export default function ProductDetailAttributesForm({
         setCartValues((prevValue) => [...prevValue, newCartItem]);
       }
     }
+
+    showCartToast()
   };
 
   return (
@@ -80,17 +106,15 @@ export default function ProductDetailAttributesForm({
         </div>
       ))}
 
-      <button
+      <Button
         type="submit"
-        className={cn(
-          "mt-8 flex w-full items-center justify-center rounded-md border border-transparent bg-indigo-600",
-          "px-8 py-3 text-base font-medium text-white",
-          "hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2",
-        )}
+        className="mt-8"
+        color="dark"
         disabled={isAddToCartButtonDisabled}
+        fullSized
       >
         Добавить в корзину
-      </button>
+      </Button>
     </form>
   )
 }
