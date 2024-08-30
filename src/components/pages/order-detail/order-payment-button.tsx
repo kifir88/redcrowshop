@@ -5,7 +5,7 @@ import {Button} from "flowbite-react";
 import OrderPaymentDialog from "@/components/pages/orders/order-payment-dialog";
 import {Order} from "@/types/woo-commerce/order";
 
-export default function OrderPaymentButton({order}: {order: Order}) {
+export default function OrderPaymentButton({order, disabled}: {order: Order; disabled: boolean}) {
   const [isPaymentModalOpened, setIsPaymentModalOpened] = useState(false);
 
   const handleOpenPaymentModal = () => {
@@ -18,7 +18,12 @@ export default function OrderPaymentButton({order}: {order: Order}) {
   return (
     <>
       {!order.date_paid && (
-        <Button color="dark" onClick={handleOpenPaymentModal} fullSized>
+        <Button
+          color="dark"
+          onClick={handleOpenPaymentModal}
+          disabled={disabled}
+          fullSized
+        >
           Оплатить
         </Button>
       )}

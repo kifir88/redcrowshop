@@ -6,6 +6,7 @@ import {CartItem} from "@/types/cart";
 import {formatPriceToKZT} from "@/libs/helper-functions";
 import {useState} from "react";
 import ShippingDetailsDialog from "@/components/pages/cart/shipping-details-dialog";
+import {Button} from "flowbite-react";
 
 export default function CartPage() {
   const [cartItems] = useLocalStorage<CartItem[]>("cartItems", [])
@@ -75,12 +76,15 @@ export default function CartPage() {
                 </dl>
               </div>
 
-              <button
-                className="flex w-full items-center justify-center rounded-lg bg-gray-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-primary-800 focus:outline-none focus:ring-4 focus:ring-primary-300"
+              <Button
+                color="dark"
+                size="sm"
+                fullSized
+                disabled={!totalOriginalPrice}
                 onClick={handleOpenShippingDialog}
               >
                 Создать заказ
-              </button>
+              </Button>
             </div>
           </div>
 

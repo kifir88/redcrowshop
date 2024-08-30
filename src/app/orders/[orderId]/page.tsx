@@ -149,7 +149,7 @@ export default async function OrderDetail({
                 </dl>
               </div>
 
-              <OrderPaymentButton order={orderData.data} />
+              <OrderPaymentButton order={orderData.data} disabled={!orderData?.data.total} />
 
             </div>
           </div>
