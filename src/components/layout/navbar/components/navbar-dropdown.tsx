@@ -7,6 +7,7 @@ import Subcategory from "@/components/layout/navbar/components/subcategory";
 import {useMemo, useState} from "react";
 import {ProductCategory} from "@/types/woo-commerce/product-category";
 import Image from "next/image";
+import {cn} from "@/libs/utils";
 
 export default function NavbarDropdown({productCategories}: {productCategories: ProductCategory[]}) {
   const [selectedProductId, setSelectedProductId] = useState<number | null>(null);
@@ -58,8 +59,14 @@ export default function NavbarDropdown({productCategories}: {productCategories: 
       <MegaMenu.Dropdown
         hidden={!selectedProductId}
         onMouseLeave={handleMouseLeave}
+        className="w-full"
       >
-        <div className="mx-auto mt-6 grid max-w-screen-xl w-screen border-y border-gray-200 px-4 py-5 text-sm text-gray-500 md:grid-cols-3 md:px-6">
+        <div
+          className={cn(
+            "mt-6 grid max-w-screen-xl w-full text-sm text-gray-500",
+            "mx-auto px-4 py-5 md:grid-cols-3 md:px-6 border-y border-gray-200"
+          )}
+        >
           <ul className="space-y-4 sm:mb-4 md:mb-0">
             {selectedSubcategories?.map(subcategory => (
               <Subcategory
