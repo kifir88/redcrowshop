@@ -3,10 +3,15 @@
 import {Button, Drawer} from "flowbite-react";
 import React, {useState} from "react";
 import Filters from "@/components/pages/category/filters";
-import {AdjustmentsHorizontalIcon} from "@heroicons/react/24/outline";
 import {SlidersHorizontalIcon} from "lucide-react";
 
-export default function MobileFilters({productSlug}: {productSlug: string}) {
+export default function MobileFilters({
+  productSlug,
+  productMaxPrice,
+}: {
+  productSlug: string;
+  productMaxPrice: number;
+}) {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleOpen = () => setIsOpen(true);
@@ -31,7 +36,11 @@ export default function MobileFilters({productSlug}: {productSlug: string}) {
           titleIcon={SlidersHorizontalIcon}
         />
         <Drawer.Items>
-          <Filters productSlug={productSlug} className="" />
+          <Filters
+            productSlug={productSlug}
+            className=""
+            productMaxPrice={productMaxPrice}
+          />
         </Drawer.Items>
       </Drawer>
     </>

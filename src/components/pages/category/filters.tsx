@@ -7,7 +7,15 @@ import {Spinner} from "flowbite-react";
 import SearchInput from "@/components/pages/category/search-input";
 import PriceSliderFilter from "@/components/pages/category/price-slider-filter";
 
-const Filters = ({productSlug, className}: {productSlug: string; className: string}) => {
+const Filters = ({
+  productSlug,
+  className,
+  productMaxPrice,
+}: {
+  productSlug: string;
+  className: string;
+  productMaxPrice: number;
+}) => {
   const {data, isLoading} = useCustomProductAttributes({
     categoryName: productSlug,
   })
@@ -30,7 +38,7 @@ const Filters = ({productSlug, className}: {productSlug: string; className: stri
         <ProductAttributeFilter key={cpa.slug} customProductAttribute={cpa} />
       ))}
 
-      <PriceSliderFilter />
+      <PriceSliderFilter productMaxPrice={productMaxPrice} />
     </form>
   )
 }

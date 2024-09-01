@@ -24,16 +24,14 @@ export default async function ProductCategoryPage({
   const productCategoriesData = await fetchProductCategories({
     exclude: [320],
   })
-  const productCategoryMaxPrice = await fetchCustomProductCategoryMaxPrice(slug)
-
-  console.log(productCategoryMaxPrice.data, "productCategoryMaxPrice")
-
   const currentProductCategory = productCategoriesData?.data.find(
     (pc: ProductCategory) => pc.slug === slug
   )
 
   const {
     search: searchParam,
+    max_price: maxPriceParam,
+    min_price: minPriceParam,
     page: pageParam,
     order: orderSearchParam,
     orderby: orderbySearchParam,
@@ -55,8 +53,18 @@ export default async function ProductCategoryPage({
     page: pageParam ? Number(pageParam) : undefined,
     per_page: 13,
     search: searchParam ? searchParam : undefined,
+    max_price: maxPriceParam ? maxPriceParam : undefined,
+    min_price: minPriceParam ? minPriceParam : undefined,
     ...formattedSearchParams,
   })
+  const productCategoryMaxPriceData = await fetchProducts({
+    category: currentProductCategory?.id,
+    per_page: 1,
+    order: "desc",
+    orderby: "price"
+  })
+  const productCategoryMaxPrice = productCategoryMaxPriceData.data[0]?.price;
+  const productCategoryMaxPriceValue = productCategoryMaxPrice ? Number(productCategoryMaxPrice) : 0;
 
   const totalPages: string = productsData?.headers["x-wp-totalpages"]
 
@@ -82,7 +90,11 @@ export default async function ProductCategoryPage({
 
         <div className="grid grid-cols-1 gap-x-8 gap-y-10 lg:grid-cols-4">
           {/* Desktop Filters */}
-          <Filters productSlug={slug} className="hidden lg:block" />
+          <Filters
+            productSlug={slug}
+            className="hidden lg:block"
+            productMaxPrice={productCategoryMaxPriceValue}
+          />
 
           {/* Product grid */}
           <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 md:grid-cols-3 lg:col-span-3 lg:gap-x-8">
@@ -94,7 +106,7 @@ export default async function ProductCategoryPage({
             >
               <CategoryListSortMenu/>
 
-              <MobileFilters productSlug={slug} />
+              <MobileFilters productSlug={slug} productMaxPrice={productCategoryMaxPriceValue} />
             </div>
 
             {productsData?.data.map((product: Product) => (
