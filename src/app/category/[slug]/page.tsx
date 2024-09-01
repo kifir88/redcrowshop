@@ -51,7 +51,7 @@ export default async function ProductCategoryPage({
     order: orderFiltersExist ? orderSearchParam : undefined,
     orderby: orderFiltersExist ? orderbySearchParam : undefined,
     page: pageParam ? Number(pageParam) : undefined,
-    per_page: 13,
+    per_page: 12,
     search: searchParam ? searchParam : undefined,
     max_price: maxPriceParam ? maxPriceParam : undefined,
     min_price: minPriceParam ? minPriceParam : undefined,

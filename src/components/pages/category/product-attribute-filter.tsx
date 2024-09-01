@@ -13,12 +13,6 @@ const ProductAttributeFilter = ({customProductAttribute}: {customProductAttribut
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  // const {
-  //   data,
-  //   isLoading,
-  //   isError
-  // } = useProductAttributeTerms(customProductAttribute.id)
-
   const productAttributeParam = searchParams.get(customProductAttribute.name);
   const productAttributeTerms = productAttributeParam?.split(",")
 
