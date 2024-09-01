@@ -2,7 +2,7 @@
 
 import {TextInput} from "flowbite-react";
 import {Search} from "lucide-react";
-import {useEffect, useState} from "react";
+import {KeyboardEventHandler, useEffect, useState} from "react";
 import {useDebounceValue} from "usehooks-ts";
 import {usePathname, useRouter, useSearchParams} from "next/navigation";
 import qs from "query-string";
@@ -31,6 +31,12 @@ export default function SearchInput() {
     router.push(url);
   };
 
+  const handleKeyDown: KeyboardEventHandler<HTMLInputElement> = (event) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+    }
+  }
+
   useEffect(() => {
     handleUpdateSearchParam()
   }, [debouncedValue])
@@ -43,6 +49,7 @@ export default function SearchInput() {
       placeholder="Поиск"
       value={value}
       onChange={(e) => setValue(e.target.value)}
+      onKeyDown={handleKeyDown}
     />
   )
 }
