@@ -7,6 +7,7 @@ import {ProductAttributeTerm} from "@/types/woo-commerce/product-attribute-term"
 import {ProductVariation} from "@/types/woo-commerce/product-variation";
 import {CustomProductAttribute} from "@/types/woo-commerce/custom-product-attribute";
 import {Order} from "@/types/woo-commerce/order";
+import {CustomCurrencyRates} from "@/types/woo-commerce/custom-currency-rates";
 
 const options: WooCommerceRestApiOptions = {
   url: "https://admin.redcrow.kz/",
@@ -26,10 +27,23 @@ const custom_api_v1_options: WooCommerceRestApiOptions = {
   consumerSecret: "cs_8b64a8187c67dbeb6e0ccf618069d0b69b4dd690",
   version: "custom-api/v1" as any,
 };
+const cust_api_v1_options: WooCommerceRestApiOptions = {
+  url: "https://admin.redcrow.kz/",
+  consumerKey: "ck_901883160cd3f891e2eaa4b88e28b4b0198c9682",
+  consumerSecret: "cs_8b64a8187c67dbeb6e0ccf618069d0b69b4dd690",
+  version: "cust_api/v1" as any,
+};
 
 export const wooCommerceApiInstance = new WooCommerceRestApi(options);
 export const wooCommerceCustomV1ApiInstance = new WooCommerceRestApi(custom_v1_options);
 export const wooCommerceCustomApiV1ApiInstance = new WooCommerceRestApi(custom_api_v1_options);
+export const wooCommerceCustApiV1ApiInstance = new WooCommerceRestApi(cust_api_v1_options);
+
+// API cust_api/v1
+
+export const fetchCurrencyRates = (): Promise<AxiosResponse<CustomCurrencyRates>> => {
+  return wooCommerceCustApiV1ApiInstance.get("cur_rates")
+}
 
 // API custom/v1
 

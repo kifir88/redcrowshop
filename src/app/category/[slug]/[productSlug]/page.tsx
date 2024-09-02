@@ -1,15 +1,22 @@
-import {fetchProductCategories, fetchProducts, fetchProductVariations} from "@/libs/woocommerce-rest-api";
+import {
+  fetchCurrencyRates,
+  fetchProductCategories,
+  fetchProducts,
+  fetchProductVariations
+} from "@/libs/woocommerce-rest-api";
 import Breadcrumb from "@/components/breadcrumb";
 import {getCategoryHierarchyBySlug} from "@/libs/helper-functions";
 import ProductCard from "@/components/pages/category/product-card";
 import ProductImageAttribute from "@/components/pages/product/product-image-attribute";
 import {Product} from "@/types/woo-commerce/product";
+import ProductPrice from "@/components/pages/product/product-price";
 
 export default async function ProductPage({
   params: { slug, productSlug },
 }: {
   params: { slug: string, productSlug: string },
 }) {
+  const currencyRatesData = await fetchCurrencyRates();
   const productsData = await fetchProducts({
     slug: productSlug,
   })
@@ -42,10 +49,7 @@ export default async function ProductPage({
           <div className="lg:col-span-5 lg:col-start-8">
             <div className="flex flex-col md:flex-row justify-between">
               <h1 className="text-xl font-medium text-gray-900">{productData.name}</h1>
-              <div
-                className="text-xl font-medium text-gray-900"
-                dangerouslySetInnerHTML={{__html: productData.price_html}}
-              />
+              <ProductPrice product={productData} currencyRates={currencyRatesData.data}  />
             </div>
           </div>
 
@@ -66,6 +70,7 @@ export default async function ProductPage({
             <ProductCard
               key={product.id}
               product={product}
+              currencyRates={currencyRatesData.data}
             />
           ))}
         </div>

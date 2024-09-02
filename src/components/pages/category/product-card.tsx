@@ -2,14 +2,28 @@
 
 import {Product} from "@/types/woo-commerce/product";
 import Link from "next/link";
-import {useParams} from "next/navigation";
+import {CustomCurrencyRates} from "@/types/woo-commerce/custom-currency-rates";
+import {useLocalStorage} from "usehooks-ts";
+import {CurrencyType, formatCurrency} from "@/libs/currency-helper";
+import {useMemo} from "react";
 
-const ProductCard = ({product}: {product: Product}) => {
+const ProductCard = ({product, currencyRates}: {product: Product; currencyRates: CustomCurrencyRates}) => {
+  const [selectedCurrency] = useLocalStorage<CurrencyType>("currency", "KZT")
+
   const image = product.images[0];
   const imageSrc = image?.src || "/category/product-image-placeholder.png";
   const imageAlt = image?.alt || "placeholder";
 
   const categorySlug = product.categories[0].slug;
+
+  const priceValue = useMemo(() => {
+    return formatCurrency(
+      parseFloat(product.price),
+      selectedCurrency,
+      currencyRates,
+    )
+  }, [selectedCurrency, product, currencyRates]);
+
 
   return (
     <Link
@@ -28,8 +42,9 @@ const ProductCard = ({product}: {product: Product}) => {
       <p className="italic text-gray-500">{product.categories[0]?.name}</p>
       <div
         className="mt-2 font-medium text-gray-900"
-        dangerouslySetInnerHTML={{__html: product.price_html}}
-      />
+      >
+        {priceValue}
+      </div>
     </Link>
   )
 }

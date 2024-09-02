@@ -1,5 +1,6 @@
 import CategoryListSortMenu from "@/components/pages/category/category-list-sort-menu";
 import {
+  fetchCurrencyRates,
   fetchCustomProductCategoryMaxPrice,
   fetchProductCategories,
   fetchProducts
@@ -13,6 +14,7 @@ import {ProductCategory} from "@/types/woo-commerce/product-category";
 import {Product} from "@/types/woo-commerce/product";
 import {cn} from "@/libs/utils";
 import MobileFilters from "@/components/pages/category/mobile-filters";
+import CurrencySelect from "@/components/pages/category/category-list-currency";
 
 export default async function ProductCategoryPage({
   params: { slug },
@@ -21,12 +23,13 @@ export default async function ProductCategoryPage({
   params: { slug: string },
   searchParams: Record<string, string>
 }) {
+  const currencyRatesData = await fetchCurrencyRates();
   const productCategoriesData = await fetchProductCategories({
     exclude: [320],
-  })
+  });
   const currentProductCategory = productCategoriesData?.data.find(
     (pc: ProductCategory) => pc.slug === slug
-  )
+  );
 
   const {
     search: searchParam,
@@ -104,7 +107,11 @@ export default async function ProductCategoryPage({
                 "flex justify-between items-center"
               )}
             >
-              <CategoryListSortMenu/>
+              <div className="flex justify-between items-center w-full">
+                <CategoryListSortMenu/>
+
+                <CurrencySelect />
+              </div>
 
               <MobileFilters productSlug={slug} productMaxPrice={productCategoryMaxPriceValue} />
             </div>
@@ -113,6 +120,7 @@ export default async function ProductCategoryPage({
               <ProductCard
                 key={product.id}
                 product={product}
+                currencyRates={currencyRatesData.data}
               />
             ))}
           </div>

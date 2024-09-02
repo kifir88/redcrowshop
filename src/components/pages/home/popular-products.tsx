@@ -1,7 +1,14 @@
 import {Product} from "@/types/woo-commerce/product";
 import ProductCard from "@/components/pages/category/product-card";
+import {CustomCurrencyRates} from "@/types/woo-commerce/custom-currency-rates";
 
-export default function PopularProducts({products}: {products: Product[]}) {
+export default function PopularProducts({
+  products,
+  currencyRates,
+}: {
+  products: Product[];
+  currencyRates: CustomCurrencyRates;
+}) {
   return (
     <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       <div className="flex items-baseline justify-between pb-6 pt-10">
@@ -15,6 +22,7 @@ export default function PopularProducts({products}: {products: Product[]}) {
           <ProductCard
             key={product.id}
             product={product}
+            currencyRates={currencyRates}
           />
         ))}
       </div>
