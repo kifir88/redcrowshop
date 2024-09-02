@@ -9,7 +9,7 @@ export default function MobileFilters({
   productSlug,
   productMaxPrice,
 }: {
-  productSlug: string;
+  productSlug?: string;
   productMaxPrice: number;
 }) {
   const [isOpen, setIsOpen] = useState(false);

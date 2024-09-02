@@ -12,7 +12,7 @@ const Filters = ({
   className,
   productMaxPrice,
 }: {
-  productSlug: string;
+  productSlug?: string;
   className: string;
   productMaxPrice: number;
 }) => {

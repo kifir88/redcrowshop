@@ -1,7 +1,124 @@
-export default function ShopPage() {
-  return (
-    <div>
+import CategoryListSortMenu from "@/components/pages/category/category-list-sort-menu";
+import {
+  fetchCurrencyRates,
+  fetchProductCategories,
+  fetchProducts
+} from "@/libs/woocommerce-rest-api";
+import ProductCard from "@/components/pages/category/product-card";
+import Breadcrumb from "@/components/breadcrumb";
+import Filters from "@/components/pages/category/filters";
+import CategoryListPagination from "@/components/pages/category/category-list-pagination";
+import {Product} from "@/types/woo-commerce/product";
+import {cn} from "@/libs/utils";
+import MobileFilters from "@/components/pages/category/mobile-filters";
+import CurrencySelect from "@/components/pages/category/category-list-currency";
 
-    </div>
+export default async function ProductCategoryPage({
+  searchParams,
+}: {
+  searchParams: Record<string, string>
+}) {
+  const currencyRatesData = await fetchCurrencyRates();
+  const productCategoriesData = await fetchProductCategories({
+    exclude: [320],
+  });
+
+  const {
+    search: searchParam,
+    max_price: maxPriceParam,
+    min_price: minPriceParam,
+    page: pageParam,
+    order: orderSearchParam,
+    orderby: orderbySearchParam,
+    ...attributeSearchParams
+  } = searchParams;
+
+  const formattedSearchParams = Object
+    .entries(attributeSearchParams)
+    .reduce((acc, [key, value]) => {
+      acc[`attr-${key}`] = value;
+      return acc;
+    }, {} as Record<string, string>);
+
+  const orderFiltersExist = orderSearchParam && orderbySearchParam;
+  const productsData = await fetchProducts({
+    order: orderFiltersExist ? orderSearchParam : undefined,
+    orderby: orderFiltersExist ? orderbySearchParam : undefined,
+    page: pageParam ? Number(pageParam) : undefined,
+    per_page: 12,
+    search: searchParam ? searchParam : undefined,
+    max_price: maxPriceParam ? maxPriceParam : undefined,
+    min_price: minPriceParam ? minPriceParam : undefined,
+    ...formattedSearchParams,
+  })
+  const productCategoryMaxPriceData = await fetchProducts({
+    per_page: 1,
+    order: "desc",
+    orderby: "price"
+  })
+  const productCategoryMaxPrice = productCategoryMaxPriceData.data[0]?.price;
+  const productCategoryMaxPriceValue = productCategoryMaxPrice ? Number(productCategoryMaxPrice) : 0;
+
+  const totalPages: string = productsData?.headers["x-wp-totalpages"]
+
+  return (
+    <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div>
+        <Breadcrumb items={[]} />
+      </div>
+
+      <div className="flex items-baseline justify-between pb-6 pt-10">
+        <h1 className="text-4xl font-bold tracking-tight text-gray-900">
+          Магазин
+        </h1>
+      </div>
+
+      <section aria-labelledby="products-heading" className="pb-24 pt-6">
+        <h2 id="products-heading" className="sr-only">
+          Products
+        </h2>
+
+        <div className="grid grid-cols-1 gap-x-8 gap-y-10 lg:grid-cols-4">
+          {/* Desktop Filters */}
+          <Filters
+            className="hidden lg:block"
+            productMaxPrice={productCategoryMaxPriceValue}
+          />
+
+          {/* Product grid */}
+          <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 md:grid-cols-3 lg:col-span-3 lg:gap-x-8">
+            <div
+              className={cn(
+                "col-span-1 sm:col-span-2 md:col-span-3 lg:col-span-3 h-min",
+                "flex flex-col md:flex-row justify-between md:items-center gap-y-5"
+              )}
+            >
+              <div className="flex justify-between items-center w-full">
+                <CategoryListSortMenu/>
+
+                <CurrencySelect />
+              </div>
+
+              <MobileFilters productMaxPrice={productCategoryMaxPriceValue} />
+            </div>
+
+            {productsData?.data.map((product: Product) => (
+              <ProductCard
+                key={product.id}
+                product={product}
+                currencyRates={currencyRatesData.data}
+              />
+            ))}
+          </div>
+
+          <div/>
+
+          <CategoryListPagination
+            currentPage={pageParam || "1"}
+            totalPages={totalPages}
+          />
+        </div>
+      </section>
+    </main>
   )
 }

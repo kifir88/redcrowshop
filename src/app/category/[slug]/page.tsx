@@ -1,7 +1,6 @@
 import CategoryListSortMenu from "@/components/pages/category/category-list-sort-menu";
 import {
   fetchCurrencyRates,
-  fetchCustomProductCategoryMaxPrice,
   fetchProductCategories,
   fetchProducts
 } from "@/libs/woocommerce-rest-api";
