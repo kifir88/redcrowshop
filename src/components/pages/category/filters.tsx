@@ -6,15 +6,18 @@ import ProductAttributeFilter from "@/components/pages/category/product-attribut
 import {Spinner} from "flowbite-react";
 import SearchInput from "@/components/pages/category/search-input";
 import PriceSliderFilter from "@/components/pages/category/price-slider-filter";
+import {CustomCurrencyRates} from "@/types/woo-commerce/custom-currency-rates";
 
 const Filters = ({
   productSlug,
   className,
   productMaxPrice,
+  currencyRates,
 }: {
   productSlug?: string;
   className: string;
   productMaxPrice: number;
+  currencyRates: CustomCurrencyRates;
 }) => {
   const {data, isLoading} = useCustomProductAttributes({
     categoryName: productSlug,
@@ -38,7 +41,7 @@ const Filters = ({
         <ProductAttributeFilter key={cpa.slug} customProductAttribute={cpa} />
       ))}
 
-      <PriceSliderFilter productMaxPrice={productMaxPrice} />
+      <PriceSliderFilter productMaxPrice={productMaxPrice} currencyRates={currencyRates} />
     </form>
   )
 }

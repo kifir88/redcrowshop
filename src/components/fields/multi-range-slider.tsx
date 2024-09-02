@@ -9,14 +9,20 @@ import {
 } from "react";
 import classnames from "classnames";
 import "./multiRangeSlider.css";
+import {CustomCurrencyRates} from "@/types/woo-commerce/custom-currency-rates";
+import {CurrencyType, formatCurrency} from "@/libs/currency-helper";
+import {useLocalStorage} from "usehooks-ts";
 
 interface MultiRangeSliderProps {
   min: number;
   max: number;
   onChange: (values: { min: number; max: number }) => void;
+  currencyRates: CustomCurrencyRates;
 }
 
-const MultiRangeSlider: FC<MultiRangeSliderProps> = ({ min, max, onChange }) => {
+const MultiRangeSlider: FC<MultiRangeSliderProps> = ({ min, max, onChange, currencyRates }) => {
+  const [selectedCurrency] = useLocalStorage<CurrencyType>("currency", "KZT")
+
   const [minVal, setMinVal] = useState(min);
   const [maxVal, setMaxVal] = useState(max);
   const minValRef = useRef<HTMLInputElement>(null);
@@ -84,8 +90,12 @@ const MultiRangeSlider: FC<MultiRangeSliderProps> = ({ min, max, onChange }) => 
         </div>
       </div>
       <div className="mt-5 flex justify-between w-full">
-        <div className="text-sm text-gray-600 cursor-pointer">{minVal}</div>
-        <div className="text-sm text-gray-600 cursor-pointer">{maxVal}</div>
+        <div className="text-sm text-gray-600 cursor-pointer">
+          {formatCurrency(minVal, selectedCurrency, currencyRates)}
+        </div>
+        <div className="text-sm text-gray-600 cursor-pointer">
+          {formatCurrency(maxVal, selectedCurrency, currencyRates)}
+        </div>
       </div>
     </div>
   );

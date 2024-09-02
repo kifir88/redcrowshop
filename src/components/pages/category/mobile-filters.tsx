@@ -4,13 +4,16 @@ import {Button, Drawer} from "flowbite-react";
 import React, {useState} from "react";
 import Filters from "@/components/pages/category/filters";
 import {SlidersHorizontalIcon} from "lucide-react";
+import {CustomCurrencyRates} from "@/types/woo-commerce/custom-currency-rates";
 
 export default function MobileFilters({
   productSlug,
   productMaxPrice,
+  currencyRates,
 }: {
   productSlug?: string;
   productMaxPrice: number;
+  currencyRates: CustomCurrencyRates
 }) {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -40,6 +43,7 @@ export default function MobileFilters({
             productSlug={productSlug}
             className=""
             productMaxPrice={productMaxPrice}
+            currencyRates={currencyRates}
           />
         </Drawer.Items>
       </Drawer>

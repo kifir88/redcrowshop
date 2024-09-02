@@ -5,8 +5,15 @@ import {usePathname, useRouter, useSearchParams} from "next/navigation";
 import {useEffect, useState} from "react";
 import {useDebounceValue} from "usehooks-ts";
 import qs from "query-string";
+import {CustomCurrencyRates} from "@/types/woo-commerce/custom-currency-rates";
 
-export default function PriceSliderFilter({productMaxPrice}: {productMaxPrice: number}) {
+export default function PriceSliderFilter({
+  productMaxPrice,
+  currencyRates,
+}: {
+  productMaxPrice: number;
+  currencyRates: CustomCurrencyRates;
+}) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -56,6 +63,7 @@ export default function PriceSliderFilter({productMaxPrice}: {productMaxPrice: n
         <MultiRangeSlider
           min={0}
           max={productMaxPrice}
+          currencyRates={currencyRates}
           onChange={({ min, max }: { min: number; max: number }) =>
             setValue({
               minPrice: min,

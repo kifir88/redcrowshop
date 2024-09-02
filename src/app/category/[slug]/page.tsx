@@ -14,6 +14,7 @@ import {Product} from "@/types/woo-commerce/product";
 import {cn} from "@/libs/utils";
 import MobileFilters from "@/components/pages/category/mobile-filters";
 import CurrencySelect from "@/components/pages/category/category-list-currency";
+import {CustomCurrencyRates} from "@/types/woo-commerce/custom-currency-rates";
 
 export default async function ProductCategoryPage({
   params: { slug },
@@ -96,6 +97,7 @@ export default async function ProductCategoryPage({
             productSlug={slug}
             className="hidden lg:block"
             productMaxPrice={productCategoryMaxPriceValue}
+            currencyRates={currencyRatesData.data}
           />
 
           {/* Product grid */}
@@ -112,7 +114,11 @@ export default async function ProductCategoryPage({
                 <CurrencySelect />
               </div>
 
-              <MobileFilters productSlug={slug} productMaxPrice={productCategoryMaxPriceValue} />
+              <MobileFilters
+                productSlug={slug}
+                productMaxPrice={productCategoryMaxPriceValue}
+                currencyRates={currencyRatesData.data}
+              />
             </div>
 
             {productsData?.data.map((product: Product) => (

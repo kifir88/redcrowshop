@@ -1,7 +1,6 @@
 import CategoryListSortMenu from "@/components/pages/category/category-list-sort-menu";
 import {
   fetchCurrencyRates,
-  fetchProductCategories,
   fetchProducts
 } from "@/libs/woocommerce-rest-api";
 import ProductCard from "@/components/pages/category/product-card";
@@ -19,9 +18,6 @@ export default async function ProductCategoryPage({
   searchParams: Record<string, string>
 }) {
   const currencyRatesData = await fetchCurrencyRates();
-  const productCategoriesData = await fetchProductCategories({
-    exclude: [320],
-  });
 
   const {
     search: searchParam,
@@ -83,6 +79,7 @@ export default async function ProductCategoryPage({
           <Filters
             className="hidden lg:block"
             productMaxPrice={productCategoryMaxPriceValue}
+            currencyRates={currencyRatesData.data}
           />
 
           {/* Product grid */}
@@ -99,7 +96,10 @@ export default async function ProductCategoryPage({
                 <CurrencySelect />
               </div>
 
-              <MobileFilters productMaxPrice={productCategoryMaxPriceValue} />
+              <MobileFilters
+                productMaxPrice={productCategoryMaxPriceValue}
+                currencyRates={currencyRatesData.data}
+              />
             </div>
 
             {productsData?.data.map((product: Product) => (
