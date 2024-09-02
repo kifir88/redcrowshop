@@ -20,7 +20,7 @@ const Filters = ({
   currencyRates: CustomCurrencyRates;
 }) => {
   const {data, isLoading} = useCustomProductAttributes({
-    categoryName: productSlug,
+    categoryName: productSlug || "all",
   })
 
   const productAttributes = useMemo(() => {
