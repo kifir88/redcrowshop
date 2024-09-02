@@ -104,7 +104,7 @@ export default async function ProductCategoryPage({
             <div
               className={cn(
                 "col-span-1 sm:col-span-2 md:col-span-3 lg:col-span-3 h-min",
-                "flex justify-between items-center"
+                "flex flex-col md:flex-row justify-between md:items-center gap-y-5"
               )}
             >
               <div className="flex justify-between items-center w-full">
