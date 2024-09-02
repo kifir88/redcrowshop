@@ -13,14 +13,16 @@ const ProductAttributeFilter = ({customProductAttribute}: {customProductAttribut
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  const productAttributeParam = searchParams.get(customProductAttribute.name);
-  const productAttributeTerms = productAttributeParam?.split(",")
+  const formattedSlug = customProductAttribute.slug.replace("pa_", "")
+
+  const productAttributeParam = searchParams.get(formattedSlug);
+  const productAttributeTerms = productAttributeParam?.split("-i-")
 
   const handleSelectOption = (productAttributeTermSlug: string) => {
     const currentParams = qs.parse(searchParams.toString());
 
     const previousAttributeValues = productAttributeParam
-      ? productAttributeParam.split(",")
+      ? productAttributeParam.split("-i-")
       : [];
 
     const newAttributeValues = previousAttributeValues.includes(productAttributeTermSlug)
@@ -29,7 +31,7 @@ const ProductAttributeFilter = ({customProductAttribute}: {customProductAttribut
 
     const newParams = {
       ...currentParams,
-      [customProductAttribute.name]: newAttributeValues.join(","),
+      [formattedSlug]: newAttributeValues.join("-i-"),
     };
 
     const url = qs.stringifyUrl({
@@ -60,8 +62,8 @@ const ProductAttributeFilter = ({customProductAttribute}: {customProductAttribut
             <ProductAttributeTermCheckbox
               key={productAttributeOption.slug}
               productAttributeOption={productAttributeOption}
-              isActive={!!productAttributeTerms?.includes(productAttributeOption.name)}
-              onChange={() => handleSelectOption(productAttributeOption.name)}
+              isActive={!!productAttributeTerms?.includes(productAttributeOption.slug)}
+              onChange={() => handleSelectOption(productAttributeOption.slug)}
             />
           )
         )}
