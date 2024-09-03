@@ -8,8 +8,15 @@ import Image from "next/image";
 import ShoppingCartButton from "@/components/layout/navbar/components/shopping-cart-button";
 import Subcategory from "@/components/layout/navbar/components/subcategory";
 import Link from "next/link";
+import {CustomCurrencyRates} from "@/types/woo-commerce/custom-currency-rates";
 
-export default function MobileMenu({productCategories}: {productCategories: ProductCategory[]}) {
+export default function MobileMenu({
+  productCategories,
+  currencyRates,
+}: {
+  productCategories: ProductCategory[];
+  currencyRates: CustomCurrencyRates;
+}) {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleOpen = () => setIsOpen(true);
@@ -41,7 +48,7 @@ export default function MobileMenu({productCategories}: {productCategories: Prod
           />
         </Link>
 
-        <ShoppingCartButton />
+        <ShoppingCartButton currencyRates={currencyRates} />
       </div>
 
       <Drawer open={isOpen} onClose={handleClose}>

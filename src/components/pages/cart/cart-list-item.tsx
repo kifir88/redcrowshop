@@ -3,6 +3,8 @@
 import {CartItem} from "@/types/cart";
 import {useLocalStorage} from "usehooks-ts";
 import {useCallback} from "react";
+import {CustomCurrencyRates} from "@/types/woo-commerce/custom-currency-rates";
+import {CurrencyType, formatCurrency} from "@/libs/currency-helper";
 
 const MinusSvg = (
   <svg className="h-2.5 w-2.5 text-gray-900" aria-hidden="true"
@@ -19,7 +21,14 @@ const PlusSvg = (
   </svg>
 )
 
-export default function CartListItem({cartItem}: { cartItem: CartItem }) {
+export default function CartListItem({
+  cartItem,
+  currencyRates,
+}: {
+  cartItem: CartItem;
+  currencyRates: CustomCurrencyRates
+}) {
+  const [selectedCurrency] = useLocalStorage<CurrencyType>("currency", "KZT")
   const [cartItems, setCartItems] = useLocalStorage<CartItem[]>("cartItems", []);
 
   const updateCartItemQuantity = useCallback((item: CartItem, newQuantity: number) => {
@@ -82,7 +91,7 @@ export default function CartListItem({cartItem}: { cartItem: CartItem }) {
           </div>
           <div className="text-end md:order-4 md:w-32">
             <p className="text-base font-bold text-gray-900 dark:text-white">
-              {`${cartItem.price} ₸`}
+              {formatCurrency(cartItem.price, selectedCurrency, currencyRates)}
             </p>
           </div>
         </div>

@@ -6,9 +6,12 @@ import {useLocalStorage} from "usehooks-ts";
 import {CartItem} from "@/types/cart";
 import Link from "next/link";
 import {Button} from "flowbite-react";
+import {CurrencyType, formatCurrency} from "@/libs/currency-helper";
+import {CustomCurrencyRates} from "@/types/woo-commerce/custom-currency-rates";
 
-export default function ShoppingCartButton() {
+export default function ShoppingCartButton({currencyRates}: {currencyRates: CustomCurrencyRates}) {
   const [cartItems] = useLocalStorage<CartItem[]>("cartItems", [])
+  const [selectedCurrency] = useLocalStorage<CurrencyType>("currency", "KZT")
 
   const totalItemsCount = cartItems.reduce((accumulator, current) => {
     return accumulator + current.quantity;
@@ -16,6 +19,12 @@ export default function ShoppingCartButton() {
   const totalItemsPrice = cartItems.reduce((accumulator, current) => {
     return accumulator + current.price;
   }, 0)
+
+  const formattedTotalItemsPrice = formatCurrency(
+    totalItemsPrice,
+    selectedCurrency,
+    currencyRates,
+  )
 
   return (
     <Popover className="z-50 ml-4 flow-root text-sm lg:relative lg:ml-8">
@@ -61,7 +70,7 @@ export default function ShoppingCartButton() {
                   Стоимость товаров
                 </h3>
                 <p className="text-gray-500">
-                  {totalItemsPrice}
+                  {formattedTotalItemsPrice}
                 </p>
               </div>
 
@@ -79,7 +88,7 @@ export default function ShoppingCartButton() {
                   Сумма
                 </h3>
                 <p className="text-gray-500">
-                  {totalItemsPrice}
+                  {formattedTotalItemsPrice}
                 </p>
               </div>
             </li>

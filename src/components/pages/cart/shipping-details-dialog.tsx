@@ -101,7 +101,7 @@ export default function ShippingDetailsDialog({
 
   return (
     <Transition appear show={isOpen} as={React.Fragment}>
-      <Dialog as="div" className="relative z-10" onClose={closeModal}>
+      <Dialog as="div" className="relative z-50" onClose={closeModal}>
         <Transition.Child
           as={React.Fragment}
           enter="ease-out duration-300"

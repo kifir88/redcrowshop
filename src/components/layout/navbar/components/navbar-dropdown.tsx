@@ -8,8 +8,15 @@ import {useMemo, useState} from "react";
 import {ProductCategory} from "@/types/woo-commerce/product-category";
 import Image from "next/image";
 import {cn} from "@/libs/utils";
+import {CustomCurrencyRates} from "@/types/woo-commerce/custom-currency-rates";
 
-export default function NavbarDropdown({productCategories}: {productCategories: ProductCategory[]}) {
+export default function NavbarDropdown({
+  productCategories,
+  currencyRates,
+}: {
+  productCategories: ProductCategory[];
+  currencyRates: CustomCurrencyRates;
+}) {
   const [selectedProductId, setSelectedProductId] = useState<number | null>(null);
 
   const parentCategories = useMemo(() => {
@@ -59,7 +66,7 @@ export default function NavbarDropdown({productCategories}: {productCategories: 
         </div>
 
         <div className="order-2 hidden items-center md:flex">
-          <ShoppingCartButton />
+          <ShoppingCartButton currencyRates={currencyRates} />
         </div>
       </Navbar.Collapse>
       <MegaMenu.Dropdown
@@ -70,7 +77,7 @@ export default function NavbarDropdown({productCategories}: {productCategories: 
         <div
           className={cn(
             "mt-6 grid max-w-screen-xl w-full text-sm text-gray-500",
-            "mx-auto px-4 py-5 md:grid-cols-3 md:px-6 border-y border-gray-200"
+            "mx-auto px-4 py-5 md:grid-cols-3 md:px-6 border-y border-gray-200 shadow-md"
           )}
         >
           <ul className="space-y-4 sm:mb-4 md:mb-0">

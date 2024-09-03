@@ -1,14 +1,16 @@
 import {MegaMenu} from 'flowbite-react';
-import {fetchProductCategories} from "@/libs/woocommerce-rest-api";
+import {fetchCurrencyRates, fetchProductCategories} from "@/libs/woocommerce-rest-api";
 import NavbarDropdown from "@/components/layout/navbar/components/navbar-dropdown";
 import MobileMenu from "@/components/layout/navbar/components/mobile-menu";
 import {cn} from "@/libs/utils";
 
 export default async function Navbar() {
+  const currencyRatesData = await fetchCurrencyRates();
   const productCategoriesData = await fetchProductCategories({
     order: "desc",
     orderby: "name"
   });
+
 
   return (
     <>
@@ -19,11 +21,17 @@ export default async function Navbar() {
             "mx-auto max-w-7xl py-6 px-4 sm:px-6 lg:px-8 "
           )}
         >
-          <NavbarDropdown productCategories={productCategoriesData.data} />
+          <NavbarDropdown
+            productCategories={productCategoriesData.data}
+            currencyRates={currencyRatesData.data}
+          />
         </MegaMenu>
       </div>
 
-      <MobileMenu productCategories={productCategoriesData.data} />
+      <MobileMenu
+        productCategories={productCategoriesData.data}
+        currencyRates={currencyRatesData.data}
+      />
     </>
   );
 }
