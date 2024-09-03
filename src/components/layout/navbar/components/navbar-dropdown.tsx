@@ -48,9 +48,9 @@ export default function NavbarDropdown({
 
       <Navbar.Collapse className="flex flex-1">
         <div className="flex flex-1 justify-evenly gap-10 ml-10">
-          <Link href={`/shop`} onMouseEnter={handleClearSelectedProductCategory}>
+          <a href={`/shop`} onMouseEnter={handleClearSelectedProductCategory}>
             Магазин
-          </Link>
+          </a>
 
           {parentCategories?.map((pc) => (
             <MegaMenu.DropdownToggle
@@ -58,9 +58,9 @@ export default function NavbarDropdown({
               onMouseEnter={() => handleSelectProductCategory(pc.id)}
               className="w-auto"
             >
-              <Link href={`/category/${pc.slug}`}>
+              <a href={`/category/${pc.slug}`}>
                 {pc.name}
-              </Link>
+              </a>
             </MegaMenu.DropdownToggle>
           ))}
         </div>
