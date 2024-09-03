@@ -83,17 +83,16 @@ export default async function ProductCategoryPage({
           />
 
           {/* Product grid */}
-          <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 md:grid-cols-3 lg:col-span-3 lg:gap-x-8">
+          <div className="col-span-1 sm:col-span-2 md:col-span-3 lg:col-span-3 h-min space-y-6">
             <div
               className={cn(
-                "col-span-1 sm:col-span-2 md:col-span-3 lg:col-span-3 h-min",
                 "flex flex-col md:flex-row justify-between md:items-center gap-y-5"
               )}
             >
-              <div className="flex justify-between items-center w-full">
+              <div className="flex justify-between items-center w-full h-min">
                 <CategoryListSortMenu/>
 
-                <CurrencySelect />
+                <CurrencySelect/>
               </div>
 
               <MobileFilters
@@ -102,13 +101,15 @@ export default async function ProductCategoryPage({
               />
             </div>
 
-            {productsData?.data.map((product: Product) => (
-              <ProductCard
-                key={product.id}
-                product={product}
-                currencyRates={currencyRatesData.data}
-              />
-            ))}
+            <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 md:grid-cols-3 lg:col-span-3 lg:gap-x-8">
+              {productsData?.data.map((product: Product) => (
+                <ProductCard
+                  key={product.id}
+                  product={product}
+                  currencyRates={currencyRatesData.data}
+                />
+              ))}
+            </div>
           </div>
 
           <div/>
