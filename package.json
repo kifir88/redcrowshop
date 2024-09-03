@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "next build && next-sitemap",
+    "postbuild": "next-sitemap",
     "start": "next start",
     "lint": "next lint",
     "generate-types": "curl https://admin.redcrow.kz/wp-json -o schema.yaml && yarn run openapi --input ./schema.yaml --output ./src/types/generated --exportServices=false --exportCore=false --useUnionTypes"
@@ -27,6 +28,7 @@
     "libphonenumber-js": "^1.11.7",
     "lucide-react": "^0.426.0",
     "next": "14.2.5",
+    "next-sitemap": "^4.2.3",
     "npm": "^10.8.2",
     "query-string": "^9.1.0",
     "react": "^18",
