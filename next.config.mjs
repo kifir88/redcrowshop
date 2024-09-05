@@ -1,5 +1,14 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+    async rewrites() {
+        return [
+            {
+                source: '/sitemap.xml',
+                destination: '/api/sitemap',
+            },
+        ];
+    },
+
     env: {
         // TODO localhost only for development
         // NEXTAUTH_URL: "http://localhost:3000",
