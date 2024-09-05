@@ -8,10 +8,13 @@ import Link from "next/link";
 import {Button} from "flowbite-react";
 import {CurrencyType, formatCurrency} from "@/libs/currency-helper";
 import {CustomCurrencyRates} from "@/types/woo-commerce/custom-currency-rates";
+import {useState} from "react";
 
 export default function ShoppingCartButton({currencyRates}: {currencyRates: CustomCurrencyRates}) {
   const [cartItems] = useLocalStorage<CartItem[]>("cartItems", [])
   const [selectedCurrency] = useLocalStorage<CurrencyType>("currency", "KZT")
+
+  const [isOpen, setIsOpen] = useState(false);
 
   const totalItemsCount = cartItems.reduce((accumulator, current) => {
     return accumulator + current.quantity;
@@ -28,7 +31,10 @@ export default function ShoppingCartButton({currencyRates}: {currencyRates: Cust
 
   return (
     <Popover className="z-50 ml-4 flow-root text-sm lg:relative lg:ml-8">
-      <PopoverButton className="group -m-2 flex items-center p-2">
+      <PopoverButton
+        className="group -m-2 flex items-center p-2"
+        onClick={() => setIsOpen(true)}
+      >
         <ShoppingBagIcon
           aria-hidden="true"
           className="h-5 w-5 md:h-6 md:w-6 flex-shrink-0 text-gray-400 group-hover:text-gray-500"
@@ -39,6 +45,7 @@ export default function ShoppingCartButton({currencyRates}: {currencyRates: Cust
         <span className="sr-only">items in cart, view bag</span>
       </PopoverButton>
       <PopoverPanel
+        hidden={!isOpen}
         transition
         className="absolute inset-x-0 top-16 mt-px bg-white pb-6 shadow-lg transition data-[closed]:opacity-0 data-[enter]:duration-200 data-[leave]:duration-150 data-[enter]:ease-out data-[leave]:ease-in sm:px-2 lg:left-auto lg:right-0 lg:top-full lg:-mr-1.5 lg:mt-3 lg:w-80 lg:rounded-lg lg:ring-1 lg:ring-black lg:ring-opacity-5"
       >
@@ -106,6 +113,7 @@ export default function ShoppingCartButton({currencyRates}: {currencyRates: Cust
               as={Link}
               href="/cart"
               color="dark"
+              onClick={() => setIsOpen(false)}
             >
               Перейти в корзину
             </Button>
