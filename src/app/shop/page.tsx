@@ -102,6 +102,19 @@ export default async function ProductCategoryPage({
             </div>
 
             <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 md:grid-cols-3 lg:col-span-3 lg:gap-x-8">
+              {!productsData?.data.length && (
+                <div
+                  className={cn(
+                    "col-span-1 sm:col-span-2 md:col-span-3 h-min",
+                    "flex justify-center items-center"
+                  )}
+                >
+                  <p className="text-center text-balance text-lg md:text-xl font-medium text-gray-900">
+                    Товаров по заданным параметрам не найдено
+                  </p>
+                </div>
+              )}
+
               {productsData?.data.map((product: Product) => (
                 <ProductCard
                   key={product.id}
