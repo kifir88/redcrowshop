@@ -1,6 +1,6 @@
 import CategoryListSortMenu from "@/components/pages/category/category-list-sort-menu";
 import {
-  fetchCurrencyRates,
+  fetchCurrencyRates, fetchCustomProductAttributes,
   fetchProductCategories,
   fetchProducts
 } from "@/libs/woocommerce-rest-api";
@@ -14,14 +14,59 @@ import {Product} from "@/types/woo-commerce/product";
 import {cn} from "@/libs/utils";
 import MobileFilters from "@/components/pages/category/mobile-filters";
 import CurrencySelect from "@/components/pages/category/category-list-currency";
+import {Metadata, ResolvingMetadata} from "next";
+
+interface ProductCategoryPageProps {
+  params: { slug: string },
+  searchParams: Record<string, string>
+}
+
+export async function generateMetadata(
+  { params }: ProductCategoryPageProps,
+  parent: ResolvingMetadata
+): Promise<Metadata> {
+  const productCategoryData = await fetchProductCategories({
+    slug: params.slug
+  })
+  const productCategory = productCategoryData.data[0]
+
+  const productAttributesData = await fetchCustomProductAttributes({
+    category_name: productCategory.slug,
+  })
+
+  const formattedAttributes = productAttributesData.data
+    .map(pa => {
+      const formattedAttributes = pa.options
+        .map(a => a.name)
+        .join(" и ")
+
+      return `${pa.name}: ${formattedAttributes}`
+    })
+    .join(", ")
+  const formattedAttributesForDescription = productAttributesData.data
+    .map(pa => {
+      const formattedAttributes = pa.options
+        .map(a => a.name.toLowerCase())
+        .join(" и ")
+
+      return `${pa.name.toLowerCase()} ${formattedAttributes}`
+    })
+    .join(", ")
+
+  const title = `RedCrow Казахстан ${productCategory.name} - ${formattedAttributes}`;
+  const description = `Откройте для себя ${productCategory.name.toLowerCase()} ${formattedAttributesForDescription}. Идеальный выбор для стильного образа.`;
+
+  return {
+    title: title,
+    description: description,
+  }
+}
+
 
 export default async function ProductCategoryPage({
   params: { slug },
   searchParams,
-}: {
-  params: { slug: string },
-  searchParams: Record<string, string>
-}) {
+}: ProductCategoryPageProps) {
   const currencyRatesData = await fetchCurrencyRates();
   const productCategoriesData = await fetchProductCategories({
     exclude: [320],
