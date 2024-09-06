@@ -2,19 +2,29 @@ import { NextResponse } from 'next/server';
 import { SitemapStream, streamToPromise } from 'sitemap';
 import { createGzip } from 'zlib';
 import {fetchProductCategories} from "@/libs/woocommerce-rest-api";
+import {fetchFooterPages} from "@/libs/strapi-rest-api";
 
 export async function GET() {
   try {
     // Fetch the product categories
-    const categoriesRes = await fetchProductCategories();
-    const categories = categoriesRes.data;
+    const categoriesData = await fetchProductCategories();
+    const strapiFooterPagesData = await fetchFooterPages()
 
     // Set up sitemap stream and gzip it
     const sitemap = new SitemapStream({ hostname: `https://www.redcrow.kz` });
     const pipeline = sitemap.pipe(createGzip());
 
+    sitemap.write({ url: `/`, changefreq: 'weekly', priority: 0.8 });
+    sitemap.write({ url: `/shop`, changefreq: 'weekly', priority: 0.8 });
+    sitemap.write({ url: `/cart`, changefreq: 'weekly', priority: 0.8 });
+
+    // Add each strapi page to the sitemap
+    strapiFooterPagesData.data.data.forEach((sfp) => {
+      sitemap.write({ url: `/info/${sfp.attributes.slug}`, changefreq: 'weekly', priority: 0.8 });
+    });
+
     // Add each category to the sitemap
-    categories.forEach((category) => {
+    categoriesData.data.forEach((category) => {
       sitemap.write({ url: `/category/${category.slug}`, changefreq: 'weekly', priority: 0.8 });
     });
 
