@@ -7,6 +7,25 @@ import {
 } from "@/libs/woocommerce-rest-api";
 import {fetchFooterPages} from "@/libs/strapi-rest-api";
 import {ProductCategory} from "@/types/woo-commerce/product-category";
+import {CustomProductAttribute} from "@/types/woo-commerce/custom-product-attribute";
+
+
+const generateProductAttributeCombinations = (options: CustomProductAttribute['options']): CustomProductAttribute['options'][] => {
+  const result: CustomProductAttribute['options'][] = [];
+
+  const generate = (start: number, currentCombination: CustomProductAttribute['options']) => {
+    result.push([...currentCombination]); // Store current combination
+
+    for (let i = start; i < options.length; i++) {
+      currentCombination.push(options[i]);
+      generate(i + 1, currentCombination); // Recursively generate combinations
+      currentCombination.pop(); // Backtrack to generate other combinations
+    }
+  };
+
+  generate(0, []); // Start from index 0 with an empty combination
+  return result;
+};
 
 // Refactored function to process categories and attributes for the sitemap
 const processCategoriesForSitemap = async (categoriesData: ProductCategory[], sitemap: SitemapStream) => {
@@ -22,12 +41,19 @@ const processCategoriesForSitemap = async (categoriesData: ProductCategory[], si
 
     // Process the product attributes
     productAttributes.data.forEach((pa) => {
-      const formattedOption = pa.options.map(o => o.slug).join("-i-");
+      const optionsCombinations = generateProductAttributeCombinations(pa.options);
 
       // Construct and write the attribute combination URL
-      const combinationUrl = `/category/${category.slug}?${pa.slug.replace("pa_", "")}=${formattedOption}`;
+      optionsCombinations
+        .filter(oc => !!oc.length)
+        .forEach(oc => {
+          const formattedOptions = oc.map(o => o.slug).join("-i-");
+          const formattedProductAttributeSlug = pa.slug.replace("pa_", "");
 
-      sitemap.write({ url: combinationUrl, changefreq: 'weekly', priority: 0.7 });
+          const combinationUrl = `/category/${category.slug}?${formattedProductAttributeSlug}=${formattedOptions}`;
+          sitemap.write({ url: combinationUrl, changefreq: 'weekly', priority: 0.7 });
+        })
+
     });
   }
 };
