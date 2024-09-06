@@ -27,33 +27,62 @@ const generateProductAttributeCombinations = (options: CustomProductAttribute['o
   return result;
 };
 
+// Helper function to generate all attribute combinations across multiple attributes
+const generateAllAttributeCombinations = (attributes: CustomProductAttribute[]): string[] => {
+  const combinations: string[] = [];
+
+  // Helper to recursively combine across different attributes
+  const combineAttributes = (index: number, currentParams: string[]) => {
+    if (index === attributes.length) {
+      combinations.push(currentParams.join("&"));
+      return;
+    }
+
+    const currentAttribute = attributes[index];
+    const optionsCombinations = generateProductAttributeCombinations(currentAttribute.options);
+
+    optionsCombinations
+      .filter(oc => !!oc.length)
+      .forEach(oc => {
+        const formattedOptions = oc.map(o => o.slug).join("-i-");
+        const formattedProductAttributeSlug = currentAttribute.slug.replace("pa_", "");
+        combineAttributes(index + 1, [...currentParams, `${formattedProductAttributeSlug}=${formattedOptions}`]);
+      });
+  };
+
+  // Generate full attribute combinations (all attributes combined)
+  combineAttributes(0, []);
+
+  // Generate individual attribute variations (each attribute on its own)
+  attributes.forEach(attribute => {
+    const optionsCombinations = generateProductAttributeCombinations(attribute.options);
+
+    optionsCombinations
+      .filter(oc => !!oc.length)
+      .forEach(oc => {
+        const formattedOptions = oc.map(o => o.slug).join("-i-");
+        const formattedProductAttributeSlug = attribute.slug.replace("pa_", "");
+        combinations.push(`${formattedProductAttributeSlug}=${formattedOptions}`);
+      });
+  });
+
+  return combinations;
+};
+
 // Refactored function to process categories and attributes for the sitemap
 const processCategoriesForSitemap = async (categoriesData: ProductCategory[], sitemap: SitemapStream) => {
-  // Use a for...of loop to handle async calls inside the loop
   for (const category of categoriesData) {
-    // Write the category URL to the sitemap
     sitemap.write({ url: `/category/${category.slug}`, changefreq: 'weekly', priority: 0.8 });
 
-    // Fetch product attributes for the current category
     const productAttributes = await fetchCustomProductAttributes({
       category_name: category.slug,
     });
 
-    // Process the product attributes
-    productAttributes.data.forEach((pa) => {
-      const optionsCombinations = generateProductAttributeCombinations(pa.options);
+    const allCombinations = generateAllAttributeCombinations(productAttributes.data);
 
-      // Construct and write the attribute combination URL
-      optionsCombinations
-        .filter(oc => !!oc.length)
-        .forEach(oc => {
-          const formattedOptions = oc.map(o => o.slug).join("-i-");
-          const formattedProductAttributeSlug = pa.slug.replace("pa_", "");
-
-          const combinationUrl = `/category/${category.slug}?${formattedProductAttributeSlug}=${formattedOptions}`;
-          sitemap.write({ url: combinationUrl, changefreq: 'weekly', priority: 0.7 });
-        })
-
+    allCombinations.forEach(combination => {
+      const combinationUrl = `/category/${category.slug}?${combination}`;
+      sitemap.write({ url: combinationUrl, changefreq: 'weekly', priority: 0.7 });
     });
   }
 };
