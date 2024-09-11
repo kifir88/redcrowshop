@@ -10,12 +10,58 @@ import ProductCard from "@/components/pages/category/product-card";
 import ProductImageAttribute from "@/components/pages/product/product-image-attribute";
 import {Product} from "@/types/woo-commerce/product";
 import ProductPrice from "@/components/pages/product/product-price";
+import {Metadata, ResolvingMetadata} from "next";
+
+interface ProductPageProps {
+  params: {
+    slug: string,
+    productSlug: string
+  },
+}
+
+export async function generateMetadata(
+  {
+    params: { productSlug },
+  }: ProductPageProps,
+  parent: ResolvingMetadata,
+): Promise<Metadata> {
+  const productsData = await fetchProducts({
+    slug: productSlug,
+  })
+  const productData = productsData?.data?.[0];
+  const productVariationsData = await fetchProductVariations(productData.id, {
+    parent: productData.id,
+    per_page: 50
+  })
+
+  const formattedVariationsForDescription = productVariationsData.data
+    .map(pv => {
+      const formattedOptions = pv.attributes
+        .map(a => `${a.name} ${a.option}`.toLowerCase())
+        .join(" и ")
+
+      return formattedOptions
+    })
+    .join(", ");
+
+  const title = `${productData?.name}`
+  const description = `Откройте для себя ${productData?.name.toLowerCase()} ${formattedVariationsForDescription}. Идеальный выбор для стильного образа.`;
+
+  return {
+    title,
+    description,
+    keywords: [
+      "RedCrow Казахстан",
+      productData?.name,
+      formattedVariationsForDescription,
+    ]
+  }
+}
+
 
 export default async function ProductPage({
   params: { slug, productSlug },
-}: {
-  params: { slug: string, productSlug: string },
-}) {
+}: ProductPageProps) {
   const currencyRatesData = await fetchCurrencyRates();
   const productsData = await fetchProducts({
     slug: productSlug,

@@ -72,7 +72,7 @@ const generateAllAttributeCombinations = (attributes: CustomProductAttribute[]):
 // Refactored function to process categories and attributes for the sitemap
 const processCategoriesForSitemap = async (categoriesData: ProductCategory[], sitemap: SitemapStream) => {
   for (const category of categoriesData) {
-    sitemap.write({ url: `/category/${category.slug}`, changefreq: 'weekly', priority: 0.8 });
+    sitemap.write({ url: `/category/${category.slug}`, changefreq: 'weekly', priority: 0.9 });
 
     const productAttributes = await fetchCustomProductAttributes({
       category_name: category.slug,
@@ -82,7 +82,7 @@ const processCategoriesForSitemap = async (categoriesData: ProductCategory[], si
 
     allCombinations.forEach(combination => {
       const combinationUrl = `/category/${category.slug}?${combination}`;
-      sitemap.write({ url: combinationUrl, changefreq: 'weekly', priority: 0.7 });
+      sitemap.write({ url: combinationUrl, changefreq: 'weekly', priority: 0.8 });
     });
   }
 };
@@ -101,12 +101,12 @@ export async function GET() {
     const pipeline = sitemap.pipe(createGzip());
 
     sitemap.write({ url: `/`, changefreq: 'weekly', priority: 0.9 });
-    sitemap.write({ url: `/shop`, changefreq: 'weekly', priority: 0.8 });
-    sitemap.write({ url: `/cart`, changefreq: 'weekly', priority: 0.8 });
+    sitemap.write({ url: `/shop`, changefreq: 'weekly', priority: 0.9 });
+    sitemap.write({ url: `/cart`, changefreq: 'weekly', priority: 0.9 });
 
     // Add each strapi page to the sitemap
     strapiFooterPagesData.data.data.forEach((sfp) => {
-      sitemap.write({ url: `/info/${sfp.attributes.slug}`, changefreq: 'weekly', priority: 0.7 });
+      sitemap.write({ url: `/info/${sfp.attributes.slug}`, changefreq: 'weekly', priority: 0.9 });
     });
 
     // Process the categories and product attributes for the sitemap
