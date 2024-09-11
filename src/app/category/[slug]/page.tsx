@@ -59,6 +59,13 @@ export async function generateMetadata(
   return {
     title: title,
     description: description,
+    keywords: [
+      "RedCrow Казахстан",
+      productCategory.name,
+      productCategory.name.toLowerCase(),
+      productCategory.description,
+      productCategory.description.toLowerCase(),
+    ]
   }
 }
 
