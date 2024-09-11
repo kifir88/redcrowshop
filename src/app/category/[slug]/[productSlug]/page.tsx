@@ -45,7 +45,7 @@ export async function generateMetadata(
     .join(", ");
 
   const title = `${productData?.name}`
-  const description = `Откройте для себя ${productData?.name.toLowerCase()} ${formattedVariationsForDescription}. Идеальный выбор для стильного образа.`;
+  const description = `${productData?.name.toLowerCase()} ${formattedVariationsForDescription}`;
 
   return {
     title,
@@ -79,6 +79,8 @@ export default async function ProductPage({
     parent: productData.id,
     per_page: 50
   })
+
+  console.log(productData?.meta_data.map(a => a.value), "productData")
 
   const breadCrumbItems = getCategoryHierarchyBySlug(productCategoriesData?.data, slug)
     .map(pc => ({name: pc.name, href: `/category/${pc.slug}`}))
