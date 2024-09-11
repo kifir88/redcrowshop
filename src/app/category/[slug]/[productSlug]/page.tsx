@@ -80,8 +80,6 @@ export default async function ProductPage({
     per_page: 50
   })
 
-  console.log(productData?.meta_data.map(a => a.value), "productData")
-
   const breadCrumbItems = getCategoryHierarchyBySlug(productCategoriesData?.data, slug)
     .map(pc => ({name: pc.name, href: `/category/${pc.slug}`}))
 
