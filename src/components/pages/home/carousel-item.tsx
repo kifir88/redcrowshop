@@ -1,6 +1,7 @@
 import {cn} from "@/libs/utils";
 import Link from "next/link";
 import {StrapiSliderAttributes} from "@/types/strapi/strapi-slider";
+import Image from "next/image";
 
 const getContent = (
   locale: string,
@@ -61,7 +62,7 @@ export default function CarouselItem({
       className="flex h-[272px] w-full items-center justify-evenly px-6 sm:h-[634px]"
       style={{ backgroundColor: item.bgHexColor }}
     >
-      <img
+      <Image
         className={cn(
           `w-1/3 object-contain`,
           item.isLeft ? "order-1" : "order-2"

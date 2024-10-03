@@ -9,6 +9,7 @@ import {Button} from "flowbite-react";
 import {CurrencyType, formatCurrency} from "@/libs/currency-helper";
 import {CustomCurrencyRates} from "@/types/woo-commerce/custom-currency-rates";
 import {useState} from "react";
+import Image from "next/image";
 
 export default function ShoppingCartButton({currencyRates}: {currencyRates: CustomCurrencyRates}) {
   const [cartItems] = useLocalStorage<CartItem[]>("cartItems", [])
@@ -55,10 +56,12 @@ export default function ShoppingCartButton({currencyRates}: {currencyRates: Cust
           <ul role="list" className="divide-y divide-gray-200">
             {cartItems.map((product) => (
               <li key={product.productVariationId} className="flex items-center py-6">
-                <img
+                <Image
                   alt={product.name}
                   src={product.imageSrc}
-                  className="h-16 w-16 flex-none rounded-md border border-gray-200"
+                  className="h-16 w-16 object-cover flex-none rounded-md border border-gray-200"
+                  width={64}
+                  height={64}
                 />
                 <div className="ml-4 flex-auto">
                   <h3 className="font-medium text-gray-900">

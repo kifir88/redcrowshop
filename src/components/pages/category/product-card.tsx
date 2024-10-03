@@ -6,6 +6,7 @@ import {CustomCurrencyRates} from "@/types/woo-commerce/custom-currency-rates";
 import {useLocalStorage} from "usehooks-ts";
 import {CurrencyType, formatCurrency} from "@/libs/currency-helper";
 import {useMemo} from "react";
+import Image from "next/image";
 
 const ProductCard = ({product, currencyRates}: {product: Product; currencyRates: CustomCurrencyRates}) => {
   const [selectedCurrency] = useLocalStorage<CurrencyType>("currency", "KZT")
@@ -32,10 +33,12 @@ const ProductCard = ({product, currencyRates}: {product: Product; currencyRates:
       className="group text-sm"
     >
       <div className="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-lg bg-gray-100 group-hover:opacity-75">
-        <img
+        <Image
           className="aspect-square h-full w-full object-cover object-center"
           src={imageSrc}
           alt={imageAlt}
+          width={384}
+          height={384}
         />
       </div>
       <h3 className="mt-4 font-medium text-gray-900">{product.name}</h3>

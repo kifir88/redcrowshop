@@ -5,6 +5,7 @@ import {useLocalStorage} from "usehooks-ts";
 import {useCallback} from "react";
 import {CustomCurrencyRates} from "@/types/woo-commerce/custom-currency-rates";
 import {CurrencyType, formatCurrency} from "@/libs/currency-helper";
+import Image from "next/image";
 
 const MinusSvg = (
   <svg className="h-2.5 w-2.5 text-gray-900" aria-hidden="true"
@@ -58,10 +59,12 @@ export default function CartListItem({
       className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800 md:p-6">
       <div className="space-y-4 md:flex md:items-center md:justify-between md:gap-6 md:space-y-0">
         <a href="#" className="shrink-0 md:order-1">
-          <img
-            className="h-20 w-20"
+          <Image
+            className="h-20 w-20 object-cover"
             src={cartItem.imageSrc}
             alt={cartItem.imageAlt}
+            width={80}
+            height={80}
           />
         </a>
 

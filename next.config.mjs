@@ -9,6 +9,23 @@ const nextConfig = {
         ];
     },
 
+    images: {
+        remotePatterns: [
+            {
+                protocol: 'https',
+                hostname: 'api.redcrow.kz',
+                port: '',
+                pathname: '/uploads/**',
+            },
+            {
+                protocol: 'https',
+                hostname: 'admin.redcrow.kz',
+                port: '',
+                pathname: '/wp-content/uploads/**',
+            },
+        ],
+    },
+
     env: {
         // TODO localhost only for development
         // NEXTAUTH_URL: "http://localhost:3000",

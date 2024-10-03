@@ -3,6 +3,7 @@ import {formatPriceToKZT} from "@/libs/helper-functions";
 import OrderPaymentButton from "@/components/pages/order-detail/order-payment-button";
 import {Order} from "@/types/woo-commerce/order";
 import {Badge} from "flowbite-react";
+import Image from "next/image";
 
 export default async function OrderDetail({
   params: { orderId },
@@ -76,10 +77,12 @@ export default async function OrderDetail({
                       <td className="whitespace-nowrap py-4 md:w-[384px]">
                         <div className="flex items-center gap-4">
                           <div className="flex items-center aspect-square w-10 h-10 shrink-0">
-                            <img
-                              className="h-auto w-full max-h-full dark:hidden"
+                            <Image
+                              className="h-auto w-full max-h-full dark:hidden object-cover"
                               src={li.image.src}
                               alt={li.image.alt}
+                              width={40}
+                              height={40}
                             />
                           </div>
                           <div className="hover:underline">
