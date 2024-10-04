@@ -74,7 +74,6 @@ export default async function ProductCategoryPage({
   params: { slug },
   searchParams,
 }: ProductCategoryPageProps) {
-  const currencyRatesData = await fetchCurrencyRates();
   const productCategoriesData = await fetchProductCategories({
     exclude: [320],
   });
@@ -100,23 +99,29 @@ export default async function ProductCategoryPage({
     }, {} as Record<string, string>);
 
   const orderFiltersExist = orderSearchParam && orderbySearchParam;
-  const productsData = await fetchProducts({
-    category: currentProductCategory?.id,
-    order: orderFiltersExist ? orderSearchParam : undefined,
-    orderby: orderFiltersExist ? orderbySearchParam : undefined,
-    page: pageParam ? Number(pageParam) : undefined,
-    per_page: 12,
-    search: searchParam ? searchParam : undefined,
-    max_price: maxPriceParam ? maxPriceParam : undefined,
-    min_price: minPriceParam ? minPriceParam : undefined,
-    ...formattedSearchParams,
-  })
-  const productCategoryMaxPriceData = await fetchProducts({
-    category: currentProductCategory?.id,
-    per_page: 1,
-    order: "desc",
-    orderby: "price"
-  })
+
+  const [currencyRatesData, productsData, productCategoryMaxPriceData] = await Promise.all([
+    fetchCurrencyRates(),
+    fetchProducts({
+      category: currentProductCategory?.id,
+      order: orderFiltersExist ? orderSearchParam : undefined,
+      orderby: orderFiltersExist ? orderbySearchParam : undefined,
+      page: pageParam ? Number(pageParam) : undefined,
+      per_page: 12,
+      search: searchParam ? searchParam : undefined,
+      max_price: maxPriceParam ? maxPriceParam : undefined,
+      min_price: minPriceParam ? minPriceParam : undefined,
+      ...formattedSearchParams,
+    }),
+    await fetchProducts({
+      category: currentProductCategory?.id,
+      per_page: 1,
+      order: "desc",
+      orderby: "price"
+    })
+
+  ])
+
   const productCategoryMaxPrice = productCategoryMaxPriceData.data[0]?.price;
   const productCategoryMaxPriceValue = productCategoryMaxPrice ? Number(productCategoryMaxPrice) : 0;
 

@@ -17,8 +17,6 @@ export default async function ProductCategoryPage({
 }: {
   searchParams: Record<string, string>
 }) {
-  const currencyRatesData = await fetchCurrencyRates();
-
   const {
     search: searchParam,
     max_price: maxPriceParam,
@@ -37,24 +35,28 @@ export default async function ProductCategoryPage({
     }, {} as Record<string, string>);
 
   const orderFiltersExist = orderSearchParam && orderbySearchParam;
-  const productsData = await fetchProducts({
-    order: orderFiltersExist ? orderSearchParam : undefined,
-    orderby: orderFiltersExist ? orderbySearchParam : undefined,
-    page: pageParam ? Number(pageParam) : undefined,
-    per_page: 12,
-    search: searchParam ? searchParam : undefined,
-    max_price: maxPriceParam ? maxPriceParam : undefined,
-    min_price: minPriceParam ? minPriceParam : undefined,
-    ...formattedSearchParams,
-  })
-  const productCategoryMaxPriceData = await fetchProducts({
-    per_page: 1,
-    order: "desc",
-    orderby: "price"
-  })
+
+  const [currencyRatesData, productsData, productCategoryMaxPriceData] = await Promise.all([
+    fetchCurrencyRates(),
+    fetchProducts({
+      order: orderFiltersExist ? orderSearchParam : undefined,
+      orderby: orderFiltersExist ? orderbySearchParam : undefined,
+      page: pageParam ? Number(pageParam) : undefined,
+      per_page: 12,
+      search: searchParam ? searchParam : undefined,
+      max_price: maxPriceParam ? maxPriceParam : undefined,
+      min_price: minPriceParam ? minPriceParam : undefined,
+      ...formattedSearchParams,
+    }),
+    fetchProducts({
+      per_page: 1,
+      order: "desc",
+      orderby: "price"
+    })
+  ]);
+
   const productCategoryMaxPrice = productCategoryMaxPriceData.data[0]?.price;
   const productCategoryMaxPriceValue = productCategoryMaxPrice ? Number(productCategoryMaxPrice) : 0;
-
   const totalPages: string = productsData?.headers["x-wp-totalpages"]
 
   return (
