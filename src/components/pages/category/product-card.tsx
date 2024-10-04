@@ -7,6 +7,7 @@ import {useLocalStorage} from "usehooks-ts";
 import {CurrencyType, formatCurrency} from "@/libs/currency-helper";
 import {useMemo} from "react";
 import Image from "next/image";
+import {cn} from "@/libs/utils";
 
 const ProductCard = ({product, currencyRates}: {product: Product; currencyRates: CustomCurrencyRates}) => {
   const [selectedCurrency] = useLocalStorage<CurrencyType>("currency", "KZT")
@@ -25,14 +26,19 @@ const ProductCard = ({product, currencyRates}: {product: Product; currencyRates:
     )
   }, [selectedCurrency, product, currencyRates]);
 
+  const isOutOfStock = product.stock_status === "outofstock";
+
+  const Wrapper = isOutOfStock
+    ? 'div'
+    : Link;
 
   return (
-    <Link
+    <Wrapper
       key={product.id}
       href={`/category/${categorySlug}/${product.slug}`}
       className="group text-sm"
     >
-      <div className="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-lg bg-gray-100 group-hover:opacity-75">
+      <div className="relative aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-lg bg-gray-100 group-hover:opacity-75">
         <Image
           className="aspect-square h-full w-full object-cover object-center"
           src={imageSrc}
@@ -40,6 +46,17 @@ const ProductCard = ({product, currencyRates}: {product: Product; currencyRates:
           width={384}
           height={384}
         />
+
+        {isOutOfStock && (
+          <p
+            className={cn(
+              "z-20 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2",
+              "text-center text-xl text-gray-900"
+            )}
+          >
+            Товара нет вналичии
+          </p>
+        )}
       </div>
       <h3 className="mt-4 font-medium text-gray-900">{product.name}</h3>
       <p className="italic text-gray-500">{product.categories[0]?.name}</p>
@@ -48,7 +65,7 @@ const ProductCard = ({product, currencyRates}: {product: Product; currencyRates:
       >
         {priceValue}
       </div>
-    </Link>
+    </Wrapper>
   )
 }
 

@@ -24,7 +24,9 @@ export default function ProductDetailAttributesForm({
 }) {
   const [cartValues, setCartValues] = useLocalStorage<CartItem[]>("cartItems", [])
 
-  const isAddToCartButtonDisabled = Object
+  const isOutOfStock = product.stock_status === "outofstock";
+
+  const isAddToCartButtonDisabled = isOutOfStock || Object
     .keys(form.values)
     .length !== product.attributes.length;
 

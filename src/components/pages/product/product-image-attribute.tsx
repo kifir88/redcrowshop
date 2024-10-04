@@ -26,7 +26,7 @@ export default function ProductImageAttribute({
     }))
 
   const selectedProductVariationImage = selectedProductVariation?.image || product.images[0]
-
+  
   return (
     <>
       {/* Image gallery */}
