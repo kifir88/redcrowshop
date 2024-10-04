@@ -62,23 +62,30 @@ export async function generateMetadata(
 export default async function ProductPage({
   params: { slug, productSlug },
 }: ProductPageProps) {
-  const currencyRatesData = await fetchCurrencyRates();
   const productsData = await fetchProducts({
     slug: productSlug,
   })
   const productData = productsData?.data?.[0];
 
-  const productsRecommendedData = await fetchProducts({
-    include: productData.related_ids,
-    per_page: 3,
-  })
-  const productCategoriesData = await fetchProductCategories({
-    exclude: [320],
-  })
-  const productVariationsData = await fetchProductVariations(productData.id, {
-    parent: productData.id,
-    per_page: 50
-  })
+  const [
+    currencyRatesData,
+    productsRecommendedData,
+    productCategoriesData,
+    productVariationsData,
+  ] = await Promise.all([
+    fetchCurrencyRates(),
+    fetchProducts({
+      include: productData.related_ids,
+      per_page: 3,
+    }),
+    fetchProductCategories({
+      exclude: [320],
+    }),
+    fetchProductVariations(productData.id, {
+      parent: productData.id,
+      per_page: 50
+    })
+  ])
 
   const breadCrumbItems = getCategoryHierarchyBySlug(productCategoriesData?.data, slug)
     .map(pc => ({name: pc.name, href: `/category/${pc.slug}`}))
