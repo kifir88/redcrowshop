@@ -2,12 +2,13 @@
 
 import MultiRangeSlider from "@/components/fields/multi-range-slider";
 import {usePathname, useRouter, useSearchParams} from "next/navigation";
-import {useEffect, useState} from "react";
-import {useDebounceValue} from "usehooks-ts";
+import {memo, useState} from "react";
+import {useDebounceValue, useIsMounted} from "usehooks-ts";
 import qs from "query-string";
 import {CustomCurrencyRates} from "@/types/woo-commerce/custom-currency-rates";
+import {useDidUpdate} from "@mantine/hooks";
 
-export default function PriceSliderFilter({
+function PriceSliderFilter({
   productMaxPrice,
   currencyRates,
 }: {
@@ -17,11 +18,13 @@ export default function PriceSliderFilter({
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const isMounted = useIsMounted()
 
-  const [value, setValue] = useState({
+  const initialValue = {
     minPrice: 0,
     maxPrice: productMaxPrice,
-  });
+  }
+  const [value, setValue] = useState(initialValue);
   const [debouncedValue] = useDebounceValue(value, 400)
 
   const handleUpdatePriceParams = () => {
@@ -41,9 +44,9 @@ export default function PriceSliderFilter({
     router.push(url);
   };
 
-  useEffect(() => {
+  useDidUpdate(() => {
     handleUpdatePriceParams()
-  }, [debouncedValue])
+  }, [debouncedValue.maxPrice, debouncedValue.minPrice])
 
 
   return (
@@ -61,8 +64,8 @@ export default function PriceSliderFilter({
       </h3>
       <div className="pt-6 space-y-4">
         <MultiRangeSlider
-          min={0}
-          max={productMaxPrice}
+          min={initialValue.minPrice}
+          max={initialValue.maxPrice}
           currencyRates={currencyRates}
           onChange={({ min, max }: { min: number; max: number }) =>
             setValue({
@@ -75,3 +78,5 @@ export default function PriceSliderFilter({
     </div>
   );
 }
+
+export default memo(PriceSliderFilter);
