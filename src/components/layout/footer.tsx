@@ -13,14 +13,14 @@ export default async function Footer() {
           <div className="grid w-full grid-cols-2 gap-8 px-6 py-8 md:grid-cols-4">
             <div>
               <FooterLinkGroup col>
-                <FooterLink href={SITE_DATA.instagram}>Instagram</FooterLink>
-                <FooterLink href={SITE_DATA.whatsapp}>Whatsapp</FooterLink>
+                <FooterLink href={SITE_DATA.instagram} className="underline-offset-4">Instagram</FooterLink>
+                <FooterLink href={SITE_DATA.whatsapp} className="underline-offset-4">Whatsapp</FooterLink>
               </FooterLinkGroup>
             </div>
             <div>
               <FooterLinkGroup col>
                 {footerPagesData.data.data.map(i => (
-                  <FooterLink key={i.id} href={`/info/${i.attributes.slug}`}>
+                  <FooterLink key={i.id} href={`/info/${i.attributes.slug}`} className="underline-offset-4">
                     {i.attributes.name}
                   </FooterLink>
                 ))}

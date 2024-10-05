@@ -63,7 +63,7 @@ const ProductCard = ({product, currencyRates}: {product: Product; currencyRates:
                 "text-center font-medium text-gray-900"
               )}
             >
-              Товара нет вналичии
+              Товара нет в наличии
             </p>
           </div>
         )}
