@@ -38,7 +38,10 @@ const ProductCard = ({product, currencyRates}: {product: Product; currencyRates:
       href={`/category/${categorySlug}/${product.slug}`}
       className="group text-sm"
     >
-      <div className="relative aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-lg bg-gray-100 group-hover:opacity-75">
+      <div className={cn(
+        "relative aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-lg bg-gray-100",
+        !isOutOfStock && "group-hover:opacity-75"
+      )}>
         <Image
           className="aspect-square h-full w-full object-cover object-center"
           src={imageSrc}
@@ -48,14 +51,21 @@ const ProductCard = ({product, currencyRates}: {product: Product; currencyRates:
         />
 
         {isOutOfStock && (
-          <p
+          <div
             className={cn(
-              "z-20 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2",
-              "text-center text-xl text-gray-900"
+            "backdrop-blur-sm bg-white/30",
+              "z-20 absolute top-0 left-0 right-0 bottom-0",
+              "flex justify-center items-center"
             )}
           >
-            Товара нет вналичии
-          </p>
+            <p
+              className={cn(
+                "text-center font-medium text-gray-900"
+              )}
+            >
+              Товара нет вналичии
+            </p>
+          </div>
         )}
       </div>
       <h3 className="mt-4 font-medium text-gray-900">{product.name}</h3>
