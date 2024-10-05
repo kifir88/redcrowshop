@@ -163,7 +163,7 @@ export default async function ProductCategoryPage({
                 "flex flex-col md:flex-row justify-between md:items-center gap-y-5"
               )}
             >
-              <div className="flex justify-between items-center w-full h-min">
+              <div className="flex justify-between w-full h-min">
                 <CategoryListSortMenu />
 
                 <CurrencySelect />

@@ -68,16 +68,28 @@ const CategoryListSortMenu = () => {
     router.push(url);
   };
 
+  const selectedValue = sortOptions.find(
+    item => orderParam === item.value?.order && orderbyParam === item.value?.orderby
+  )
+
 
   return (
     <Menu as="div" className="relative inline-block text-left">
       <div>
-        <MenuButton className="group inline-flex justify-center text-sm font-medium text-gray-700 hover:text-gray-900">
-          Сортировать
-          <ChevronDownIcon
-            aria-hidden="true"
-            className="-mr-1 ml-1 h-5 w-5 flex-shrink-0 text-gray-400 group-hover:text-gray-500"
-          />
+        <MenuButton className="group flex flex-col text-gray-700 hover:text-gray-900">
+          <div className="inline-flex justify-center text-sm font-medium">
+            Сортировать
+            <ChevronDownIcon
+              aria-hidden="true"
+              className="-mr-1 ml-1 h-5 w-5 flex-shrink-0 text-gray-400 group-hover:text-gray-500"
+            />
+          </div>
+
+          {!!selectedValue?.value.order && (
+            <p className="italic text-gray-500 text-sm">
+              {selectedValue.name}
+            </p>
+          )}
         </MenuButton>
       </div>
 
