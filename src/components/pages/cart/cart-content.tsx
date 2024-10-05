@@ -8,6 +8,7 @@ import ShippingDetailsDialog from "@/components/pages/cart/shipping-details-dial
 import {Button} from "flowbite-react";
 import {CustomCurrencyRates} from "@/types/woo-commerce/custom-currency-rates";
 import {CurrencyType, formatCurrency} from "@/libs/currency-helper";
+import Link from "next/link";
 
 export default function CartContent({currencyRates}: {currencyRates: CustomCurrencyRates}) {
   const [selectedCurrency] = useLocalStorage<CurrencyType>("currency", "KZT")
@@ -34,6 +35,16 @@ export default function CartContent({currencyRates}: {currencyRates: CustomCurre
         <div className="mt-6 sm:mt-8 md:gap-6 lg:flex lg:items-start xl:gap-8">
           <div className="mx-auto w-full flex-none lg:max-w-2xl xl:max-w-4xl">
             <div className="space-y-6">
+              {!cartItems.length && (
+                <div className="flex flex-col items-start gap-4">
+                  <h6 className="text-xl text-gray-700">
+                    Ваша корзина пуста
+                  </h6>
+                  <Button as={Link} href="/shop" color="dark">
+                    Продолжить покупки
+                  </Button>
+                </div>
+              )}
               {cartItems.map(ct => (
                 <CartListItem
                   key={ct.productVariationId}
