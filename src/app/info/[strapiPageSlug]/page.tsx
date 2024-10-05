@@ -18,7 +18,7 @@ export default async function InfoStrapiPage({
           <Link
             key={page.attributes.slug}
             className={cn(
-              `w-fit hover:underline`,
+              `w-fit hover:underline underline-offset-4`,
               strapiPageSlug === page.attributes.slug && "underline"
             )}
             href={`/info/${page.attributes.slug}`}
