@@ -5,12 +5,16 @@ import MobileMenu from "@/components/layout/navbar/components/mobile-menu";
 import {cn} from "@/libs/utils";
 
 export default async function Navbar() {
-  const currencyRatesData = await fetchCurrencyRates();
-  const productCategoriesData = await fetchProductCategories({
-    order: "desc",
-    orderby: "name"
-  });
-
+  const [
+    currencyRatesData,
+    productCategoriesData,
+  ] = await Promise.all([
+    fetchCurrencyRates(),
+    fetchProductCategories({
+      order: "desc",
+      orderby: "name"
+    })
+  ]);
 
   return (
     <>

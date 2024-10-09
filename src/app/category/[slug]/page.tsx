@@ -100,7 +100,11 @@ export default async function ProductCategoryPage({
 
   const orderFiltersExist = orderSearchParam && orderbySearchParam;
 
-  const [currencyRatesData, productsData, productCategoryMaxPriceData] = await Promise.all([
+  const [
+    currencyRatesData,
+    productsData,
+    productCategoryMaxPriceData,
+  ] = await Promise.all([
     fetchCurrencyRates(),
     fetchProducts({
       category: currentProductCategory?.id,
@@ -113,13 +117,12 @@ export default async function ProductCategoryPage({
       min_price: minPriceParam ? minPriceParam : undefined,
       ...formattedSearchParams,
     }),
-    await fetchProducts({
+    fetchProducts({
       category: currentProductCategory?.id,
       per_page: 1,
       order: "desc",
       orderby: "price"
     })
-
   ])
 
   const productCategoryMaxPrice = productCategoryMaxPriceData.data[0]?.price;

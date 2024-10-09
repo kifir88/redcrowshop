@@ -121,7 +121,7 @@ export default function OrderPaymentDialog({
                         isProcessing={yookassaCreatePaymentMutation.isPending}
                         onClick={handleConfirmClick}
                       >
-                        Подвтердить
+                        Подтвердить
                       </Button>
                     </div>
                   </Dialog.Panel>

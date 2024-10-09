@@ -61,7 +61,7 @@ export default function CartListItem({
         <a href="#" className="shrink-0 md:order-1">
           <Image
             className="h-20 w-20 object-cover"
-            src={cartItem.imageSrc}
+            src={cartItem.imageSrc || "/category/product-image-placeholder.png"}
             alt={cartItem.imageAlt}
             width={80}
             height={80}
