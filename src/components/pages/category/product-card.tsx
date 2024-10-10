@@ -28,12 +28,8 @@ const ProductCard = ({product, currencyRates}: {product: Product; currencyRates:
 
   const isOutOfStock = product.stock_status === "outofstock";
 
-  const Wrapper = isOutOfStock
-    ? 'div'
-    : Link;
-
   return (
-    <Wrapper
+    <Link
       key={product.id}
       href={`/category/${categorySlug}/${product.slug}`}
       className="group text-sm"
@@ -75,7 +71,7 @@ const ProductCard = ({product, currencyRates}: {product: Product; currencyRates:
       >
         {priceValue}
       </div>
-    </Wrapper>
+    </Link>
   )
 }
 
