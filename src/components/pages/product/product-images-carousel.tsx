@@ -6,7 +6,7 @@ import Image from "next/image";
 export default function ProductImagesCarousel({
   productImage,
 }: {
-  productImage: ProductImage | null | undefined;
+  productImage: ProductImage | null;
 }) {
 
   const imageSrc = productImage?.src || "/category/product-image-placeholder.png";

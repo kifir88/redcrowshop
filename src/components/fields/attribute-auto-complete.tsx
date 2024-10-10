@@ -56,7 +56,7 @@ export default function AttributeAutoComplete({
   }, [value?.name, placeholder])
 
   return (
-    <Listbox value={value?.id} disabled={isLoading}>
+    <Listbox value={value || null} onChange={onChange} disabled={isLoading}>
       {label && (
         <Label className="block text-sm font-medium leading-6 text-gray-900">
           {label}
@@ -82,9 +82,6 @@ export default function AttributeAutoComplete({
               key={i.value.id}
               value={i.value}
               disabled={!i.value.count}
-              onClick={() => {
-                onChange(i.value)
-              }}
               className={cn(
                 "group relative cursor-default select-none py-2 pl-3 pr-9 text-gray-900",
                 "data-[focus]:bg-indigo-600 data-[focus]:text-white",

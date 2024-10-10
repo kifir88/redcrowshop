@@ -17,10 +17,12 @@ export default function ProductDetailAttributesForm({
   form,
   product,
   selectedProductVariation,
+  availableProductVariationIds,
 }: {
   form: UseFormReturnType<FormValues>;
   product: Product;
   selectedProductVariation?: ProductVariation;
+  availableProductVariationIds: number[]
 }) {
   const [cartValues, setCartValues] = useLocalStorage<CartItem[]>("cartItems", [])
 
@@ -30,7 +32,7 @@ export default function ProductDetailAttributesForm({
     .keys(form.values)
     .length !== product.attributes.length;
 
-  const showCartToast = () => {
+  const showSuccessCartToast = () => {
     toast.custom((t) => (
       <Toast className={`${t.visible ? 'animate-enter' : 'animate-leave'}`}>
         <div className="text-sm font-normal">Товар добавлен в корзину.</div>
@@ -53,44 +55,47 @@ export default function ProductDetailAttributesForm({
   }
 
   const handleSubmit = (formValues: FormValues) => {
-    if (selectedProductVariation) {
-      const productVariationFromCart = cartValues.find(
-        (cv) => cv.productVariationId === selectedProductVariation.id
-      );
-
-      if (productVariationFromCart) {
-        // Update quantity of existing item
-        setCartValues((prevValue) =>
-          prevValue.map((item) =>
-            item.productVariationId === selectedProductVariation.id
-              ? { ...item, quantity: item.quantity + 1 }
-              : item
-          )
-        );
-      } else {
-        // Add new item to the cart
-        const newCartItem = {
-          productId: product.id,
-          productVariationId: selectedProductVariation.id,
-          name: product.name,
-          quantity: 1,
-          price: Number(selectedProductVariation.price),
-          imageSrc: selectedProductVariation.image?.src as string,
-          imageAlt: selectedProductVariation.image?.alt as string,
-          attributes: Object.keys(formValues).map(attributeId => {
-            const attributeName = product.attributes
-              .find(a => a.id === Number(attributeId))
-              ?.name;
-            const attributeVariation = formValues[attributeId].name;
-
-            return `${attributeName} ${attributeVariation}`
-          }),
-        };
-        setCartValues((prevValue) => [...prevValue, newCartItem]);
-      }
+    if (!selectedProductVariation) {
+      toast.error("Такая вариация не доступна")
+      return
     }
 
-    showCartToast()
+    const productVariationFromCart = cartValues.find(
+      (cv) => cv.productVariationId === selectedProductVariation.id
+    );
+
+    if (productVariationFromCart) {
+      // Update quantity of existing item
+      setCartValues((prevValue) =>
+        prevValue.map((item) =>
+          item.productVariationId === selectedProductVariation.id
+            ? { ...item, quantity: item.quantity + 1 }
+            : item
+        )
+      );
+    } else {
+      // Add new item to the cart
+      const newCartItem = {
+        productId: product.id,
+        productVariationId: selectedProductVariation.id,
+        name: product.name,
+        quantity: 1,
+        price: Number(selectedProductVariation.price),
+        imageSrc: selectedProductVariation.image?.src || null,
+        imageAlt: selectedProductVariation.image?.alt || null,
+        attributes: Object.keys(formValues).map(attributeId => {
+          const attributeName = product.attributes
+            .find(a => a.id === Number(attributeId))
+            ?.name;
+          const attributeVariation = formValues[attributeId].name;
+
+          return `${attributeName} ${attributeVariation}`
+        }),
+      };
+      setCartValues((prevValue) => [...prevValue, newCartItem]);
+    }
+
+    showSuccessCartToast()
   };
 
   return (

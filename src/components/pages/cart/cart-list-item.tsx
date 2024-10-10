@@ -62,7 +62,7 @@ export default function CartListItem({
           <Image
             className="h-20 w-20 object-cover"
             src={cartItem.imageSrc || "/category/product-image-placeholder.png"}
-            alt={cartItem.imageAlt}
+            alt={cartItem.imageAlt || "image-placeholder"}
             width={80}
             height={80}
           />
