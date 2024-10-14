@@ -7,29 +7,26 @@ import Image from "next/image";
 
 export default async function OrderDetail({
   params: { orderId },
-  searchParams: {
-    paymentOption,
-    paymentId,
-  },
+  searchParams,
 }: {
   params: {
     orderId: string;
   };
-  searchParams: {
+  searchParams?: {
     paymentOption?: string;
     paymentId?: string;
   }
 }) {
   let orderData = await fetchOrder(orderId)
 
-  if (paymentOption && paymentId && !orderData.data.date_paid_gmt) {
-    const payload: Partial<Order> = {
-      payment_method: paymentOption,
-      transaction_id: paymentId,
-      status: "processing",
-    }
-    orderData = await updateOrder(orderId, payload)
-  }
+  // if (searchParams?.paymentOption && searchParams?.paymentId && !orderData.data.date_paid_gmt) {
+  //   const payload: Partial<Order> = {
+  //     payment_method: searchParams?.paymentOption,
+  //     transaction_id: searchParams?.paymentId,
+  //     status: "processing",
+  //   }
+  //   orderData = await updateOrder(orderId, payload)
+  // }
 
   return (
     <section className="bg-white py-8 antialiased dark:bg-gray-900 md:py-16">
