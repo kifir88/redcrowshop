@@ -1,6 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { ICreatePayment, YooCheckout } from "@a2seven/yoo-checkout";
-import { v4 as uuidv4 } from "uuid";
 import {Order} from "@/types/woo-commerce/order";
 const robokassa = require('node-robokassa');
 
@@ -18,13 +16,13 @@ const robokassaHelper = new robokassa.RobokassaHelper({
   // REQUIRED OPTIONS:
   merchantLogin: 'redcrowshop',
   hashingAlgorithm: 'md5',
-  password1: 'rjWWXl1u7kmSKaM37u8L',
-  password2: 'TwVeW9V5BGyzjGP458Vt',
+  password1: 'thBxjea111OWTIu7Y7kp',
+  password2: 'ZO5DfOO2tTYF4cB78IUV',
 
   // OPTIONAL CONFIGURATION
   testMode: false, // Whether to use test mode globally
-  testPassword1: "s726NqXcByj0Sltu2rza",
-  testPassword2: "Qc8d7njELqrwZ936jqRg",
+  testPassword1: "MJ1hL68FHYwLJO8CrJ5D",
+  testPassword2: "ejjTYhz7Dm4IDj99Pj5H",
   resultUrlRequestMethod: 'POST' // HTTP request method selected for "ResultURL" requests
 });
 

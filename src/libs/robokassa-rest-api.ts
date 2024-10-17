@@ -3,14 +3,16 @@ import RoboGate from "robokassa-gate";
 import {Order} from "@/types/woo-commerce/order";
 
 const robokassaApiInstance = new RoboGate({
-  merchantLogin: "redcrowshop",
-  hashingAlgorithm: "md5",
-  password1: 'rjWWXl1u7kmSKaM37u8L',
-  password2: 'TwVeW9V5BGyzjGP458Vt',
-  // TODO true only for dev mode
-  testMode: false,
-  testPassword1: "s726NqXcByj0Sltu2rza",
-  testPassword2: "Qc8d7njELqrwZ936jqRg",
+  // REQUIRED OPTIONS:
+  merchantLogin: 'redcrowshop',
+  hashingAlgorithm: 'md5',
+  password1: 'thBxjea111OWTIu7Y7kp',
+  password2: 'ZO5DfOO2tTYF4cB78IUV',
+
+  // OPTIONAL CONFIGURATION
+  testMode: true, // Whether to use test mode globally
+  testPassword1: "MJ1hL68FHYwLJO8CrJ5D",
+  testPassword2: "ejjTYhz7Dm4IDj99Pj5H",
   resultUrlRequestMethod: "POST", // !ONLY ACCEPTED METHOD FOR NOW
 });
 
