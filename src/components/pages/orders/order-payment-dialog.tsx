@@ -7,7 +7,6 @@ import {Order} from "@/types/woo-commerce/order";
 import {robokassaGeneratePaymentURL} from "@/libs/robokassa-rest-api";
 import useYookassaCreatePayment from "@/hooks/yookassa/useYookassaCreatePayment";
 import toast from "react-hot-toast";
-import useRobokassaCreatePayment from "@/hooks/robokassa/useRobokassaCreatePayment";
 
 type Payment =
   | 'uKassa'
@@ -25,27 +24,14 @@ export default function OrderPaymentDialog({
 }) {
   const [selectedOption, setSelectedOption] = useState<Payment>(null);
 
-  const robokassaCreatePaymentMutation = useRobokassaCreatePayment()
   const yookassaCreatePaymentMutation = useYookassaCreatePayment()
 
   const handleConfirmClick = () => {
     if (selectedOption === "RoboKassa") {
-      robokassaCreatePaymentMutation.mutate(
-        { order: order },
-        {
-          onError: () => {
-            toast.error("Ошибка оплаты с помощю RoboKassa. Попробуйте позже.")
-          },
-          onSuccess: (res) => {
-            console.log(res)
-            // const confirmationUrl = res.data.payment.confirmation.confirmation_url;
-            // window.location.assign(confirmationUrl);
-          }
-        }
-      )
       const robokassaPaymentURL = robokassaGeneratePaymentURL(order);
-      console.log(robokassaPaymentURL, "robokassaPaymentURL")
+      window.location.assign(robokassaPaymentURL)
     }
+
     if (selectedOption === "uKassa") {
       yookassaCreatePaymentMutation.mutate({
         order: order,
@@ -59,6 +45,7 @@ export default function OrderPaymentDialog({
         }
       })
     }
+
   }
 
   return (

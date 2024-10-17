@@ -8,8 +8,14 @@ export default async function InfoStrapiPage({
 }: {
   params: { strapiPageSlug: string },
 }) {
-  const strapiFooterPages = await fetchFooterPages()
-  const strapiPageData = await fetchPage(strapiPageSlug)
+
+  const [
+    strapiFooterPages,
+    strapiPageData,
+  ] = await Promise.all([
+    fetchFooterPages(),
+    fetchPage(strapiPageSlug)
+  ])
 
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex py-10">
