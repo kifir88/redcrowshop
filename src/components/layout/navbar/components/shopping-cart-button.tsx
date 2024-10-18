@@ -58,7 +58,7 @@ export default function ShoppingCartButton({currencyRates}: {currencyRates: Cust
               <li key={product.productVariationId} className="flex items-center py-6">
                 <Image
                   alt={product.name}
-                  src={product.imageSrc}
+                  src={product.imageSrc || "placeholder"}
                   className="h-16 w-16 object-cover flex-none rounded-md border border-gray-200"
                   width={64}
                   height={64}
