@@ -21,7 +21,7 @@ export default function OrderPaymentButton({order, disabled}: {order: Order; dis
         <Button
           color="dark"
           onClick={handleOpenPaymentModal}
-          disabled={disabled}
+          disabled={disabled || order.status !== 'pending'}
           fullSized
         >
           Оплатить

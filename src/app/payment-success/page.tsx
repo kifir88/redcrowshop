@@ -1,20 +1,26 @@
 import {fetchPage} from "@/libs/strapi-rest-api";
-import {fetchOrder} from "@/libs/woocommerce-rest-api";
+import {fetchOrder, updateOrder} from "@/libs/woocommerce-rest-api";
 import {formatPriceToKZT} from "@/libs/helper-functions";
 import ReactMarkdown from "react-markdown";
+import {Order} from "@/types/woo-commerce/order";
 
 export default async function PaymentSuccessPage({
   searchParams
 }: {
   searchParams: Record<string, string>
 }) {
+    const orderUpdatePayload: Partial<Order> = {
+      payment_method: "RoboKassa",
+      transaction_id: searchParams?.InvId,
+      status: "processing",
+    }
 
   const [
     strapiPaymentSuccessPageData,
     orderData,
   ] = await Promise.all([
     fetchPage("payment-success"),
-    fetchOrder(searchParams?.InvId)
+    updateOrder(searchParams?.InvId, orderUpdatePayload)
   ])
 
   const productList = orderData?.data.line_items

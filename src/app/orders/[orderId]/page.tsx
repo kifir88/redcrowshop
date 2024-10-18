@@ -19,14 +19,7 @@ export default async function OrderDetail({
 }) {
   let orderData = await fetchOrder(orderId)
 
-  // if (searchParams?.paymentOption && searchParams?.paymentId && !orderData.data.date_paid_gmt) {
-  //   const payload: Partial<Order> = {
-  //     payment_method: searchParams?.paymentOption,
-  //     transaction_id: searchParams?.paymentId,
-  //     status: "processing",
-  //   }
-  //   orderData = await updateOrder(orderId, payload)
-  // }
+  console.log(orderData.data.status, "orderData.data.status")
 
   return (
     <section className="bg-white py-8 antialiased dark:bg-gray-900 md:py-16">
