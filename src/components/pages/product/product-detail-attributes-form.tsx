@@ -100,6 +100,12 @@ export default function ProductDetailAttributesForm({
 
   return (
     <form onSubmit={form.onSubmit(handleSubmit)}>
+      {isOutOfStock && (
+        <p className="text-xl text-gray-900">
+          Товара нет в наличии
+        </p>
+      )}
+
       {product.attributes.map(a => (
         <div key={a.id} className="mt-6">
           <AttributeAutoComplete
