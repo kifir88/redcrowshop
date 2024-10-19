@@ -1,33 +1,52 @@
 import { NextRequest, NextResponse } from "next/server";
 import FormData from 'form-data';
 import Mailgun from 'mailgun.js';
+import {MailgunMessageData} from "mailgun.js/Types/Messages";
 
 const mailgun = new Mailgun(FormData);
 const mailgunClient = mailgun.client({
+  url: "https://api.eu.mailgun.net",
   username: 'api',
-  key: process.env.MAILGUN_API_KEY || "1e437a0e91d108be4a56f68211b6858f-d010bdaf-0269b9f1",
+  key: process.env.MAILGUN_API_KEY || "9085566ba3ba48dbf8024860b652aba3-d010bdaf-9b12ac21",
 });
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
 
-    if (!body?.orderId) {
-      throw new Error("OrderId is required");
+    if (
+      !body?.orderId
+      || !body?.to
+    ) {
+      throw new Error("В теле запроса не хватает базовых параметров.");
+    }
+    if (
+      !body?.text
+      || !body?.html
+    ) {
+      throw new Error("Параметры html или text обязательны.");
     }
 
-    const mailgunMessageData = {
-      from: "Excited User <mailgun@sandboxbec10238dca94e57a23b6427b0975712.mailgun.org>",
-      to: ["asgardpavlov@gmail.com"],
+    const mailgunMessageData: MailgunMessageData = {
+      from: "RedCrow KZ <mailgun@a-au.com>",
+      to: [body?.to],
       subject: `RedCrow Успешная Оплата - Заказ #${body.orderId}`,
-      text: "Hello here is a file in the attachment"
+      text: body.text || "",
     }
 
-    const mailgunResponse = await mailgunClient.messages.create("sandbox-123.mailgun.org", mailgunMessageData)
+    if (body?.html) {
+      mailgunMessageData.html = body?.html;
+    }
+
+    const mailgunResponse = await mailgunClient.messages.create(
+      // TODO extract to env variables
+      "a-au.com",
+      mailgunMessageData
+    )
 
     return NextResponse.json(mailgunResponse);
   } catch (error) {
-    console.error("Sending email error:", error);
+    console.error("Ошибка отправки имейла через MailGun:", error);
     return NextResponse.json({ error: error }, { status: 500 });
   }
 }
