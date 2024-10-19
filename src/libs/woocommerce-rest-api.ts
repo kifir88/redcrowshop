@@ -14,24 +14,45 @@ const options: WooCommerceRestApiOptions = {
   consumerKey: "ck_901883160cd3f891e2eaa4b88e28b4b0198c9682",
   consumerSecret: "cs_8b64a8187c67dbeb6e0ccf618069d0b69b4dd690",
   version: "wc/v3",
+  axiosConfig: {
+    headers: {
+      "Content-type": "application/json"
+    }
+  }
 };
 const custom_v1_options: WooCommerceRestApiOptions = {
   url: "https://admin.redcrow.kz/",
   consumerKey: "ck_901883160cd3f891e2eaa4b88e28b4b0198c9682",
   consumerSecret: "cs_8b64a8187c67dbeb6e0ccf618069d0b69b4dd690",
   version: "custom/v1" as any,
+  axiosConfig: {
+    headers: {
+      "Content-type": "application/json"
+    }
+  }
 };
 const custom_api_v1_options: WooCommerceRestApiOptions = {
   url: "https://admin.redcrow.kz/",
   consumerKey: "ck_901883160cd3f891e2eaa4b88e28b4b0198c9682",
   consumerSecret: "cs_8b64a8187c67dbeb6e0ccf618069d0b69b4dd690",
   version: "custom-api/v1" as any,
+  axiosConfig: {
+    headers: {
+      "Content-type": "application/json"
+    }
+  }
+
 };
 const cust_api_v1_options: WooCommerceRestApiOptions = {
   url: "https://admin.redcrow.kz/",
   consumerKey: "ck_901883160cd3f891e2eaa4b88e28b4b0198c9682",
   consumerSecret: "cs_8b64a8187c67dbeb6e0ccf618069d0b69b4dd690",
   version: "cust_api/v1" as any,
+  axiosConfig: {
+    headers: {
+      "Content-type": "application/json"
+    }
+  }
 };
 
 export const wooCommerceApiInstance = new WooCommerceRestApi(options);
