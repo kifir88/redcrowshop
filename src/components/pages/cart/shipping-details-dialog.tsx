@@ -138,7 +138,7 @@ export default function ShippingDetailsDialog({
                     className="grid grid-cols-2 gap-4"
                   >
                     <label className="block">
-                      First Name*
+                      Имя
                       <input
                         type="text"
                         required
@@ -147,7 +147,7 @@ export default function ShippingDetailsDialog({
                       />
                     </label>
                     <label className="block">
-                      Last Name*
+                      Фамилия
                       <input
                         type="text"
                         required
@@ -156,7 +156,7 @@ export default function ShippingDetailsDialog({
                       />
                     </label>
                     <label className="col-span-2 block">
-                      Address line 1*
+                      Адрес 1
                       <input
                         type="text"
                         required
@@ -165,7 +165,7 @@ export default function ShippingDetailsDialog({
                       />
                     </label>
                     <label className="col-span-2 block">
-                      Address line 2
+                      Адрес 2
                       <input
                         type="text"
                         className="w-full rounded-md border px-2 py-1 focus:border-black focus:outline-none"
@@ -173,13 +173,13 @@ export default function ShippingDetailsDialog({
                       />
                     </label>
                     <label className="block">
-                      Country*
+                      Страна
                       <select
                         required
                         className="w-full rounded-md border px-2 py-1 focus:border-black focus:outline-none"
                         {...form.getInputProps("country")}
                       >
-                        <option value="">Select a country</option>
+                        <option value="">Выберите страну</option>
 
                         {countryData.map((country) => (
                           <option key={country.code} value={country.code}>
@@ -189,7 +189,7 @@ export default function ShippingDetailsDialog({
                       </select>
                     </label>
                     <label className="block">
-                      City*
+                      Город
                       <input
                         type="text"
                         required
@@ -198,7 +198,7 @@ export default function ShippingDetailsDialog({
                       />
                     </label>
                     <label className="block">
-                      State
+                      Регион / Провинция
                       <input
                         type="text"
                         className="w-full rounded-md border px-2 py-1 focus:border-black focus:outline-none"
@@ -206,7 +206,7 @@ export default function ShippingDetailsDialog({
                       />
                     </label>
                     <label className="block">
-                      Postcode / ZIP*
+                      Посткод / Индекс
                       <input
                         type="text"
                         required
@@ -215,7 +215,7 @@ export default function ShippingDetailsDialog({
                       />
                     </label>
                     <label className="col-span-2 block">
-                      Email*
+                      Электронная почта
                       <input
                         type="email"
                         required
@@ -224,7 +224,7 @@ export default function ShippingDetailsDialog({
                       />
                     </label>
                     <label className="col-span-2 block">
-                      Phone*
+                      Контактный телефон
                       <PhoneInput
                         labels={ru}
                         placeholder={'Введите номер телефона'}

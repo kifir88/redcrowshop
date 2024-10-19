@@ -15,18 +15,17 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
 
     if (
-      !body?.orderId
-      || !body?.to
+      !body?.to
       || !body?.subject
+      || !body?.text
     ) {
       throw new Error("В теле запроса не хватает базовых параметров.");
     }
-    if (
-      !body?.text
-      || !body?.html
-    ) {
-      throw new Error("Параметры html или text обязательны.");
-    }
+    // if (
+    //   !(body?.text && body?.html)
+    // ) {
+    //   throw new Error("Параметры html или text обязательны.");
+    // }
 
     const mailgunMessageData: MailgunMessageData = {
       from: "RedCrow KZ <mailgun@a-au.com>",

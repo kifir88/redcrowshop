@@ -3,29 +3,66 @@ import {fetchOrder, updateOrder} from "@/libs/woocommerce-rest-api";
 import {formatPriceToKZT} from "@/libs/helper-functions";
 import ReactMarkdown from "react-markdown";
 import {Order} from "@/types/woo-commerce/order";
+import axios from "axios";
 
 export default async function PaymentSuccessPage({
   searchParams
 }: {
   searchParams: Record<string, string>
 }) {
-    const orderUpdatePayload: Partial<Order> = {
-      payment_method: "RoboKassa",
-      transaction_id: searchParams?.InvId,
-      status: "processing",
-    }
 
   const [
     strapiPaymentSuccessPageData,
     orderData,
   ] = await Promise.all([
     fetchPage("payment-success"),
-    updateOrder(searchParams?.InvId, orderUpdatePayload)
+    fetchOrder(searchParams?.InvId)
   ])
 
   const productList = orderData?.data.line_items
     .map(li => (`- ${li.name} / ${li.quantity} / ${formatPriceToKZT(li.total)}`))
-    .join();
+    .join(" \n");
+
+  if (orderData.data.status === "pending") {
+    const emailPayload = {
+      to: orderData.data.billing.email,
+      subject: `RedCrow Успешная Оплата - Заказ #${searchParams?.InvId}`,
+      text: `Ваши товары: ${productList}. На сумму ${formatPriceToKZT(orderData.data.total)}`
+      //   (
+      //   `
+      //   <div>
+      //     <p>
+      //
+      //     </p>
+      //     <h4>${productList}</h4>
+      //     <p>
+      //        На сумму:
+      //     </p>
+      //     <h4>
+      //      ${formatPriceToKZT(orderData.data.total)}
+      //     </h4>
+      //   </div>
+      //   `
+      // )
+    }
+    await axios.post(
+      "/api/mailgun",
+      emailPayload,
+      {
+        // TODO extract base url to env variable
+        baseURL: "https://www.redcrow.kz/",
+        headers: {
+          "Content-type": "application/json"
+        }
+      }
+    )
+    const orderUpdatePayload: Partial<Order> = {
+      payment_method: "RoboKassa",
+      transaction_id: searchParams?.InvId,
+      status: "processing",
+    }
+    updateOrder(searchParams?.InvId, orderUpdatePayload)
+  }
 
   const parsedStrapiPage = strapiPaymentSuccessPageData.data.data.attributes.content
     .replace("[[ORDER_ID]]", searchParams?.InvId)
