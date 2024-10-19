@@ -57,8 +57,8 @@ export default function ShoppingCartButton({currencyRates}: {currencyRates: Cust
             {cartItems.map((product) => (
               <li key={product.productVariationId} className="flex items-center py-6">
                 <Image
-                  alt={product.name}
-                  src={product.imageSrc || "placeholder"}
+                  src={product?.imageSrc || "/category/product-image-placeholder.png"}
+                  alt={product?.name || "image-placeholder"}
                   className="h-16 w-16 object-cover flex-none rounded-md border border-gray-200"
                   width={64}
                   height={64}
