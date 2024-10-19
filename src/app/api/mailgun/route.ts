@@ -17,6 +17,7 @@ export async function POST(req: NextRequest) {
     if (
       !body?.orderId
       || !body?.to
+      || !body?.subject
     ) {
       throw new Error("В теле запроса не хватает базовых параметров.");
     }
@@ -29,13 +30,13 @@ export async function POST(req: NextRequest) {
 
     const mailgunMessageData: MailgunMessageData = {
       from: "RedCrow KZ <mailgun@a-au.com>",
-      to: [body?.to],
-      subject: `RedCrow Успешная Оплата - Заказ #${body.orderId}`,
+      to: [body.to],
+      subject: body.subject,
       text: body.text || "",
     }
 
     if (body?.html) {
-      mailgunMessageData.html = body?.html;
+      mailgunMessageData.html = body.html;
     }
 
     const mailgunResponse = await mailgunClient.messages.create(
