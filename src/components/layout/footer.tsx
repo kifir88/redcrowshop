@@ -5,6 +5,9 @@ import {fetchFooterPages} from "@/libs/strapi-rest-api";
 export default async function Footer() {
   const footerPagesData = await fetchFooterPages()
 
+  const footerPages = footerPagesData.data.data
+    .filter(i => !['payment-error', 'payment-success'].includes(i.attributes.slug))
+
   return (
     <>
       <div className="border-t-2 rounded-none border-gray-300" />
@@ -19,7 +22,7 @@ export default async function Footer() {
             </div>
             <div>
               <FooterLinkGroup col>
-                {footerPagesData.data.data.map(i => (
+                {footerPages.map(i => (
                   <FooterLink key={i.id} href={`/info/${i.attributes.slug}`} className="underline-offset-4">
                     {i.attributes.name}
                   </FooterLink>
