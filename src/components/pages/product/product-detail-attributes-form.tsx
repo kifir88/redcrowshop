@@ -1,6 +1,6 @@
 'use client';
 
-import {Product} from "@/types/woo-commerce/product";
+import {Attribute, Product} from "@/types/woo-commerce/product";
 import AttributeAutoComplete from "@/components/fields/attribute-auto-complete";
 import {UseFormReturnType} from "@mantine/form";
 import {ProductAttributeTerm} from "@/types/woo-commerce/product-attribute-term";
@@ -13,16 +13,48 @@ import toast from "react-hot-toast";
 
 type FormValues = Record<string, ProductAttributeTerm>;
 
+const getAvailableOptions = (
+  attribute: Attribute,
+  selectedValues: FormValues,
+  productVariations: ProductVariation[]
+): number[] => {
+  // If no other attributes are selected, return all options for this attribute
+  const selectedAttributeIds = Object.keys(selectedValues).filter(id => selectedValues[id]);
+
+  // Filter variations based on selected attributes
+  const filteredVariations = productVariations.filter(variation => {
+    return variation.attributes.every(attr => {
+      if (selectedValues[attr.id]) {
+        return selectedValues[attr.id].name === attr.option;
+      }
+      return true;
+    });
+  });
+
+  // Gather available options for this attribute based on the filtered variations
+  const availableOptions: Set<number> = new Set();
+  filteredVariations.forEach(variation => {
+    variation.attributes.forEach(attr => {
+      if (attr.id === attribute.id) {
+        availableOptions.add(attr.id);
+      }
+    });
+  });
+
+  // Return an array of options for this attribute that are available
+  return Array.from(availableOptions);
+}
+
 export default function ProductDetailAttributesForm({
   form,
   product,
   selectedProductVariation,
-  availableProductVariationIds,
+  productVariations,
 }: {
   form: UseFormReturnType<FormValues>;
   product: Product;
   selectedProductVariation?: ProductVariation;
-  availableProductVariationIds: number[]
+  productVariations: ProductVariation[]
 }) {
   const [cartValues, setCartValues] = useLocalStorage<CartItem[]>("cartItems", [])
 
@@ -98,6 +130,8 @@ export default function ProductDetailAttributesForm({
     showSuccessCartToast()
   };
 
+  const allAttributesField = Object.keys(form.values).length === product.attributes.length;
+
   return (
     <form onSubmit={form.onSubmit(handleSubmit)}>
       {isOutOfStock && (
@@ -111,7 +145,9 @@ export default function ProductDetailAttributesForm({
           <AttributeAutoComplete
             label={a.name}
             attribute={a}
+            allAttributesField={allAttributesField}
             value={form.values[a.id]}
+            availableOptions={getAvailableOptions(a, form.values, productVariations)}
             onChange={value => {
               form.setFieldValue(String(a.id), value)
             }}

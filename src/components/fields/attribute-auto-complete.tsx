@@ -16,6 +16,8 @@ export interface AttributeAutoCompleteProps {
   placeholder?: string;
   isLoading?: boolean;
   attribute: Attribute;
+  availableOptions: number[];
+  allAttributesField: boolean;
 }
 
 interface ItemAutoComplete {
@@ -29,6 +31,8 @@ export default function AttributeAutoComplete({
   placeholder,
   value,
   onChange,
+  availableOptions,
+  allAttributesField,
 }: AttributeAutoCompleteProps) {
   const {
     data,
@@ -55,6 +59,15 @@ export default function AttributeAutoComplete({
       || "Выберите опцию"
   }, [value?.name, placeholder])
 
+  const filteredItems = useMemo(() => {
+    if (!value) {
+      return items;
+    }
+
+    return items.filter(i => availableOptions.includes(i.value.id))
+
+  }, [availableOptions, items, value])
+
   return (
     <Listbox value={value || null} onChange={onChange} disabled={isLoading}>
       {label && (
@@ -77,7 +90,7 @@ export default function AttributeAutoComplete({
           transition
           className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none data-[closed]:data-[leave]:opacity-0 data-[leave]:transition data-[leave]:duration-100 data-[leave]:ease-in sm:text-sm"
         >
-          {items.map((i) => (
+          {filteredItems.map((i) => (
             <ListboxOption
               key={i.value.id}
               value={i.value}

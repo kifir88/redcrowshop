@@ -27,11 +27,12 @@ export default function ProductImageAttribute({
     }))
 
   const selectedProductVariationImage: Image | null = selectedProductVariation?.image || product.images[0] || null;
+  //
+  // const availableProductVariationIds = productVariations
+  //   .map(pv => pv.attributes.map(a => a.id))
+  //   .flat();
 
-  const availableProductVariationIds = productVariations
-    .map(pv => pv.attributes.map(a => a.id))
-    .flat();
-
+  // TODO
   useEffect(() => {
     console.log(form.values)
   }, [form])
@@ -47,7 +48,7 @@ export default function ProductImageAttribute({
           product={product}
           selectedProductVariation={selectedProductVariation}
           form={form}
-          availableProductVariationIds={availableProductVariationIds}
+          productVariations={productVariations}
         />
 
         {/* Product details */}
