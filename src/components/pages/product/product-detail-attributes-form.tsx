@@ -13,37 +13,37 @@ import toast from "react-hot-toast";
 
 type FormValues = Record<string, ProductAttributeTerm>;
 
-const getAvailableOptions = (
-  attribute: Attribute,
-  selectedValues: FormValues,
-  productVariations: ProductVariation[]
-): number[] => {
-  // If no other attributes are selected, return all options for this attribute
-  const selectedAttributeIds = Object.keys(selectedValues).filter(id => selectedValues[id]);
-
-  // Filter variations based on selected attributes
-  const filteredVariations = productVariations.filter(variation => {
-    return variation.attributes.every(attr => {
-      if (selectedValues[attr.id]) {
-        return selectedValues[attr.id].name === attr.option;
-      }
-      return true;
-    });
-  });
-
-  // Gather available options for this attribute based on the filtered variations
-  const availableOptions: Set<number> = new Set();
-  filteredVariations.forEach(variation => {
-    variation.attributes.forEach(attr => {
-      if (attr.id === attribute.id) {
-        availableOptions.add(attr.id);
-      }
-    });
-  });
-
-  // Return an array of options for this attribute that are available
-  return Array.from(availableOptions);
-}
+// const getAvailableOptions = (
+//   attribute: Attribute,
+//   selectedValues: FormValues,
+//   productVariations: ProductVariation[]
+// ): number[] => {
+//   // If no other attributes are selected, return all options for this attribute
+//   const selectedAttributeIds = Object.keys(selectedValues).filter(id => selectedValues[id]);
+//
+//   // Filter variations based on selected attributes
+//   const filteredVariations = productVariations.filter(variation => {
+//     return variation.attributes.every(attr => {
+//       if (selectedValues[attr.id]) {
+//         return selectedValues[attr.id].name === attr.option;
+//       }
+//       return true;
+//     });
+//   });
+//
+//   // Gather available options for this attribute based on the filtered variations
+//   const availableOptions: Set<number> = new Set();
+//   filteredVariations.forEach(variation => {
+//     variation.attributes.forEach(attr => {
+//       if (attr.id === attribute.id) {
+//         availableOptions.add(attr.option);
+//       }
+//     });
+//   });
+//
+//   // Return an array of options for this attribute that are available
+//   return Array.from(availableOptions);
+// }
 
 export default function ProductDetailAttributesForm({
   form,
@@ -145,12 +145,12 @@ export default function ProductDetailAttributesForm({
           <AttributeAutoComplete
             label={a.name}
             attribute={a}
-            allAttributesField={allAttributesField}
             value={form.values[a.id]}
-            availableOptions={getAvailableOptions(a, form.values, productVariations)}
+            productVariations={productVariations}
             onChange={value => {
               form.setFieldValue(String(a.id), value)
             }}
+           formValues={form.values}
           />
         </div>
       ))}

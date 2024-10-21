@@ -1,13 +1,14 @@
 "use client"
 
-import {Attribute} from "@/types/woo-commerce/product";
+import { Attribute } from "@/types/woo-commerce/product";
 import useProductAttributeTerms from "@/hooks/product-attribute-terms/useProductAttributeTerms";
-import {useEffect, useMemo, useState} from "react";
-import {Label, Listbox, ListboxButton, ListboxOption, ListboxOptions} from "@headlessui/react";
-import {Spinner} from "flowbite-react";
-import {CheckIcon, ChevronUpDownIcon} from "@heroicons/react/20/solid";
-import {ProductAttributeTerm} from "@/types/woo-commerce/product-attribute-term";
-import {cn} from "@/libs/utils";
+import { useEffect, useMemo, useState } from "react";
+import { Label, Listbox, ListboxButton, ListboxOption, ListboxOptions } from "@headlessui/react";
+import { Spinner } from "flowbite-react";
+import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
+import { ProductAttributeTerm } from "@/types/woo-commerce/product-attribute-term";
+import { cn } from "@/libs/utils";
+import { ProductVariation } from "@/types/woo-commerce/product-variation";
 
 export interface AttributeAutoCompleteProps {
   value: ProductAttributeTerm | null;
@@ -16,13 +17,14 @@ export interface AttributeAutoCompleteProps {
   placeholder?: string;
   isLoading?: boolean;
   attribute: Attribute;
-  availableOptions: number[];
-  allAttributesField: boolean;
+  productVariations: ProductVariation[];
+  formValues: Record<number, ProductAttributeTerm>; // <-- добавляем formValues для доступа к текущим значениям формы
 }
 
 interface ItemAutoComplete {
   label: string;
   value: ProductAttributeTerm;
+  disabled: boolean;
 }
 
 export default function AttributeAutoComplete({
@@ -31,42 +33,49 @@ export default function AttributeAutoComplete({
   placeholder,
   value,
   onChange,
-  availableOptions,
-  allAttributesField,
+  productVariations,
+  formValues,
 }: AttributeAutoCompleteProps) {
-  const {
-    data,
-    isLoading,
-    isSuccess,
-  } = useProductAttributeTerms(attribute.id)
+  const { data, isLoading, isSuccess } = useProductAttributeTerms(attribute.id);
 
-  const [items, setItems] = useState<ItemAutoComplete[]>([])
+  const [items, setItems] = useState<ItemAutoComplete[]>([]);
 
   useEffect(() => {
     if (isSuccess && data?.data) {
-      setItems(data.data.map(i => (
-        {
+      const availableOptions = new Set<string>();
+
+      // Фильтруем вариации на основе выбранных значений в форме
+      const filteredVariations = productVariations.filter(variation => {
+        return Object.entries(formValues).every(([attrId, selectedAttr]) => {
+          // Если атрибут уже выбран, проверяем совпадение с вариацией
+          const match = variation.attributes.find(attr => attr.id === Number(attrId));
+          return match ? match.option === selectedAttr.name : true;
+        });
+      });
+
+      // Собираем доступные опции для данного атрибута из отфильтрованных вариаций
+      filteredVariations.forEach(variation => {
+        variation.attributes.forEach(attr => {
+          if (attr.id === attribute.id) {
+            availableOptions.add(attr.option);
+          }
+        });
+      });
+
+      // Обновляем items с учётом доступных опций
+      setItems(
+        data.data.map(i => ({
           label: i.name,
           value: i,
-        }
-      )))
+          disabled: !availableOptions.has(i.name), // дизейблим недоступные опции
+        }))
+      );
     }
-  }, [isSuccess, data?.data])
+  }, [isSuccess, data?.data, productVariations, formValues, attribute.id]);
 
   const valueLabel = useMemo(() => {
-    return value?.name
-      || placeholder
-      || "Выберите опцию"
-  }, [value?.name, placeholder])
-
-  const filteredItems = useMemo(() => {
-    if (!value) {
-      return items;
-    }
-
-    return items.filter(i => availableOptions.includes(i.value.id))
-
-  }, [availableOptions, items, value])
+    return value?.name || placeholder || "Выберите опцию";
+  }, [value?.name, placeholder]);
 
   return (
     <Listbox value={value || null} onChange={onChange} disabled={isLoading}>
@@ -90,15 +99,15 @@ export default function AttributeAutoComplete({
           transition
           className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none data-[closed]:data-[leave]:opacity-0 data-[leave]:transition data-[leave]:duration-100 data-[leave]:ease-in sm:text-sm"
         >
-          {filteredItems.map((i) => (
+          {items.map((i) => (
             <ListboxOption
               key={i.value.id}
               value={i.value}
-              disabled={!i.value.count}
+              disabled={i.disabled} // дизейблим недоступные опции
               className={cn(
                 "group relative cursor-default select-none py-2 pl-3 pr-9 text-gray-900",
                 "data-[focus]:bg-indigo-600 data-[focus]:text-white",
-                !i.value.count && "opacity-25"
+                i.disabled && "opacity-25"
               )}
             >
               <span className="block truncate font-normal group-data-[selected]:font-semibold">
@@ -113,5 +122,5 @@ export default function AttributeAutoComplete({
         </ListboxOptions>
       </div>
     </Listbox>
-  )
+  );
 }

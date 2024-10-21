@@ -83,6 +83,7 @@ export default async function ProductPage({
     }),
     fetchProductVariations(productData.id, {
       parent: productData.id,
+      stock_status: "instock",
       per_page: 50
     })
   ])

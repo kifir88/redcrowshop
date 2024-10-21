@@ -32,11 +32,6 @@ export default function ProductImageAttribute({
   //   .map(pv => pv.attributes.map(a => a.id))
   //   .flat();
 
-  // TODO
-  useEffect(() => {
-    console.log(form.values)
-  }, [form])
-
   return (
     <>
       {/* Image gallery */}
