@@ -91,18 +91,18 @@ export default function OrderPaymentDialog({
                       <legend className="mb-4">
                         Выберите способ оплаты
                       </legend>
-                      <div className="flex items-center gap-2">
-                        <Radio
-                          id="uKassa"
-                          name="paymentOption"
-                          value="uKassa"
-                          checked={selectedOption === "uKassa"}
-                          onChange={() => setSelectedOption("uKassa")}
-                        />
-                        <Label htmlFor="uKassa">
-                          uKassa
-                        </Label>
-                      </div>
+                      {/*<div className="flex items-center gap-2">*/}
+                      {/*  <Radio*/}
+                      {/*    id="uKassa"*/}
+                      {/*    name="paymentOption"*/}
+                      {/*    value="uKassa"*/}
+                      {/*    checked={selectedOption === "uKassa"}*/}
+                      {/*    onChange={() => setSelectedOption("uKassa")}*/}
+                      {/*  />*/}
+                      {/*  <Label htmlFor="uKassa">*/}
+                      {/*    uKassa*/}
+                      {/*  </Label>*/}
+                      {/*</div>*/}
                       <div className="flex items-center gap-2">
                         <Radio
                           id="RoboKassa"
