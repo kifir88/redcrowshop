@@ -19,8 +19,6 @@ export default async function OrderDetail({
 }) {
   let orderData = await fetchOrder(orderId)
 
-  console.log(orderData.data.status, "orderData.data.status")
-
   return (
     <section className="bg-white py-8 antialiased dark:bg-gray-900 md:py-16">
       <form action="#" className="mx-auto max-w-screen-xl px-4 2xl:px-0">

@@ -5,20 +5,23 @@ import useProductAttributeTerms from "@/hooks/product-attribute-terms/useProduct
 import { useEffect, useMemo, useState } from "react";
 import { Label, Listbox, ListboxButton, ListboxOption, ListboxOptions } from "@headlessui/react";
 import { Spinner } from "flowbite-react";
-import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
+import { CheckIcon, ChevronUpDownIcon, XMarkIcon } from "@heroicons/react/20/solid";
 import { ProductAttributeTerm } from "@/types/woo-commerce/product-attribute-term";
 import { cn } from "@/libs/utils";
 import { ProductVariation } from "@/types/woo-commerce/product-variation";
+import {UseFormReturnType} from "@mantine/form";
+
+type FormValues = Record<number, ProductAttributeTerm | null>
 
 export interface AttributeAutoCompleteProps {
   value: ProductAttributeTerm | null;
-  onChange: (value: ProductAttributeTerm) => void;
+  onChange: (value: ProductAttributeTerm | null) => void;
   label?: string;
   placeholder?: string;
   isLoading?: boolean;
   attribute: Attribute;
   productVariations: ProductVariation[];
-  formValues: Record<number, ProductAttributeTerm>; // <-- добавляем formValues для доступа к текущим значениям формы
+  form: UseFormReturnType<FormValues>;
 }
 
 interface ItemAutoComplete {
@@ -34,22 +37,23 @@ export default function AttributeAutoComplete({
   value,
   onChange,
   productVariations,
-  formValues,
+  form,
 }: AttributeAutoCompleteProps) {
   const { data, isLoading, isSuccess } = useProductAttributeTerms(attribute.id);
 
   const [items, setItems] = useState<ItemAutoComplete[]>([]);
 
+
   useEffect(() => {
     if (isSuccess && data?.data) {
       const availableOptions = new Set<string>();
 
-      // Фильтруем вариации на основе выбранных значений в форме
+      // Логика фильтрации вариаций на основе выбранных значений в форме
       const filteredVariations = productVariations.filter(variation => {
-        return Object.entries(formValues).every(([attrId, selectedAttr]) => {
-          // Если атрибут уже выбран, проверяем совпадение с вариацией
+        return Object.entries(form.values).every(([attrId, selectedAttr]) => {
           const match = variation.attributes.find(attr => attr.id === Number(attrId));
-          return match ? match.option === selectedAttr.name : true;
+          // Перерасчет: если значение атрибута сброшено на null, этот атрибут не проверяется
+          return match ? (selectedAttr ? match.option === selectedAttr.name : true) : true;
         });
       });
 
@@ -62,20 +66,25 @@ export default function AttributeAutoComplete({
         });
       });
 
-      // Обновляем items с учётом доступных опций
+      // Обновляем список доступных элементов для атрибута
       setItems(
         data.data.map(i => ({
           label: i.name,
           value: i,
-          disabled: !availableOptions.has(i.name), // дизейблим недоступные опции
+          disabled: !availableOptions.has(i.name), // Опция будет отключена, если она не доступна
         }))
       );
     }
-  }, [isSuccess, data?.data, productVariations, formValues, attribute.id]);
+  }, [isSuccess, data?.data, productVariations, form.values, attribute.id, value]); // Добавляем зависимость от value
+
 
   const valueLabel = useMemo(() => {
     return value?.name || placeholder || "Выберите опцию";
   }, [value?.name, placeholder]);
+
+  const clearSelection = () => {
+    onChange(null); // Передаем null, чтобы сбросить значение
+  };
 
   return (
     <Listbox value={value || null} onChange={onChange} disabled={isLoading}>
@@ -86,12 +95,24 @@ export default function AttributeAutoComplete({
       )}
 
       <div className="relative mt-2">
-        <ListboxButton className="relative w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6">
+        <ListboxButton
+          className="relative w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
+          onClick={() => clearSelection()}
+        >
           <span className="block truncate">{valueLabel}</span>
           <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-            {isLoading
-              ? <Spinner color="gray" size="sm" />
-              : <ChevronUpDownIcon aria-hidden="true" className="h-5 w-5 text-gray-400" />}
+            {!value && (
+              <>
+                {isLoading
+                  ? <Spinner color="gray" size="sm" />
+                  : <ChevronUpDownIcon aria-hidden="true" className="h-5 w-5 text-gray-400" />}
+              </>
+            )}
+
+
+            {!!value && (
+              <XMarkIcon color="gray" className="h-5 w-5 text-gray-400" onClick={clearSelection} />
+            )}
           </span>
         </ListboxButton>
 

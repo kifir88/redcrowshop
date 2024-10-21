@@ -6,9 +6,8 @@ import {Image, Product} from "@/types/woo-commerce/product";
 import {ProductVariation} from "@/types/woo-commerce/product-variation";
 import {useForm} from "@mantine/form";
 import {ProductAttributeTerm} from "@/types/woo-commerce/product-attribute-term";
-import {useEffect} from "react";
 
-type FormValues = Record<string, ProductAttributeTerm>;
+type FormValues = Record<string, ProductAttributeTerm | null>;
 
 export default function ProductImageAttribute({
   product,
@@ -23,14 +22,10 @@ export default function ProductImageAttribute({
 
   const selectedProductVariation = productVariations
     .find(pv => pv.attributes.every((attribute) => {
-      return form.values[attribute.id] && form.values[attribute.id].name === attribute.option;
+      return form.values[attribute.id] && form.values[attribute.id]?.name === attribute.option;
     }))
 
   const selectedProductVariationImage: Image | null = selectedProductVariation?.image || product.images[0] || null;
-  //
-  // const availableProductVariationIds = productVariations
-  //   .map(pv => pv.attributes.map(a => a.id))
-  //   .flat();
 
   return (
     <>

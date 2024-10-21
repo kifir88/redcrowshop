@@ -11,39 +11,7 @@ import {Button, Toast} from "flowbite-react";
 import Link from "next/link";
 import toast from "react-hot-toast";
 
-type FormValues = Record<string, ProductAttributeTerm>;
-
-// const getAvailableOptions = (
-//   attribute: Attribute,
-//   selectedValues: FormValues,
-//   productVariations: ProductVariation[]
-// ): number[] => {
-//   // If no other attributes are selected, return all options for this attribute
-//   const selectedAttributeIds = Object.keys(selectedValues).filter(id => selectedValues[id]);
-//
-//   // Filter variations based on selected attributes
-//   const filteredVariations = productVariations.filter(variation => {
-//     return variation.attributes.every(attr => {
-//       if (selectedValues[attr.id]) {
-//         return selectedValues[attr.id].name === attr.option;
-//       }
-//       return true;
-//     });
-//   });
-//
-//   // Gather available options for this attribute based on the filtered variations
-//   const availableOptions: Set<number> = new Set();
-//   filteredVariations.forEach(variation => {
-//     variation.attributes.forEach(attr => {
-//       if (attr.id === attribute.id) {
-//         availableOptions.add(attr.option);
-//       }
-//     });
-//   });
-//
-//   // Return an array of options for this attribute that are available
-//   return Array.from(availableOptions);
-// }
+type FormValues = Record<string, ProductAttributeTerm | null>;
 
 export default function ProductDetailAttributesForm({
   form,
@@ -119,7 +87,7 @@ export default function ProductDetailAttributesForm({
           const attributeName = product.attributes
             .find(a => a.id === Number(attributeId))
             ?.name;
-          const attributeVariation = formValues[attributeId].name;
+          const attributeVariation = formValues[attributeId]?.name;
 
           return `${attributeName} ${attributeVariation}`
         }),
@@ -129,8 +97,6 @@ export default function ProductDetailAttributesForm({
 
     showSuccessCartToast()
   };
-
-  const allAttributesField = Object.keys(form.values).length === product.attributes.length;
 
   return (
     <form onSubmit={form.onSubmit(handleSubmit)}>
@@ -150,7 +116,7 @@ export default function ProductDetailAttributesForm({
             onChange={value => {
               form.setFieldValue(String(a.id), value)
             }}
-           formValues={form.values}
+           form={form}
           />
         </div>
       ))}
