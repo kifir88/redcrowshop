@@ -17,10 +17,14 @@ export default async function InfoStrapiPage({
     fetchPage(strapiPageSlug)
   ])
 
+  const footerPages = strapiFooterPages.data.data
+    .filter(i => !['payment-error', 'payment-success'].includes(i.attributes.slug))
+
+
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex py-10">
       <div className="hidden w-1/5 flex-col md:flex">
-        {strapiFooterPages.data.data.map((page) => (
+        {footerPages.map((page) => (
           <Link
             key={page.attributes.slug}
             className={cn(
