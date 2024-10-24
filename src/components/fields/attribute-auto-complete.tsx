@@ -68,11 +68,13 @@ export default function AttributeAutoComplete({
 
       // Обновляем список доступных элементов для атрибута
       setItems(
-        data.data.map(i => ({
-          label: i.name,
-          value: i,
-          disabled: !availableOptions.has(i.name), // Опция будет отключена, если она не доступна
-        }))
+        data.data
+          .filter(i => availableOptions.has(i.name))
+          .map(i => ({
+            label: i.name,
+            value: i,
+            disabled: !availableOptions.has(i.name), // Опция будет отключена, если она не доступна
+          }))
       );
     }
   }, [isSuccess, data?.data, productVariations, form.values, attribute.id, value]); // Добавляем зависимость от value
