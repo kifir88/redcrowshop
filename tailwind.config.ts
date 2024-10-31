@@ -13,7 +13,9 @@ const config: Config = {
   ],
   theme: {
     extend: {
-
+      aspectRatio: {
+        '3/4': '3 / 4',
+      },
     },
   },
   plugins: [

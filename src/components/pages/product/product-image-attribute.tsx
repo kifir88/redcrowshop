@@ -25,12 +25,12 @@ export default function ProductImageAttribute({
       return form.values[attribute.id] && form.values[attribute.id]?.name === attribute.option;
     }))
 
-  const selectedProductVariationImage: Image | null = selectedProductVariation?.image || product.images[0] || null;
+  const selectedProductVariationImage: Image | null = selectedProductVariation?.image || null;
 
   return (
     <>
       {/* Image gallery */}
-      <ProductImagesCarousel productImage={selectedProductVariationImage || null} />
+      <ProductImagesCarousel images={product.images} productImage={selectedProductVariationImage || null} />
 
       <div className="mt-8 lg:col-span-5">
         {/* Attribute pickers  */}
