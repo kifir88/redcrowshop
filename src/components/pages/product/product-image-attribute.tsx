@@ -28,8 +28,8 @@ export default function ProductImageAttribute({
   const selectedProductVariationImage: Image | null = selectedProductVariation?.image || null;
 
   const productVariationImages = productVariations
-    .map(i => i.image)
-    .filter(i => i !== null);
+    ?.map(i => i.image)
+    ?.filter(i => i !== null);
 
   return (
     <>
