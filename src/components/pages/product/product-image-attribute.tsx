@@ -27,10 +27,14 @@ export default function ProductImageAttribute({
 
   const selectedProductVariationImage: Image | null = selectedProductVariation?.image || null;
 
+  const productVariationImages = productVariations
+    .map(i => i.image)
+    .filter(i => i !== null);
+
   return (
     <>
       {/* Image gallery */}
-      <ProductImagesCarousel images={product.images} productImage={selectedProductVariationImage || null} />
+      <ProductImagesCarousel images={productVariationImages} productImage={selectedProductVariationImage || null} />
 
       <div className="mt-8 lg:col-span-5">
         {/* Attribute pickers  */}
