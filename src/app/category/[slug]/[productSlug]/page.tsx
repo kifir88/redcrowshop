@@ -100,16 +100,11 @@ export default async function ProductPage({
 
       <div className="">
         <div className="lg:grid lg:auto-rows-min lg:grid-cols-12 lg:gap-x-8">
-          <div className="lg:col-span-5 lg:col-start-8">
-            <div className="flex flex-col md:flex-row justify-between">
-              <h1 className="text-xl font-medium text-gray-900">{productData.name}</h1>
-              <ProductPrice product={productData} currencyRates={currencyRatesData.data}  />
-            </div>
-          </div>
 
           <ProductImageAttribute
             product={productData}
             productVariations={productVariationsData.data}
+            currencyRates={currencyRatesData.data}
           />
 
         </div>
