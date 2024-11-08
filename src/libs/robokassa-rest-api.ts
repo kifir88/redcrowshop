@@ -6,11 +6,11 @@ const robokassaApiInstance = new RoboGate({
   // REQUIRED OPTIONS:
   merchantLogin: 'redcrowshop',
   hashingAlgorithm: 'md5',
-  password1: 'HYeX5Kh8yC1HdP63sfZN',
-  password2: 'T0Wi5pt4M51wkfWLMnUe',
+  password1: 'ZQ4B6UJqQ8w6hQhyx0tw',
+  password2: 'c0JXAQwvU7f0MH8nQ9er',
 
   // OPTIONAL CONFIGURATION
-  testMode: true, // Whether to use test mode globally
+  testMode: false, // Whether to use test mode globally
   testPassword1: "MJ1hL68FHYwLJO8CrJ5D",
   testPassword2: "ejjTYhz7Dm4IDj99Pj5H",
   resultUrlRequestMethod: "POST", // !ONLY ACCEPTED METHOD FOR NOW
