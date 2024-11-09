@@ -70,7 +70,7 @@ export async function POST(req: NextRequest)
   return NextResponse.json({ a: 'ok' });
 }
 
-export function generateOrderEmailText(order: Order): string {
+function generateOrderEmailText(order: Order): string {
   const { billing, shipping, line_items, total } = order;
 
   return `
