@@ -14,7 +14,7 @@ const robokassaApiInstance = new RoboGate({
   testMode: true, // Whether to use test mode globally
   testPassword1: "MJ1hL68FHYwLJO8CrJ5D",
   testPassword2: "ejjTYhz7Dm4IDj99Pj5H",
-  resultUrlRequestMethod: "POST", // !ONLY ACCEPTED METHOD FOR NOW
+  resultUrlRequestMethod: "GET", // !ONLY ACCEPTED METHOD FOR NOW
 });
 
 
