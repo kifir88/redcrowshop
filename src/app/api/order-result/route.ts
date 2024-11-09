@@ -1,29 +1,21 @@
 import {NextRequest, NextResponse} from "next/server";
 import {robokassaIsValidCallbackRequest} from "@/libs/robokassa-rest-api";
 
-export async function GET(req: NextRequest)
+export async function POST(req: NextRequest)
 {
   const isValid = robokassaIsValidCallbackRequest(req);
 
-  const params = {};
-
-  // Loop through all search parameters
-  req.nextUrl.searchParams.forEach((value, key) => {
-    console.log('qq: ' + key + ' = ' + value);
-  });
-
-  console.log('All Query Parameters:', params);
-
-  const invId = req.nextUrl.searchParams.get('InvId');
+  const body = await req.json(); // Parses the JSON body
+  const { InvId } = body; // Extract a specific parameter, e.g., InvId
 
   if (isValid)
   {
-    console.log("Valid result from Robokassa orderId:"+ invId);
+    console.log("Valid result from Robokassa orderId:"+ InvId);
   }
   else
   {
-    console.log("Invalid result from Robokassa orderId:"+ invId);
+    console.log("Invalid result from Robokassa orderId:"+ InvId);
   }
 
-  return NextResponse.json({ invId });
+  return NextResponse.json({ InvId });
 }
