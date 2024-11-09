@@ -7,14 +7,14 @@ export async function POST(req: NextRequest)
 
   if (isValid)
   {
-    console.log("Valid result from Robokassa orderId:"+ InvId);
+    console.log("Valid result from Robokassa orderId:");
   }
   else
   {
-    console.log("Invalid result from Robokassa orderId:"+ InvId);
+    console.log("Invalid result from Robokassa orderId:");
   }
 
-  const body = await req.body(); // Parses the JSON body
+  const body = await req.text(); // Parses the JSON body
   //const { InvId } = body; // Extract a specific parameter, e.g., InvId
 
   console.log(body);
