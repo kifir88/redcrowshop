@@ -5,9 +5,6 @@ export async function POST(req: NextRequest)
 {
   const isValid = robokassaIsValidCallbackRequest(req);
 
-  const body = await req.json(); // Parses the JSON body
-  const { InvId } = body; // Extract a specific parameter, e.g., InvId
-
   if (isValid)
   {
     console.log("Valid result from Robokassa orderId:"+ InvId);
@@ -17,5 +14,10 @@ export async function POST(req: NextRequest)
     console.log("Invalid result from Robokassa orderId:"+ InvId);
   }
 
-  return NextResponse.json({ InvId });
+  const body = await req.body(); // Parses the JSON body
+  //const { InvId } = body; // Extract a specific parameter, e.g., InvId
+
+  console.log(body);
+
+  return NextResponse.json({ a: 'ok' });
 }
