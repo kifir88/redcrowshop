@@ -59,8 +59,10 @@ export default async function PaymentSuccessPage({
     const orderUpdatePayload: Partial<Order> = {
       payment_method: "RoboKassa",
       transaction_id: searchParams?.InvId,
+      set_paid: true,
       status: "processing",
     }
+
     updateOrder(searchParams?.InvId, orderUpdatePayload)
   }
 
