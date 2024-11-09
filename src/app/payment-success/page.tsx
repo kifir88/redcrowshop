@@ -19,57 +19,9 @@ export default async function PaymentSuccessPage({
     fetchOrder(searchParams?.InvId)
   ])
 
-  const productList = orderData?.data.line_items
-    .map(li => (`- ${li.name} / ${li.quantity} / ${formatPriceToKZT(li.total)}`))
-    .join(" \n");
-
-  if (orderData.data.status === "pending") {
-    const emailPayload = {
-      to: orderData.data.billing.email,
-      subject: `RedCrow Успешная Оплата - Заказ #${searchParams?.InvId}`,
-      text: `Ваши товары: ${productList}. На сумму ${formatPriceToKZT(orderData.data.total)}`
-      //   (
-      //   `
-      //   <div>
-      //     <p>
-      //
-      //     </p>
-      //     <h4>${productList}</h4>
-      //     <p>
-      //        На сумму:
-      //     </p>
-      //     <h4>
-      //      ${formatPriceToKZT(orderData.data.total)}
-      //     </h4>
-      //   </div>
-      //   `
-      // )
-    }
-    await axios.post(
-      "/api/mailgun",
-      emailPayload,
-      {
-        // TODO extract base url to env variable
-        baseURL: "https://www.redcrow.kz/",
-        headers: {
-          "Content-type": "application/json"
-        }
-      }
-    )
-    const orderUpdatePayload: Partial<Order> = {
-      payment_method: "RoboKassa",
-      transaction_id: searchParams?.InvId,
-      set_paid: true,
-      status: "processing",
-    }
-
-    updateOrder(searchParams?.InvId, orderUpdatePayload)
-  }
-
   const parsedStrapiPage = strapiPaymentSuccessPageData.data.data.attributes.content
     .replace("[[ORDER_ID]]", searchParams?.InvId)
-    .replace("[[TOTAL_PRICE]]", formatPriceToKZT(orderData.data.total))
-    .replace("[[PRODUCT_LIST]]", productList);
+    .replace("[[ORDER_DETAILS]]", generateOrderText(orderData.data))
 
   return (
     <section className="bg-white py-8 antialiased dark:bg-gray-900 md:py-16">
@@ -90,4 +42,38 @@ export default async function PaymentSuccessPage({
       </div>
     </section>
   )
+}
+
+
+function generateOrderText(order: Order): string {
+  const { billing, shipping, line_items, total } = order;
+
+  return `
+  
+Детали оплаты:
+Имя: ${billing.first_name} ${billing.last_name}
+Электронная почта: ${billing.email}
+Телефон: ${billing.phone}
+
+Адрес для выставления счета:
+${billing.address_1}
+${billing.address_2 ? billing.address_2 + '\n' : ''}${billing.city}, ${billing.state} ${billing.postcode}
+${billing.country}
+
+Адрес доставки:
+${shipping.address_1}
+${shipping.address_2 ? shipping.address_2 + '\n' : ''}${shipping.city}, ${shipping.state} ${shipping.postcode}
+${shipping.country}
+
+Состав заказа:
+${line_items
+      .map(
+          (item) =>
+              `${item.name} - Количество: ${item.quantity} - Цена: ${formatPriceToKZT(item.price)}`
+      )
+      .join('\n')}
+
+Итого:
+${total}
+  `.trim();
 }

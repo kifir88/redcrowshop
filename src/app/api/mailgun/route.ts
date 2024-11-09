@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
     // }
 
     const mailgunMessageData: MailgunMessageData = {
-      from: "RedCrow KZ <mailgun@redcrow.kz>",
+      from: "REDCROW KZ <mailgun@redcrow.kz>",
       to: [body.to],
       subject: body.subject,
       text: body.text || "",
