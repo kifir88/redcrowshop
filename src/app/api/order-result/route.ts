@@ -25,12 +25,7 @@ export async function POST(req: NextRequest)
     const emailContent = generateOrderEmailText(order);
     console.log("email content: "+emailContent)
 
-    const productList = orderData?.data.line_items
-        .map(li => (`- ${li.name} / ${li.quantity} / ${formatPriceToKZT(li.total)}`))
-        .join(" \n");
-
-    if (orderData.data.status === "pending") {
-      const emailPayload = {
+    const emailPayload = {
         to: orderData.data.billing.email,
         subject: `RedCrow Успешная Оплата - Заказ #${invId}\n`,
         text: emailContent
@@ -72,9 +67,6 @@ export async function POST(req: NextRequest)
 
       updateOrder(invId, orderUpdatePayload)
 
-    } else {
-      console.log("Invalid result from Robokassa orderId:" + invId);
-    }
   }
 
   return NextResponse.json({ a: 'ok' });
