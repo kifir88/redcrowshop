@@ -1,7 +1,6 @@
 // @ts-ignore
 import RoboGate from "robokassa-gate";
 import {Order} from "@/types/woo-commerce/order";
-import {NextRequest, NextResponse} from "next/server";
 
 const robokassaApiInstance = new RoboGate({
   // REQUIRED OPTIONS:
@@ -39,9 +38,9 @@ export const robokassaGeneratePaymentURL = (order: Order): string => {
   })
 }
 
-export const robokassaIsValidCallbackRequest = (req: NextRequest) : boolean =>
+export const robokassaIsValidCallbackRequest = (bodyVars: Object) : boolean =>
 {
-   const { validated, details } = robokassaApiInstance.validateResult(req);
+   const { validated, details } = robokassaApiInstance.validateResult({method: "POST", body: bodyVars});
 
    console.log("validation detail: " + details);
 
