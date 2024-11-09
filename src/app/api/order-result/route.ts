@@ -21,7 +21,9 @@ export async function POST(req: NextRequest)
     const orderData = await fetchOrder(data["InvId"])
     const order = orderData.data;
 
+    console.log("trying to generate emial ontent")
     const emailContent = generateOrderEmailText(order);
+    console.log("email content: "+emailContent)
 
     const productList = orderData?.data.line_items
         .map(li => (`- ${li.name} / ${li.quantity} / ${formatPriceToKZT(li.total)}`))
@@ -103,7 +105,7 @@ ${shipping.country}
 ${line_items
       .map(
           (item) =>
-              `${item.name} - Количество: ${item.quantity} - Цена: ${formatPriceToKZT(item.price)}`
+              `${item.name} - Количество: ${item.quantity} - Цена: ${item.price}`
       )
       .join('\n')}
 
