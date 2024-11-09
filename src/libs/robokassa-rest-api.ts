@@ -42,5 +42,8 @@ export const robokassaGeneratePaymentURL = (order: Order): string => {
 export const robokassaIsValidCallbackRequest = (req: NextRequest) : boolean =>
 {
    const { validated, details } = robokassaApiInstance.validateResult(req);
+
+   console.log("validation detail: " + details);
+
    return validated === true;
 }
