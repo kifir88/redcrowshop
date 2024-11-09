@@ -74,6 +74,6 @@ ${line_items
       .join('\n')}
 
 Итого:
-${total}
+${formatPriceToKZT(total)}
   `.trim();
 }
