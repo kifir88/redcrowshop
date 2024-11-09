@@ -82,7 +82,6 @@ export default function ShippingDetailsDialog({
       set_paid: false,
       billing: address,
       shipping: address,
-      customer_note: "[ ЗАКАЗ ОПЛАЧЕН ]",
       line_items: lineItems,
       shipping_lines: [],
     }
