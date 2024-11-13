@@ -78,7 +78,8 @@ export const fetchCustomProductCategoryMaxPrice = (productCategorySlug: string) 
 // API wc/v3
 
 export const fetchProducts = (params?: any): Promise<AxiosResponse<Product[]>> => {
-  const defaultParams = { ...params, status: 'publish' };
+  const cacheBuster = { _timestamp: new Date().getTime() };
+  const defaultParams = { ...params, status: 'publish', ...cacheBuster };
   return wooCommerceApiInstance.get("products", defaultParams)
 }
 export const fetchProductCategories = (params?: any): Promise<AxiosResponse<ProductCategory[]>> => {
