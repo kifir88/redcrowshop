@@ -78,7 +78,8 @@ export const fetchCustomProductCategoryMaxPrice = (productCategorySlug: string) 
 // API wc/v3
 
 export const fetchProducts = (params?: any): Promise<AxiosResponse<Product[]>> => {
-  return wooCommerceApiInstance.get("products", params)
+  const defaultParams = { ...params, status: 'publish' };
+  return wooCommerceApiInstance.get("products", defaultParams)
 }
 export const fetchProductCategories = (params?: any): Promise<AxiosResponse<ProductCategory[]>> => {
   return wooCommerceApiInstance.get("products/categories", params)
@@ -93,6 +94,7 @@ export const fetchProductAttributeTerms = (attributeId: string, params?: any): P
   return wooCommerceApiInstance.get(`products/attributes/${attributeId}/terms`, params)
 }
 export const fetchProductVariations = (productId: number, params?: any): Promise<AxiosResponse<ProductVariation[]>> => {
+  const defaultParams = { ...params, status: 'publish' };
   return wooCommerceApiInstance.get(`products/${productId}/variations`, params)
 }
 export const fetchProductVariation = (productId: number, variationId: number, params?: any): Promise<AxiosResponse<ProductVariation>> => {

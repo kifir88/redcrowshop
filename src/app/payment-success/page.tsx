@@ -49,8 +49,8 @@ function generateOrderText(order: Order): string {
   const { billing, shipping, line_items, total } = order;
 
   return `
-<br/>
-Детали оплаты:<br/>
+\n
+Детали оплаты:\n
 Имя: ${billing.first_name} ${billing.last_name}<br/>
 Электронная почта: ${billing.email}<br/>
 Телефон: ${billing.phone}<br/>
