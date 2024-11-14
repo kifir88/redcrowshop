@@ -17,7 +17,7 @@ export const fetchNavItems = () => {
   return strapiInstance.get("/api/navbar-items?populate=deep")
 };
 export const fetchSlider = (): Promise<AxiosResponse<StrapiSliderApiResponse>> => {
-  return strapiInstance.get("/api/sliders?populate=*")
+  return strapiInstance.get("/api/sliders?populate=*&filters[publishedAt][$notNull]=true")
 };
 export const fetchSocialMedia = () => {
   return strapiInstance.get("/api/socials")
