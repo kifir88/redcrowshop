@@ -51,7 +51,7 @@ export async function generateMetadata(
     title,
     description,
     keywords: [
-      "RedCrow Казахстан",
+      "REDCROW Казахстан",
       productData?.name,
       formattedVariationsForDescription,
     ]

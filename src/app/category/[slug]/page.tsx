@@ -53,14 +53,14 @@ export async function generateMetadata(
     })
     .join(", ")
 
-  const title = `RedCrow Казахстан ${productCategory.name} - ${formattedAttributes}`;
+  const title = `REDCROW Казахстан ${productCategory.name} - ${formattedAttributes}`;
   const description = `Откройте для себя ${productCategory.name.toLowerCase()} ${formattedAttributesForDescription}. Идеальный выбор для стильного образа.`;
 
   return {
     title: title,
     description: description,
     keywords: [
-      "RedCrow Казахстан",
+      "REDCROW Казахстан",
       productCategory.name,
       productCategory.name.toLowerCase(),
       productCategory.description,

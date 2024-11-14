@@ -31,7 +31,7 @@ export const robokassaGeneratePaymentURL = (order: Order): string => {
   return robokassaApiInstance.generatePaymentURL({
     invId: order.id,
     invSumm: order.total,
-    invDescr: `Оплата Заказа на RedCrow.kz / Заказ: ${order.id}`,
+    invDescr: `Оплата Заказа на REDCROW.kz / Заказ: ${order.id}`,
     email: order.billing.email,
     items: items,
     invSummCurrency: "KZT",
