@@ -9,6 +9,7 @@ export default function HeroCarousel({strapiSlider}: {strapiSlider: StrapiSlider
   return (
     <main className="">
       <Carousel
+          slideInterval={10000} // Set the interval to 5000ms (5 seconds), adjust as needed
         leftControl={(
           <div>
             <ChevronLeft className="size-10" strokeWidth={1.2} />
