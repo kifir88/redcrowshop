@@ -113,8 +113,8 @@ export default async function ProductCategoryPage({
       page: pageParam ? Number(pageParam) : undefined,
       per_page: 12,
       search: searchParam ? searchParam : undefined,
-      max_price: maxPriceParam ? maxPriceParam : undefined,
-      min_price: minPriceParam ? minPriceParam : undefined,
+      max_price: maxPriceParam ? maxPriceParam : 10000000000,
+      min_price: minPriceParam ? minPriceParam : 0,
       ...formattedSearchParams,
     }),
     fetchProducts({

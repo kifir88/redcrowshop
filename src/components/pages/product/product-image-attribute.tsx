@@ -35,6 +35,13 @@ export default function ProductImageAttribute({
     ?.map(i => i.image)
     ?.filter(i => i !== null);
 
+  const productImages = product.images
+      ?.map(i => i)
+      ?.filter(i => i !== null);
+
+  const allProductImages = productImages.concat(productVariationImages);
+
+
   return (
     <>
       <div className="lg:col-span-5 lg:col-start-8">
@@ -49,7 +56,7 @@ export default function ProductImageAttribute({
       </div>
 
       {/* Image gallery */}
-      <ProductImagesCarousel images={productVariationImages} productImage={selectedProductVariationImage || null}/>
+      <ProductImagesCarousel images={allProductImages} productImage={selectedProductVariationImage || null}/>
 
       <div className="mt-8 lg:col-span-5">
         {/* Attribute pickers  */}
