@@ -91,9 +91,17 @@ export const fetchProductCategory = (productCategoryId: number) => {
 export const fetchProductAttributes = (params?: any): Promise<AxiosResponse<ProductAttribute[]>> => {
   return wooCommerceApiInstance.get("products/attributes", params)
 }
-export const fetchProductAttributeTerms = (attributeId: string, params?: any): Promise<AxiosResponse<ProductAttributeTerm[]>> => {
-  return wooCommerceApiInstance.get(`products/attributes/${attributeId}/terms`, params)
-}
+export const fetchProductAttributeTerms = (
+    attributeId: string,
+    params?: any
+): Promise<AxiosResponse<ProductAttributeTerm[]>> => {
+
+  return wooCommerceApiInstance.get(
+      `products/attributes/${attributeId}/terms?per_page=100`,
+      { params: params } // Pass the merged parameters
+  );
+};
+
 export const fetchProductVariations = (productId: number, params?: any): Promise<AxiosResponse<ProductVariation[]>> => {
   const defaultParams = { ...params, status: 'publish' };
   return wooCommerceApiInstance.get(`products/${productId}/variations`, params)
