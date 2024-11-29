@@ -73,7 +73,7 @@ export default function AttributeAutoComplete({
                 // Check if there are any variations with stock_quantity > 0
                 const hasStock = filteredVariations?.some(variation =>
                     variation.attributes?.some(attr => attr.option === i.name) &&
-                    variation.stock_quantity > 0
+                    (variation?.stock_quantity || 0) > 0
                 );
 
                 console.log(`${i.name} stock ${hasStock ? "available" : "not available"}`);
