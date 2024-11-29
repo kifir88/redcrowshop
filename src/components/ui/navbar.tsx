@@ -9,7 +9,7 @@ import DropdownMenu from "@/components/ui/components/dropdown-menu";
 
 const Navbar = () => {
   const {data, isLoading, isError} = useProductCategories({
-    parent: 320, // Номенклатура
+    parent: 378, // Номенклатура
   })
 
   const [openDropdownIndex, setOpenDropdownIndex] = useState<number | null>(null);

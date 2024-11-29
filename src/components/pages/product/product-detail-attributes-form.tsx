@@ -106,20 +106,23 @@ export default function ProductDetailAttributesForm({
         </p>
       )}
 
-      {product.attributes.map(a => (
-        <div key={a.id} className="mt-6">
-          <AttributeAutoComplete
-            label={a.name}
-            attribute={a}
-            value={form.values[a.id]}
-            productVariations={productVariations}
-            onChange={value => {
-              form.setFieldValue(String(a.id), value)
-            }}
-           form={form}
-          />
-        </div>
-      ))}
+      {[...product.attributes].reverse().map(a => {
+        console.log(String(a.id) + " = " + a?.name);
+        return (
+          <div key={a.id} className="mt-6">
+            <AttributeAutoComplete
+                label={a.name}
+                attribute={a}
+                value={form.values[a.id]}
+                productVariations={productVariations}
+                onChange={value => {
+                  console.log("change: " + String(a.id) + " = " + value?.name);
+                  form.setFieldValue(String(a.id), value);
+                }}
+                form={form}
+            />
+          </div>
+      )})}
 
       <Button
         type="submit"

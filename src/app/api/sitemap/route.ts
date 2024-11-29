@@ -91,7 +91,7 @@ export async function GET() {
   try {
     // Fetch the product categories
     const categoriesData = await fetchProductCategories({
-      exclude: [320],
+      exclude: [378],
     });
     const strapiFooterPagesData = await fetchFooterPages();
     // const attributesData = await fetchProductAttributes();

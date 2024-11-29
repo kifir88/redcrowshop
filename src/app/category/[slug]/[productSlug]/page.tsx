@@ -79,11 +79,11 @@ export default async function ProductPage({
       per_page: 3,
     }),
     fetchProductCategories({
-      exclude: [320],
+      exclude: [378],
     }),
     fetchProductVariations(productData.id, {
       parent: productData.id,
-      stock_status: "instock",
+      //stock_status: "instock",
       per_page: 50
     })
   ])

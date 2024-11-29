@@ -75,7 +75,7 @@ export default async function ProductCategoryPage({
   searchParams,
 }: ProductCategoryPageProps) {
   const productCategoriesData = await fetchProductCategories({
-    exclude: [320],
+    exclude: [378],
   });
   const currentProductCategory = productCategoriesData?.data.find(
     (pc: ProductCategory) => pc.slug === slug
