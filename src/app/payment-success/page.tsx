@@ -23,7 +23,14 @@ export default async function PaymentSuccessPage({
     orderData,
   ] = await Promise.all([
     //fetchPage("payment-success"),
-    fetch(`https://admin.redcrow.kz/wp-json/wp/v2/posts/${pageId}`),
+    fetch(`https://admin.redcrow.kz/wp-json/wp/v2/posts/${pageId}`,{
+      method: 'GET', // or 'POST'
+      headers: {
+        'Cache-Control': 'no-cache, no-store, must-revalidate', // Instructs the browser to not store the cache
+        'Pragma': 'no-cache', // For HTTP/1.0 compatibility
+        'Expires': '0' // Proxies and others
+      }
+    }),
     fetchOrder(searchParams?.InvId)
   ])
 

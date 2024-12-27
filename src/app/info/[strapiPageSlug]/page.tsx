@@ -23,7 +23,14 @@ export default async function InfoStrapiPage({
   ] = await Promise.all([
     fetchFooterPages(),
     //fetchPage(strapiPageSlug)
-    fetch(`https://admin.redcrow.kz/wp-json/wp/v2/posts/${pageId}`)
+    fetch(`https://admin.redcrow.kz/wp-json/wp/v2/posts/${pageId}`, {
+        method: 'GET', // or 'POST'
+        headers: {
+            'Cache-Control': 'no-cache, no-store, must-revalidate', // Instructs the browser to not store the cache
+            'Pragma': 'no-cache', // For HTTP/1.0 compatibility
+            'Expires': '0' // Proxies and others
+        }
+    })
   ])
 
    const txt = await strapiPageData.json();
@@ -49,8 +56,8 @@ export default async function InfoStrapiPage({
           </Link>
         ))}
       </div>
-      <div className="prose w-full max-w-none lg:prose-xl">
-          <div dangerouslySetInnerHTML={{ __html: txt.content.rendered.replace(
+      <div className="prose w-full lg:prose-xl">
+          <div style={{maxWidth: "900px"}} dangerouslySetInnerHTML={{ __html: txt.content.rendered.replace(
                   "(/uploads",
                   "(" + process.env.NEXT_PUBLIC_STRAPI_API_URL + "/uploads"
               ) }}>
