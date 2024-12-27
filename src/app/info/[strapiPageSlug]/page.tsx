@@ -12,7 +12,7 @@ export default async function InfoStrapiPage({
 
 
     // Check if the environment variable is loaded and has the key
-    const pageId: number = config.PAGES[strapiPageSlug]
+    const pageId = config.PAGES[strapiPageSlug]
         ? config.PAGES[strapiPageSlug]
         : 0;
 

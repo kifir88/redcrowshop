@@ -12,7 +12,7 @@ export default async function PaymentErrorPage({
 
 
   // Check if the environment variable is loaded and has the key
-  const pageId: number = config.PAGES && config.PAGES['payment_error']
+  const pageId = config.PAGES && config.PAGES['payment_error']
       ? config.PAGES['payment_error']
       : 0;
 
