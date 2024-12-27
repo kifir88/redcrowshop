@@ -13,7 +13,7 @@ export default async function PaymentSuccessPage({
 }) {
 
   // Check if the environment variable is loaded and has the key
-  const pageId: number = config.PAGES && config.PAGES['payment_success']
+  const pageId = config.PAGES && config.PAGES['payment_success']
       ? config.PAGES['payment_success']
       : 0;
 
@@ -45,8 +45,9 @@ export default async function PaymentSuccessPage({
 
           <div className="mt-10 prose w-full max-w-none lg:prose-xl">
             <div dangerouslySetInnerHTML={{
-              __html: parsedStrapiPage
-            }}>
+                __html: parsedStrapiPage
+              }}>
+            </div>
           </div>
         </div>
       </div>
