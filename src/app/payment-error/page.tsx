@@ -2,6 +2,7 @@ import {fetchPage} from "@/libs/strapi-rest-api";
 import {fetchOrder} from "@/libs/woocommerce-rest-api";
 import {formatPriceToKZT} from "@/libs/helper-functions";
 import ReactMarkdown from "react-markdown";
+import config from "@/config"
 
 export default async function PaymentErrorPage({
   searchParams
@@ -9,19 +10,29 @@ export default async function PaymentErrorPage({
   searchParams: Record<string, string>
 }) {
 
+
+  // Check if the environment variable is loaded and has the key
+  const pageId: number = config.PAGES && config.PAGES['payment_error']
+      ? config.PAGES['payment_error']
+      : 0;
+
+
   const [
     strapiPaymentSuccessPageData,
     orderData,
   ] = await Promise.all([
-    fetchPage("payment-error"),
+      //fetchPage("payment-error"),
+    fetch(`https://admin.redcrow.kz/wp-json/wp/v2/posts/${pageId}`),
     fetchOrder(searchParams?.InvId)
   ])
+
+  const txt = await strapiPaymentSuccessPageData.json();
 
   const productList = orderData?.data.line_items
     .map(li => (`- ${li.name} / ${li.quantity} / ${formatPriceToKZT(li.total)}`))
     .join();
 
-  const parsedStrapiPage = strapiPaymentSuccessPageData.data.data.attributes.content
+  const parsedStrapiPage = txt.content.rendered
     .replace("[[ORDER_ID]]", searchParams?.InvId)
     .replace("[[TOTAL_PRICE]]", formatPriceToKZT(orderData.data.total))
     .replace("[[PRODUCT_LIST]]", productList);
@@ -37,9 +48,10 @@ export default async function PaymentErrorPage({
           </div>
 
           <div className="mt-10 prose w-full max-w-none lg:prose-xl">
-            <ReactMarkdown>
-              {parsedStrapiPage}
-            </ReactMarkdown>
+            <div dangerouslySetInnerHTML={{
+              __html: parsedStrapiPage
+            }}>
+            </div>
           </div>
         </div>
       </div>

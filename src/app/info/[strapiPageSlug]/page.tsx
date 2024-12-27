@@ -1,7 +1,8 @@
-import {fetchFooterPages, fetchPage} from "@/libs/strapi-rest-api";
+import {fetchFooterPages, fetchPage, fetchWpPostPage} from "@/libs/strapi-rest-api";
 import ReactMarkdown from "react-markdown";
 import Link from "next/link";
 import {cn} from "@/libs/utils";
+import config from "@/config"
 
 export default async function InfoStrapiPage({
   params: { strapiPageSlug },
@@ -9,13 +10,24 @@ export default async function InfoStrapiPage({
   params: { strapiPageSlug: string },
 }) {
 
+
+    // Check if the environment variable is loaded and has the key
+    const pageId: number = config.PAGES[strapiPageSlug]
+        ? config.PAGES[strapiPageSlug]
+        : 0;
+
+
   const [
     strapiFooterPages,
     strapiPageData,
   ] = await Promise.all([
     fetchFooterPages(),
-    fetchPage(strapiPageSlug)
+    //fetchPage(strapiPageSlug)
+    fetch(`https://admin.redcrow.kz/wp-json/wp/v2/posts/${pageId}`)
   ])
+
+   const txt = await strapiPageData.json();
+
 
   const footerPages = strapiFooterPages.data.data
     .filter(i => !['payment-error', 'payment-success'].includes(i.attributes.slug))
@@ -38,12 +50,11 @@ export default async function InfoStrapiPage({
         ))}
       </div>
       <div className="prose w-full max-w-none lg:prose-xl">
-        <ReactMarkdown>
-          {strapiPageData.data.data.attributes.content.replace(
-            "(/uploads",
-            "(" + process.env.NEXT_PUBLIC_STRAPI_API_URL + "/uploads"
-          )}
-        </ReactMarkdown>
+          <div dangerouslySetInnerHTML={{ __html: txt.content.rendered.replace(
+                  "(/uploads",
+                  "(" + process.env.NEXT_PUBLIC_STRAPI_API_URL + "/uploads"
+              ) }}>
+        </div>
       </div>
     </div>
 )

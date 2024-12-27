@@ -4,6 +4,7 @@ import {formatPriceToKZT} from "@/libs/helper-functions";
 import ReactMarkdown from "react-markdown";
 import {Order} from "@/types/woo-commerce/order";
 import axios from "axios";
+import config from "@/config"
 
 export default async function PaymentSuccessPage({
   searchParams
@@ -11,15 +12,24 @@ export default async function PaymentSuccessPage({
   searchParams: Record<string, string>
 }) {
 
+  // Check if the environment variable is loaded and has the key
+  const pageId: number = config.PAGES && config.PAGES['payment_success']
+      ? config.PAGES['payment_success']
+      : 0;
+
+
   const [
     strapiPaymentSuccessPageData,
     orderData,
   ] = await Promise.all([
-    fetchPage("payment-success"),
+    //fetchPage("payment-success"),
+    fetch(`https://admin.redcrow.kz/wp-json/wp/v2/posts/${pageId}`),
     fetchOrder(searchParams?.InvId)
   ])
 
-  const parsedStrapiPage = strapiPaymentSuccessPageData.data.data.attributes.content
+  const txt = await strapiPaymentSuccessPageData.json();
+
+  const parsedStrapiPage = txt.content.rendered
     .replace("[[ORDER_ID]]", searchParams?.InvId)
     .replace("[[ORDER_DETAILS]]", generateOrderText(orderData.data))
 
@@ -34,9 +44,9 @@ export default async function PaymentSuccessPage({
           </div>
 
           <div className="mt-10 prose w-full max-w-none lg:prose-xl">
-            <ReactMarkdown>
-              {parsedStrapiPage}
-            </ReactMarkdown>
+            <div dangerouslySetInnerHTML={{
+              __html: parsedStrapiPage
+            }}>
           </div>
         </div>
       </div>

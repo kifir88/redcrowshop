@@ -28,6 +28,11 @@ export const fetchFooterPages = (): Promise<AxiosResponse<StrapiFooterPagesApiRe
 export const fetchDynamicPaths = () => {
   return strapiInstance.get("/api/pages?populate=*");
 }
+
+export const fetchWpPostPage = () => {
+  return strapiInstance.get("/api/pages?populate=*");
+}
+
 export const fetchPage = (slug: string): Promise<AxiosResponse<StrapiPageApiResponse>> => {
   return strapiInstance.get(`/api/pages/${slug}?populate=*`);
 }
