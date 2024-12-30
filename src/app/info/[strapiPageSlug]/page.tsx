@@ -23,7 +23,7 @@ export default async function InfoStrapiPage({
   ] = await Promise.all([
     fetchFooterPages(),
     //fetchPage(strapiPageSlug)
-    fetch(`https://admin.redcrow.kz/wp-json/wp/v2/posts/${pageId}`, {
+    fetch(`https://admin.redcrow.kz/wp-json/wp/v2/posts/${pageId}?v=${new Date().getTime()}`, {
         method: 'GET', // or 'POST'
         headers: {
             'Cache-Control': 'no-cache, no-store, must-revalidate', // Instructs the browser to not store the cache
