@@ -67,25 +67,17 @@ export default function AttributeAutoComplete({
       });
 
       setItems(
-          data?.data
-              ?.filter(i => availableOptions.has(i.name)) // Ensure valid access to data.data
-              .map(i => {
-                // Check if there are any variations with stock_quantity > 0
-                const hasStock = filteredVariations?.some(variation =>
-                    variation.attributes?.some(attr => attr.option === i.name) &&
-                    (variation?.stock_quantity || 0) > 0
-                );
-
-                console.log(`${i.name} stock ${hasStock ? "available" : "not available"}`);
-
-                return {
-                  label: i.name,
-                  value: i,
-                  disabled:
-                      !availableOptions.has(i.name) ||
-                      !hasStock, // Disable if no stock is available for any variation
-                };
-              }) || [] // Return an empty array if data.data is empty
+          Array.from(new Map(data?.data
+              ?.filter(i => availableOptions.has(i.name))
+              .map(i => [i.name, {
+                label: i.name,
+                value: i,
+                disabled: !availableOptions.has(i.name) ||
+                    !filteredVariations.some(variation =>
+                        variation.attributes?.some(attr => attr.option === i.name) &&
+                        (variation?.stock_quantity || 0) > 0
+                    ),
+              }])).values()) // Ensures only unique names are kept
       );
     }
   }, [isSuccess, data?.data, productVariations, form.values, attribute.id, value]); // Добавляем зависимость от value
