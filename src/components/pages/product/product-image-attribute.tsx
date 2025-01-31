@@ -59,7 +59,7 @@ export default function ProductImageAttribute({
       ?.filter(i => i !== null);
 
 
-  const allProductImages = (productImages?.concat(productVariationImages) || []);
+  const allProductImages = [...(productImages ?? []), ...(productVariationImages ?? [])].filter((img): img is Image => img !== null);
 
 
   return (
