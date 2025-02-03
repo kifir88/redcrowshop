@@ -156,7 +156,7 @@ export default function ShippingDetailsDialog({
                       />
                     </label>
                     <label className="col-span-2 block">
-                      Адрес 1
+                      Улица
                       <input
                         type="text"
                         required
@@ -165,7 +165,7 @@ export default function ShippingDetailsDialog({
                       />
                     </label>
                     <label className="col-span-2 block">
-                      Адрес 2
+                      Дом/Квартира
                       <input
                         type="text"
                         className="w-full rounded-md border px-2 py-1 focus:border-black focus:outline-none"
