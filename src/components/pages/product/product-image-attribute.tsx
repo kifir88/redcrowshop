@@ -36,9 +36,10 @@ export default function ProductImageAttribute({
     equalBaseImage = product.images.find((gg) => selectedProductVariation?.image?.src == gg.src) != null;
   }
 
+  var variationProductWithImage = null;
     // Если точного совпадения нет, ищем вариацию с изображением, игнорируя "Размер", но проверяя остальные атрибуты
     if (selectedProductVariation?.image == null || equalBaseImage) {
-      selectedProductVariation = productVariations.find(pv =>
+      variationProductWithImage = productVariations.find(pv =>
           pv.image != null && product.images.find((gg) => pv?.image?.src == gg.src) == null &&
           pv.attributes
               .every(attribute => attribute.name.toLowerCase() == "размер" || (
@@ -48,7 +49,8 @@ export default function ProductImageAttribute({
     }
 
 
-  const selectedProductVariationImage: Image | null = selectedProductVariation?.image || null;
+  const selectedProductVariationImage: Image | null = variationProductWithImage != null ? variationProductWithImage.image
+                                                          : (selectedProductVariation?.image || null);
 
   const productVariationImages = productVariations
     ?.map(i => i.image)
