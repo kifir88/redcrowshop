@@ -12,7 +12,7 @@ const mailgunClient = mailgun.client({
 
 // In-memory cache to store the last sent timestamp per email
 const emailCache = new Map<string, number>();
-const EMAIL_COOLDOWN_MS = 3 * 60 * 1000; // 3 minutes
+const EMAIL_COOLDOWN_MS = 5 * 60 * 1000; // 5 minutes
 
 export async function POST(req: NextRequest) {
   try {
@@ -37,6 +37,7 @@ export async function POST(req: NextRequest) {
       to: [body.to],
       subject: body.subject,
       text: body.text || "",
+      "o:time-to-live": "2m",
     };
 
     if (body?.html) {
