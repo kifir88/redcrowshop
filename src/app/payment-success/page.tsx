@@ -67,31 +67,32 @@ function generateOrderText(order: Order): string {
   const { billing, shipping, line_items, total } = order;
 
   return `
-\n
-Детали оплаты:\n
-Имя: ${billing.first_name} ${billing.last_name}\n
-Электронная почта: ${billing.email}\n
-Телефон: ${billing.phone}\n
-\n
-Адрес для выставления счета:\n
-${billing.address_1}\n
-${billing.address_2 ? billing.address_2 + '\n' : ''}${billing.city}, ${billing.state} ${billing.postcode}\n
-${billing.country}\n
-\n
-Адрес доставки:\n
-${shipping.address_1}\n
-${shipping.address_2 ? shipping.address_2 + '\n' : ''}${shipping.city}, ${shipping.state} ${shipping.postcode}\n
-${shipping.country}\n
-\n
-Состав заказа:\n
+<br\>
+Детали оплаты:<br\>
+Имя: ${billing.first_name} ${billing.last_name}<br\>
+Электронная почта: ${billing.email}<br\>
+Телефон: ${billing.phone}<br\>
+<br\>
+Адрес для выставления счета:<br\>
+${billing.address_1}<br\>
+${billing.address_2 ? billing.address_2 + '<br\>' : ''}${billing.city}, ${billing.state} ${billing.postcode}<br\>
+${billing.country}<br\>
+<br\>
+Адрес доставки:<br\>
+${shipping.address_1}<br\>
+${shipping.address_2 ? shipping.address_2 + '\n' : ''}${shipping.city}, ${shipping.state} ${shipping.postcode}<br\>
+${shipping.country}<br\>
+<br\>
+Состав заказа:<br\>
 ${line_items
       .map(
           (item) =>
               `${item.name} - Количество: ${item.quantity} - Цена: ${formatPriceToKZT(item.price)}`
       )
-      .join('\n')}
-\n
-Итого:\n
+      .join('<br\>')}
+<br\>
+<br\>
+Итого:<br\>
 ${formatPriceToKZT(total)}
   `.trim();
 }
