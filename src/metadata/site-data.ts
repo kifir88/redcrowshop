@@ -1,7 +1,7 @@
 export const SITE_DATA = {
   // Head Tags
   head_title_home:
-    "REDCROW Казахстан - Пошив на заказ женской моды и аксессуаров",
+    "be the REDCROW - буть той самой.",
   head_title_cart: "Ваша корзина в REDCROW – Оформление заказа с элегантностью",
   head_title_shop: "Исследуйте бутик REDCROW – Поиск индивидуальной моды",
 

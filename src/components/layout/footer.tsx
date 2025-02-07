@@ -30,8 +30,8 @@ export default async function Footer() {
               </FooterLinkGroup>
             </div>
           </div>
-          <div className="w-full px-4 py-6 sm:flex sm:items-center sm:justify-between">
-            <FooterCopyright by="RedCrow™" year={new Date().getFullYear()} />
+          <div className="w-full px-4 py-6 sm:flex sm:items-center sm:justify-between text-sm text-gray-500 dark:text-gray-400 sm:text-center">
+            since 2014 REDCROW
           </div>
         </div>
       </FBFooter>

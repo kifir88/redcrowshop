@@ -7,6 +7,7 @@ import {ThemeModeScript} from "flowbite-react";
 import {SITE_DATA} from "@/metadata/site-data";
 
 import "./globals.css";
+import FullscreenModal from "@/components/fullscreen_modal";
 
 const roboto = Roboto({
   subsets: ["latin", "cyrillic", "cyrillic-ext"],
@@ -34,6 +35,7 @@ export default function RootLayout({
             <Navbar />
             {children}
             <Footer />
+            <FullscreenModal />
           </main>
         </Providers>
       </body>

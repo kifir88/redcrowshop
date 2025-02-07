@@ -10,7 +10,7 @@ const mailgunClient = mailgun.client({
   key: process.env.MAILGUN_API_KEY || "9085566ba3ba48dbf8024860b652aba3-d010bdaf-9b12ac21",
 });
 
-// In-memory cache to store the last sent timestamp per email
+// In-memory cache to store the last sent timestamp per emailw
 const emailCache = new Map<string, number>();
 const EMAIL_COOLDOWN_MS = 5 * 60 * 1000; // 5 minutes
 
