@@ -10,31 +10,17 @@ export default function FullscreenModal() {
         const timer = setTimeout(() => {
             setIsVisible(true);
             fetchPopupContent();
-        }, 10 * 1000); // 20 minutes
+        }, 30 * 1000); // 20 minutes
 
         return () => clearTimeout(timer);
     }, []);
 
     async function fetchPopupContent() {
         try {
-            const response = await fetch(
-                `https://admin.redcrow.kz/wp-json/wp/v2/posts/popup-ad-1?v=${new Date().getTime()}`,
-                {
-                    method: "GET",
-                    headers: {
-                        "Cache-Control": "no-cache, no-store, must-revalidate",
-                        "Pragma": "no-cache",
-                        "Expires": "0",
-                    },
-                }
-            );
-
+            const response = await fetch("/api/popup");
             if (!response.ok) throw new Error("Failed to fetch popup content");
 
             const data = await response.json();
-
-            console.log(data);
-
             setContent(data.content.rendered);
         } catch (error) {
             console.error("Error fetching popup content:", error);

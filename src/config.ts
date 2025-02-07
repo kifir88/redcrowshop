@@ -17,7 +17,8 @@ const config: Config = {
     oferta: "16492",
     confidential: "16499",
     payment_error: "16506",
-    payment_success: "16508"
+    payment_success: "16508",
+    popup_ad_1: "17248",
   }
 };
 
