@@ -10,7 +10,7 @@ export default function FullscreenModal() {
         const timer = setTimeout(() => {
             setIsVisible(true);
             fetchPopupContent();
-        }, 30 * 1000); // 20 minutes
+        }, 10 * 1000); // 20 minutes
 
         return () => clearTimeout(timer);
     }, []);

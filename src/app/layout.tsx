@@ -35,7 +35,7 @@ export default function RootLayout({
             <Navbar />
             {children}
             <Footer />
-            <FullscreenModal />
+            {/*<FullscreenModal />*/}
           </main>
         </Providers>
       </body>
