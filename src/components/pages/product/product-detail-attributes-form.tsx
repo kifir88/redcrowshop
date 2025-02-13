@@ -41,41 +41,52 @@ export default function ProductDetailAttributesForm({
                 Перейти
               </Button>
             </div>
-            <Toast.Toggle onClick={() => toast.dismiss(t.id)} />
+            <Toast.Toggle onClick={() => toast.dismiss(t.id)}/>
           </div>
         </Toast>
     ));
   };
 
   const handleSubmit = (formValues: FormValues) => {
+
     if (!selectedProductVariation) {
       if (product.type === "simple") {
-        // Handle adding a simple product to the cart
         const simpleProductFromCart = cartValues.find((cv) => cv.productId === product.id);
+        const stockQuantity = product.stock_quantity || 0;
 
         if (simpleProductFromCart) {
-          // Update quantity if the product is already in the cart
-          setCartValues((prevValue) =>
-              prevValue.map((item) =>
-                  item.productId === product.id ? { ...item, quantity: item.quantity + 1 } : item
-              )
-          );
-        } else {
-          // Add new simple product to the cart
-          const newCartItem: CartItem = {
-            productId: product.id,
-            productVariationId: -1,
-            name: product.name,
-            quantity: 1,
-            price: Number(product.price), // Use the product's main price
-            imageSrc: product.images?.[0]?.src || null,
-            imageAlt: product.images?.[0]?.alt || null,
-            attributes: [],
-          };
-          setCartValues((prevValue) => [...prevValue, newCartItem]);
-        }
+          const newQuantity = simpleProductFromCart.quantity + 1;
 
-        showSuccessCartToast();
+          if (newQuantity <= stockQuantity) {
+            setCartValues((prevValue) =>
+                prevValue.map((item) =>
+                    item.productId === product.id ? {...item, quantity: newQuantity} : item
+                )
+            );
+            showSuccessCartToast();
+          } else {
+            toast.error(
+                `Товара с названием ${product.name} в наличии только ${stockQuantity}`
+            );
+          }
+        } else {
+          if (stockQuantity > 0) {
+            const newCartItem = {
+              productId: product.id,
+              productVariationId: -1,
+              name: product.name,
+              quantity: 1,
+              price: Number(product.price),
+              imageSrc: product.images?.[0]?.src || null,
+              imageAlt: product.images?.[0]?.alt || null,
+              attributes: [],
+            };
+            setCartValues((prevValue) => [...prevValue, newCartItem]);
+            showSuccessCartToast();
+          } else {
+            toast.error(`Товара с названием ${product.name} нет в наличии`);
+          }
+        }
         return;
       } else {
         toast.error("Такая вариация не доступна");
@@ -87,62 +98,79 @@ export default function ProductDetailAttributesForm({
     const productVariationFromCart = cartValues.find(
         (cv) => cv.productVariationId === selectedProductVariation.id
     );
+    const stockQuantity = selectedProductVariation.stock_quantity || 0;
 
-    if (productVariationFromCart) {
-      // Update quantity of existing item
-      setCartValues((prevValue) =>
-          prevValue.map((item) =>
-              item.productVariationId === selectedProductVariation.id
-                  ? { ...item, quantity: item.quantity + 1 }
-                  : item
-          )
-      );
+    if (productVariationFromCart)
+    {
+      const newQuantity = productVariationFromCart.quantity + 1;
+
+      if (newQuantity <= stockQuantity) {
+        setCartValues((prevValue) =>
+            prevValue.map((item) =>
+                item.productVariationId === selectedProductVariation.id
+                    ? {...item, quantity: newQuantity}
+                    : item
+            )
+        );
+        showSuccessCartToast();
+      } else {
+        toast.error(
+            `Товара с названием ${product.name} и аттрибутами ${productVariationFromCart.attributes.join(", ")} в наличии только ${
+                selectedProductVariation.stock_quantity || 0
+            }`
+        );
+      }
     } else {
-      // Add new variation product to the cart
-      const newCartItem: CartItem = {
-        productId: product.id,
-        productVariationId: selectedProductVariation.id,
-        name: product.name,
-        quantity: 1,
-        price: Number(selectedProductVariation.price),
-        imageSrc: selectedProductVariation.image?.src || null,
-        imageAlt: selectedProductVariation.image?.alt || null,
-        attributes: Object.keys(formValues).map((attributeId) => {
-          const attributeName = product.attributes.find((a) => a.id === Number(attributeId))?.name;
-          const attributeVariation = formValues[attributeId]?.name;
-          return `${attributeName} ${attributeVariation}`;
-        }),
-      };
-      setCartValues((prevValue) => [...prevValue, newCartItem]);
+      if (stockQuantity > 0) {
+        const newCartItem = {
+          productId: product.id,
+          productVariationId: selectedProductVariation.id,
+          name: product.name,
+          quantity: 1,
+          price: Number(selectedProductVariation.price),
+          imageSrc: selectedProductVariation.image?.src || null,
+          imageAlt: selectedProductVariation.image?.alt || null,
+          attributes: Object.keys(formValues).map((attributeId) => {
+            const attributeName = product.attributes.find((a) => a.id === Number(attributeId))?.name;
+            const attributeVariation = formValues[attributeId]?.name;
+            return `${attributeName} ${attributeVariation}`;
+          }),
+        };
+        setCartValues((prevValue) => [...prevValue, newCartItem]);
+        showSuccessCartToast();
+      }
+      else {
+        toast.error(
+            `Товара с названием ${product.name} нет в наличии`
+        );
+      }
     }
+  }
 
-    showSuccessCartToast();
-  };
+    return (
+        <form onSubmit={form.onSubmit(handleSubmit)}>
+          {isOutOfStock && <p className="text-xl text-gray-900">Товара нет в наличии</p>}
 
-  return (
-      <form onSubmit={form.onSubmit(handleSubmit)}>
-        {isOutOfStock && <p className="text-xl text-gray-900">Товара нет в наличии</p>}
+          {[...product.attributes].reverse().map((a) => {
+            return (
+                <div key={a.id} className="mt-6">
+                  <AttributeAutoComplete
+                      label={a.name}
+                      attribute={a}
+                      value={form.values[a.id]}
+                      productVariations={productVariations}
+                      onChange={(value) => {
+                        form.setFieldValue(String(a.id), value);
+                      }}
+                      form={form}
+                  />
+                </div>
+            );
+          })}
 
-        {[...product.attributes].reverse().map((a) => {
-          return (
-              <div key={a.id} className="mt-6">
-                <AttributeAutoComplete
-                    label={a.name}
-                    attribute={a}
-                    value={form.values[a.id]}
-                    productVariations={productVariations}
-                    onChange={(value) => {
-                      form.setFieldValue(String(a.id), value);
-                    }}
-                    form={form}
-                />
-              </div>
-          );
-        })}
-
-        <Button type="submit" className="mt-8" color="dark" disabled={isAddToCartButtonDisabled} fullSized>
-          Добавить в корзину
-        </Button>
-      </form>
-  );
-}
+          <Button type="submit" className="mt-8" color="dark" disabled={isAddToCartButtonDisabled} fullSized>
+            Добавить в корзину
+          </Button>
+        </form>
+    );
+  }
