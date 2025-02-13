@@ -9,6 +9,8 @@ import {Button} from "flowbite-react";
 import {CustomCurrencyRates} from "@/types/woo-commerce/custom-currency-rates";
 import {CurrencyType, formatCurrency} from "@/libs/currency-helper";
 import Link from "next/link";
+import ClientOnly from "@/components/client_only";
+import CartListItemSimple from "@/components/pages/cart/cart-list-item-simple";
 
 export default function CartContent({currencyRates}: {currencyRates: CustomCurrencyRates}) {
   const [selectedCurrency] = useLocalStorage<CurrencyType>("currency", "KZT")
@@ -18,6 +20,8 @@ export default function CartContent({currencyRates}: {currencyRates: CustomCurre
 
   const totalOriginalPrice = cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
 
+  console.log(cartItems.length);
+
   const handleOpenShippingDialog = () => {
     setShippingDialogOpened(true)
   }
@@ -26,6 +30,7 @@ export default function CartContent({currencyRates}: {currencyRates: CustomCurre
   }
 
   return (
+      <ClientOnly>
     <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 md:py-16">
       <div className="mx-auto max-w-screen-xl px-4 2xl:px-0">
         <h2 className="text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl">
@@ -45,13 +50,21 @@ export default function CartContent({currencyRates}: {currencyRates: CustomCurre
                   </Button>
                 </div>
               )}
-              {cartItems.map(ct => (
-                <CartListItem
-                  key={ct.productVariationId}
-                  cartItem={ct}
-                  currencyRates={currencyRates}
-                />
-              ))}
+              {cartItems.map((ct) =>
+                  ct.productVariationId === -1 ? (
+                      <CartListItemSimple
+                          key={ct.productId}
+                          cartItem={ct}
+                          currencyRates={currencyRates}
+                      />
+                  ) : (
+                      <CartListItem
+                          key={ct.productVariationId}
+                          cartItem={ct}
+                          currencyRates={currencyRates}
+                      />
+                  )
+              )}
             </div>
           </div>
 
@@ -110,5 +123,6 @@ export default function CartContent({currencyRates}: {currencyRates: CustomCurre
 
       <ShippingDetailsDialog isOpen={isShippingDialogOpened} closeModal={handleCloseShippingDialog} />
     </section>
+      </ClientOnly>
   )
 }

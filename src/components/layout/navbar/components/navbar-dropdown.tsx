@@ -9,6 +9,7 @@ import {ProductCategory} from "@/types/woo-commerce/product-category";
 import Image from "next/image";
 import {cn} from "@/libs/utils";
 import {CustomCurrencyRates} from "@/types/woo-commerce/custom-currency-rates";
+import ClientOnly from "@/components/client_only";
 
 export default function NavbarDropdown({
   productCategories,
@@ -66,7 +67,9 @@ export default function NavbarDropdown({
         </div>
 
         <div className="order-2 hidden items-center md:flex">
-          <ShoppingCartButton currencyRates={currencyRates} />
+          <ClientOnly>
+            <ShoppingCartButton currencyRates={currencyRates} />
+          </ClientOnly>
         </div>
       </Navbar.Collapse>
       <MegaMenu.Dropdown

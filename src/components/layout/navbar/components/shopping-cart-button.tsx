@@ -55,7 +55,7 @@ export default function ShoppingCartButton({currencyRates}: {currencyRates: Cust
         <form className="mx-auto max-w-2xl px-4">
           <ul role="list" className="divide-y divide-gray-200">
             {cartItems.map((product) => (
-              <li key={product.productVariationId} className="flex items-center py-6">
+              <li key={product.productVariationId === -1 ? product.productId : product.productVariationId} className="flex items-center py-6">
                 <Image
                   src={product?.imageSrc || "/category/product-image-placeholder.png"}
                   alt={product?.name || "image-placeholder"}

@@ -1,7 +1,8 @@
 import type {AxiosResponse} from "axios";
 import {useQuery} from "@tanstack/react-query";
 import {ProductVariation} from "@/types/woo-commerce/product-variation";
-import {fetchProductVariation} from "@/libs/woocommerce-rest-api";
+import {fetchProduct, fetchProductVariation} from "@/libs/woocommerce-rest-api";
+import {Product} from "@/types/woo-commerce/product";
 
 export default function useProductVariation({
   productId,
@@ -21,3 +22,4 @@ export default function useProductVariation({
     refetchOnWindowFocus: false,
   })
 }
+

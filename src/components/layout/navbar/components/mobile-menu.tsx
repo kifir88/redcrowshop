@@ -9,6 +9,7 @@ import ShoppingCartButton from "@/components/layout/navbar/components/shopping-c
 import Subcategory from "@/components/layout/navbar/components/subcategory";
 import Link from "next/link";
 import {CustomCurrencyRates} from "@/types/woo-commerce/custom-currency-rates";
+import ClientOnly from "@/components/client_only";
 
 export default function MobileMenu({
   productCategories,
@@ -48,7 +49,9 @@ export default function MobileMenu({
           />
         </Link>
 
-        <ShoppingCartButton currencyRates={currencyRates} />
+        <ClientOnly>
+          <ShoppingCartButton currencyRates={currencyRates} />
+        </ClientOnly>
       </div>
 
       <Drawer open={isOpen} onClose={handleClose}>

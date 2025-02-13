@@ -70,9 +70,12 @@ export default function ShippingDetailsDialog({
       phone: formatPhoneNumberIntl(formValues.phone as string)
     }
 
-    const lineItems = cartItems.map(ci => ({
+    const lineItems = cartItems.map(ci => (ci.productVariationId !== -1 ? {
       product_id: ci.productId,
       variation_id: ci.productVariationId,
+      quantity: ci.quantity,
+    } : {
+      product_id: ci.productId,
       quantity: ci.quantity,
     }))
 
