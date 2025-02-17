@@ -66,7 +66,8 @@ export default function AttributeAutoComplete({
         });
       });
 
-      setItems(
+      // Previous solution with disabled options which are out of stock
+      /*setItems(
           Array.from(new Map(data?.data
               ?.filter(i => availableOptions.has(i.name))
               .map(i => [i.name, {
@@ -78,7 +79,28 @@ export default function AttributeAutoComplete({
                         (variation?.stock_quantity || 0) > 0
                     ),
               }])).values()) // Ensures only unique names are kept
+      );*/
+
+      // new solution with hidden options which are out of stock
+      setItems(
+          Array.from(
+              new Map<string, ItemAutoComplete>(
+                  data?.data
+                      ?.filter(i => availableOptions.has(i.name))
+                      .map(i => {
+                        const isAvailable = filteredVariations.some(variation =>
+                            variation.attributes?.some(attr => attr.option === i.name) &&
+                            (variation?.stock_quantity || 0) > 0 && variation?.stock_status == "instock"
+                        );
+
+                        return isAvailable ? [i.name, { label: i.name, value: i }] : null;
+                      })
+                      .filter((item): item is [string, ItemAutoComplete] => Boolean(item)) // Type guard to remove null values
+              ).values()
+          ) as ItemAutoComplete[]
       );
+
+
     }
   }, [isSuccess, data?.data, productVariations, form.values, attribute.id, value]); // Добавляем зависимость от value
 
