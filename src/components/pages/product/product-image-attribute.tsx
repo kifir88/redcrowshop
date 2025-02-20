@@ -63,6 +63,12 @@ export default function ProductImageAttribute({
 
   const allProductImages = [...(productImages ?? []), ...(productVariationImages ?? [])].filter((img): img is Image => img !== null);
 
+  var idx = null;
+  if (selectedProductVariationImage!=null)
+  {
+    idx = allProductImages.indexOf(selectedProductVariationImage);
+    console.log(idx);
+  }
 
   return (
     <>
@@ -78,7 +84,7 @@ export default function ProductImageAttribute({
       </div>
 
       {/* Image gallery */}
-      <ProductImagesCarousel images={allProductImages} productImage={selectedProductVariationImage || null}/>
+      <ProductImagesCarousel images={allProductImages} productImageIndex={idx}/>
 
       <div className="mt-8 lg:col-span-5">
         {/* Attribute pickers  */}

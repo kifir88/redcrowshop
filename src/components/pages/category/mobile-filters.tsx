@@ -45,6 +45,7 @@ export default function MobileFilters({
             productMaxPrice={productMaxPrice}
             currencyRates={currencyRates}
           />
+            <div style={{minHeight: "100px"}}/>
         </Drawer.Items>
       </Drawer>
     </>
