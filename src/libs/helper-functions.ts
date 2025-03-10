@@ -65,11 +65,28 @@ export const formatPriceToKZT = (amount: number | String): string => {
   }) + ' ₸';
 };
 
-export const formatPriceToLocale = (amount: number | String): string => {
+export const formatPriceToLocale = (amount: number | String, currency: string): string => {
+
+  var strV = ' ₸';
+  if(currency=='USD')
+  {
+    strV = ' $'
+  }
+
+  if(currency=='EUR')
+  {
+    strV = ' €'
+  }
+  if(currency=='RUB')
+  {
+    strV = ' ₽'
+  }
+
+
   return amount.toLocaleString('kk-KZ', {
     style: 'decimal',
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
-  }) + ' ₸';
+  }) + strV;
 };
 

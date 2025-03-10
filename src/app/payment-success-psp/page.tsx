@@ -1,6 +1,6 @@
 import {fetchPage} from "@/libs/strapi-rest-api";
 import {fetchOrder, updateOrder} from "@/libs/woocommerce-rest-api";
-import {formatPriceToKZT} from "@/libs/helper-functions";
+import {formatPriceToKZT, formatPriceToLocale} from "@/libs/helper-functions";
 import ReactMarkdown from "react-markdown";
 import {Order} from "@/types/woo-commerce/order";
 import axios from "axios";
@@ -89,12 +89,12 @@ ${shipping.country}<br\>
 ${line_items
       .map(
           (item) =>
-              `${item.name} - Количество: ${item.quantity} - Цена: ${formatPriceToKZT(item.price)}`
+              `${item.name} - Количество: ${item.quantity} - Цена: ${formatPriceToLocale(item.price, order.currency)}`
       )
       .join('<br\>')}
 <br\>
 <br\>
 Итого:<br\>
-${formatPriceToKZT(total)}
+${formatPriceToLocale(total, order.currency)}
   `.trim();
 }

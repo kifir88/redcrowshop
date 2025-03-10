@@ -1,7 +1,7 @@
 import {NextRequest, NextResponse} from "next/server";
 import {robokassaIsValidCallbackRequest} from "@/libs/robokassa-rest-api";
 import {fetchOrder, updateOrder} from "@/libs/woocommerce-rest-api";
-import {formatPriceToKZT} from "@/libs/helper-functions";
+import {formatPriceToKZT, formatPriceToLocale} from "@/libs/helper-functions";
 import axios from "axios";
 import {Order} from "@/types/woo-commerce/order";
 import {Callback} from "@/libs/gate";
@@ -107,11 +107,11 @@ ${shipping.country}
 ${line_items
       .map(
           (item) =>
-              `${item.name} - Количество: ${item.quantity} - Цена: ${formatPriceToKZT(item.price)}`
+              `${item.name} - Количество: ${item.quantity} - Цена: ${formatPriceToLocale(item.price, order.currency)}`
       )
       .join('\n')}
 
 Итого:
-${formatPriceToKZT(total)}
+${formatPriceToLocale(total, order.currency)}
   `.trim();
 }
