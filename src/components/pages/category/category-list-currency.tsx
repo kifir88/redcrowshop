@@ -3,10 +3,18 @@
 import {Select} from "flowbite-react";
 import {useLocalStorage} from "usehooks-ts";
 import {CURRENCIES, CurrencyType} from "@/libs/currency-helper";
+import {useEffect, useState} from "react";
 
 const CurrencySelect = () => {
-  const [selectedCurrency, setSelectedCurrency] = useLocalStorage<CurrencyType>("currency", "KZT")
 
+    const [selectedCurrency, setSelectedCurrency] = useState<CurrencyType>("KZT");
+    const [storedCurrency] = useLocalStorage<CurrencyType>("currency", "KZT");
+
+    useEffect(() => {
+        if (storedCurrency) {
+            setSelectedCurrency(storedCurrency);
+        }
+    }, [storedCurrency]);
   return (
     <div className="max-w-md">
       <Select
