@@ -8,7 +8,7 @@ import { Badge } from "flowbite-react";
 import Image from "next/image";
 import { Order } from "@/types/woo-commerce/order"; // Импортируем тип
 import {CustomCurrencyRates} from "@/types/woo-commerce/custom-currency-rates";
-import {formatPriceToKZT} from "@/libs/helper-functions";
+import {formatPriceToKZT, formatPriceToLocale} from "@/libs/helper-functions";
 
 interface OrderDetailClientProps {
     orderData: Order;
@@ -85,7 +85,7 @@ export default function OrderDetailClient({ orderData, currencyRates }: OrderDet
                                         </td>
 
                                         <td className="p-4 text-right text-base font-bold text-gray-900 dark:text-white">
-                                            {formatPriceToKZT(Number(li.total))}
+                                            {formatPriceToLocale(Number(li.total), selectedCurrency)}
                                         </td>
                                     </tr>
                                 ))}
@@ -101,28 +101,28 @@ export default function OrderDetailClient({ orderData, currencyRates }: OrderDet
                                     <dl className="flex items-center justify-between gap-4">
                                         <dt className="text-gray-500 dark:text-gray-400">Стоимость товаров</dt>
                                         <dd className="text-base font-medium text-gray-900 dark:text-white">
-                                            {formatPriceToKZT(Number(orderData?.total))}
+                                            {formatPriceToLocale(Number(orderData?.total), selectedCurrency)}
                                         </dd>
                                     </dl>
 
                                     <dl className="flex items-center justify-between gap-4">
                                         <dt className="text-gray-500 dark:text-gray-400">Скидка</dt>
                                         <dd className="text-base font-medium text-green-500">
-                                            {`- ${formatPriceToKZT(Number(orderData?.discount_total))}`}
+                                            {`- ${formatPriceToLocale(Number(orderData?.discount_total), selectedCurrency)}`}
                                         </dd>
                                     </dl>
 
                                     <dl className="flex items-center justify-between gap-4">
                                         <dt className="text-gray-500 dark:text-gray-400">Доставка</dt>
                                         <dd className="text-base font-medium text-gray-900 dark:text-white">
-                                            {formatPriceToKZT(Number(orderData?.shipping_total))}
+                                            {formatPriceToLocale(Number(orderData?.shipping_total), selectedCurrency)}
                                         </dd>
                                     </dl>
 
                                     <dl className="flex items-center justify-between gap-4">
                                         <dt className="text-gray-500 dark:text-gray-400">Налоги</dt>
                                         <dd className="text-base font-medium text-gray-900 dark:text-white">
-                                            {formatPriceToKZT(Number(orderData?.total_tax))}
+                                            {formatPriceToLocale(Number(orderData?.total_tax), selectedCurrency)}
                                         </dd>
                                     </dl>
                                 </div>
@@ -130,7 +130,7 @@ export default function OrderDetailClient({ orderData, currencyRates }: OrderDet
                                 <dl className="flex items-center justify-between gap-4 border-t border-gray-200 pt-2 dark:border-gray-700">
                                     <dt className="text-lg font-bold text-gray-900 dark:text-white">Конечная цена</dt>
                                     <dd className="text-lg font-bold text-gray-900 dark:text-white">
-                                        {formatPriceToKZT(Number(orderData?.total))}
+                                        {formatPriceToLocale(Number(orderData?.total), selectedCurrency)}
                                     </dd>
                                 </dl>
                             </div>
