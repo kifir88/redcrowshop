@@ -7,10 +7,12 @@ import {Order} from "@/types/woo-commerce/order";
 import {robokassaGeneratePaymentURL} from "@/libs/robokassa-rest-api";
 import useYookassaCreatePayment from "@/hooks/yookassa/useYookassaCreatePayment";
 import toast from "react-hot-toast";
+import {pspHostGeneratePaymentURL} from "@/libs/gate";
 
 type Payment =
   | 'uKassa'
   | 'RoboKassa'
+  | 'PspHost'
   | null
 
 export default function OrderPaymentDialog({
@@ -30,6 +32,14 @@ export default function OrderPaymentDialog({
     if (selectedOption === "RoboKassa") {
       const robokassaPaymentURL = robokassaGeneratePaymentURL(order);
       window.location.assign(robokassaPaymentURL)
+    }
+
+    if(selectedOption == 'PspHost')
+    {
+        const pspHostPaymentURL = pspHostGeneratePaymentURL(order)
+            .then(url => window.location.assign(url))
+            .catch(err => console.error("Error generating PspHost payment URL:", err));
+        //window.location.assign(pspHostPaymentURL)
     }
 
     if (selectedOption === "uKassa") {
@@ -105,25 +115,37 @@ export default function OrderPaymentDialog({
                       {/*</div>*/}
                       <div className="flex items-center gap-2">
                         <Radio
-                          id="RoboKassa"
-                          name="paymentOption"
-                          value="RoboKassa"
-                          checked={selectedOption === "RoboKassa"}
-                          onChange={() => setSelectedOption("RoboKassa")}
+                            id="RoboKassa"
+                            name="paymentOption"
+                            value="RoboKassa"
+                            checked={selectedOption === "RoboKassa"}
+                            onChange={() => setSelectedOption("RoboKassa")}
                         />
                         <Label htmlFor="RoboKassa">
                           RoboKassa
+                        </Label>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Radio
+                            id="PspHost"
+                            name="paymentOption"
+                            value="PspHost"
+                            checked={selectedOption === "PspHost"}
+                            onChange={() => setSelectedOption("PspHost")}
+                        />
+                        <Label htmlFor="PspHost">
+                          PspHost
                         </Label>
                       </div>
                     </fieldset>
 
                     <div className="mt-10">
                       <Button
-                        color="dark"
-                        fullSized
-                        disabled={!selectedOption}
-                        isProcessing={yookassaCreatePaymentMutation.isPending}
-                        onClick={handleConfirmClick}
+                          color="dark"
+                          fullSized
+                          disabled={!selectedOption}
+                          isProcessing={yookassaCreatePaymentMutation.isPending}
+                          onClick={handleConfirmClick}
                       >
                         Подтвердить
                       </Button>
