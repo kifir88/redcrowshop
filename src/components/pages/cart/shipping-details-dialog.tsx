@@ -13,10 +13,15 @@ import {CartItem} from "@/types/cart";
 import toast from "react-hot-toast";
 import {Button} from "flowbite-react";
 import {useRouter} from "next/navigation";
+import {fetchCurrencyRates} from "@/libs/woocommerce-rest-api";
+import {CustomCurrencyRates} from "@/types/woo-commerce/custom-currency-rates";
+import {amountCurrency, CurrencyType} from "@/libs/currency-helper";
 
 interface ShippingDetailsDialogProps {
   isOpen: boolean;
   closeModal: () => void;
+  currencyRates: CustomCurrencyRates
+  selectedCurrency: CurrencyType,
 }
 
 interface FormValues {
@@ -33,6 +38,8 @@ interface FormValues {
 }
 
 export default function ShippingDetailsDialog({
+  currencyRates,
+   selectedCurrency,
   isOpen,
   closeModal,
 }: ShippingDetailsDialogProps) {
@@ -74,9 +81,11 @@ export default function ShippingDetailsDialog({
       product_id: ci.productId,
       variation_id: ci.productVariationId,
       quantity: ci.quantity,
+      price: Math.round(amountCurrency(ci.price, selectedCurrency, currencyRates))
     } : {
       product_id: ci.productId,
       quantity: ci.quantity,
+      price: Math.round(amountCurrency(ci.price, selectedCurrency, currencyRates))
     }))
 
     const payload = {
@@ -87,6 +96,7 @@ export default function ShippingDetailsDialog({
       shipping: address,
       line_items: lineItems,
       shipping_lines: [],
+      currency: selectedCurrency
     }
 
     createOrderMutation.mutate(payload, {

@@ -121,7 +121,7 @@ export default function CartContent({currencyRates}: {currencyRates: CustomCurre
         </div>
       </div>
 
-      <ShippingDetailsDialog isOpen={isShippingDialogOpened} closeModal={handleCloseShippingDialog} />
+      <ShippingDetailsDialog isOpen={isShippingDialogOpened} closeModal={handleCloseShippingDialog} currencyRates={currencyRates} selectedCurrency={selectedCurrency}/>
     </section>
       </ClientOnly>
   )

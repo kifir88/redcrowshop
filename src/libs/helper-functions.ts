@@ -64,3 +64,12 @@ export const formatPriceToKZT = (amount: number | String): string => {
     maximumFractionDigits: 2,
   }) + ' ₸';
 };
+
+export const formatPriceToLocale = (amount: number | String): string => {
+  return amount.toLocaleString('kk-KZ', {
+    style: 'decimal',
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }) + ' ₸';
+};
+

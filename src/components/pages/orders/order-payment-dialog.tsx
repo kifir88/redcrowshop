@@ -113,7 +113,7 @@ export default function OrderPaymentDialog({
                       {/*    uKassa*/}
                       {/*  </Label>*/}
                       {/*</div>*/}
-                      <div className="flex items-center gap-2">
+                      {/*<div className="flex items-center gap-2">
                         <Radio
                             id="RoboKassa"
                             name="paymentOption"
@@ -124,7 +124,7 @@ export default function OrderPaymentDialog({
                         <Label htmlFor="RoboKassa">
                           RoboKassa
                         </Label>
-                      </div>
+                      </div>*/}
                       <div className="flex items-center gap-2">
                         <Radio
                             id="PspHost"

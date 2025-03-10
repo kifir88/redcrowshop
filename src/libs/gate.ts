@@ -165,7 +165,7 @@ export const pspHostGeneratePaymentURL = async (order: Order): Promise<string> =
     payment.setParam('paymentAmount', order.total + "00");
     payment.setParam('paymentId', order.id);
     payment.setParam('customerId', 1);
-    payment.setParam('paymentCurrency', 'KZT');
+    payment.setParam('paymentCurrency', order.currency);
     payment.setParam('redirect_success_url', 'https://redcrow.kz/payment-success-psp?InvId='+order.id);
     payment.setParam('merchant_callback_url', 'https://redcrow.kz/api/order-result-psp')
 
