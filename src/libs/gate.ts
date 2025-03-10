@@ -138,23 +138,23 @@ export class Payment {
 }
 
 
-export const convertKZTtoRUB = async (amountKZT: number): Promise<number> => {
+/*export const convertKZTtoRUB = async (amountKZT: number): Promise<number> => {
     try {
         const response = await fetchCurrencyRates(); // Fetch the currency rates
         const rates = response.data; // Extract rates from the response
 
-        console.log(response.data);
+        //console.log(response.data);
 
-        const exchangeRate = parseFloat(rates.RUB) / parseFloat(rates.KZT); // Conversion rate from KZT to RUB
+        //const exchangeRate = parseFloat(rates.RUB) / parseFloat(rates.KZT); // Conversion rate from KZT to RUB
 
-        console.log(exchangeRate);
+        //console.log(exchangeRate);
 
         return parseFloat((amountKZT * exchangeRate).toFixed(2)); // Convert and round to 2 decimal places
     } catch (error) {
         console.error("Error fetching currency rates:", error);
         throw new Error("Failed to convert currency");
     }
-};
+};*/
 
 export const pspHostGeneratePaymentURL = async (order: Order): Promise<string> => {
 
