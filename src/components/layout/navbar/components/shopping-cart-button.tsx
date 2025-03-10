@@ -13,8 +13,8 @@ import Image from "next/image";
 
 export default function ShoppingCartButton({currencyRates}: {currencyRates: CustomCurrencyRates}) {
   const [cartItems] = useLocalStorage<CartItem[]>("cartItems", [])
-  const [selectedCurrency] = useLocalStorage<CurrencyType>("currency", "KZT")
 
+    const [selectedCurrency] = useLocalStorage<CurrencyType>("currency", "KZT");
   const [isOpen, setIsOpen] = useState(false);
 
   const totalItemsCount = cartItems.reduce((accumulator, current) => {

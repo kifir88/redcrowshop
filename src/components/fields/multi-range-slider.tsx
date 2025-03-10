@@ -3,7 +3,7 @@
 import {
   ChangeEvent,
   FC,
-  useCallback,
+  useCallback, useEffect,
   useRef,
   useState
 } from "react";
@@ -21,7 +21,15 @@ interface MultiRangeSliderProps {
 }
 
 const MultiRangeSlider: FC<MultiRangeSliderProps> = ({ min, max, onChange, currencyRates }) => {
-  const [selectedCurrency] = useLocalStorage<CurrencyType>("currency", "KZT")
+
+  const [selectedCurrency, setSelectedCurrency] = useState<CurrencyType>("KZT");
+  const [storedCurrency] = useLocalStorage<CurrencyType>("currency", "KZT");
+
+  useEffect(() => {
+    if (storedCurrency) {
+      setSelectedCurrency(storedCurrency);
+    }
+  }, [storedCurrency]);
 
   const [minVal, setMinVal] = useState(min);
   const [maxVal, setMaxVal] = useState(max);

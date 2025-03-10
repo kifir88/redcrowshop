@@ -5,12 +5,21 @@ import Link from "next/link";
 import {CustomCurrencyRates} from "@/types/woo-commerce/custom-currency-rates";
 import {useLocalStorage} from "usehooks-ts";
 import {CurrencyType, formatCurrency} from "@/libs/currency-helper";
-import {useMemo} from "react";
+import {useEffect, useMemo, useState} from "react";
 import Image from "next/image";
 import {cn} from "@/libs/utils";
 
 const ProductCard = ({product, currencyRates}: {product: Product; currencyRates: CustomCurrencyRates}) => {
-  const [selectedCurrency] = useLocalStorage<CurrencyType>("currency", "KZT")
+
+  const [selectedCurrency, setSelectedCurrency] = useState<CurrencyType>("KZT");
+  const [storedCurrency] = useLocalStorage<CurrencyType>("currency", "KZT");
+
+  useEffect(() => {
+    if (storedCurrency) {
+      setSelectedCurrency(storedCurrency);
+    }
+  }, [storedCurrency]);
+
 
   const image = product.images[0];
   const imageSrc = image?.src || "/category/product-image-placeholder.png";

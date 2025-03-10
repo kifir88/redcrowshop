@@ -38,7 +38,16 @@ export default function CartListItemSimple({
         productId: cartItem.productId,
     });
 
-    const [selectedCurrency] = useLocalStorage<CurrencyType>("currency", "KZT");
+    const [selectedCurrency, setSelectedCurrency] = useState<CurrencyType>("KZT");
+    const [storedCurrency] = useLocalStorage<CurrencyType>("currency", "KZT");
+
+    useEffect(() => {
+        if (storedCurrency) {
+            setSelectedCurrency(storedCurrency);
+        }
+    }, [storedCurrency]);
+
+
     const [cartItems, setCartItems] = useLocalStorage<CartItem[]>("cartItems", []);
 
     const updateCartItemQuantity = useCallback((item: CartItem, newQuantity: number) => {

@@ -3,7 +3,7 @@
 import CartListItem from "@/components/pages/cart/cart-list-item";
 import {useLocalStorage} from "usehooks-ts";
 import {CartItem} from "@/types/cart";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import ShippingDetailsDialog from "@/components/pages/cart/shipping-details-dialog";
 import {Button} from "flowbite-react";
 import {CustomCurrencyRates} from "@/types/woo-commerce/custom-currency-rates";
@@ -13,7 +13,17 @@ import ClientOnly from "@/components/client_only";
 import CartListItemSimple from "@/components/pages/cart/cart-list-item-simple";
 
 export default function CartContent({currencyRates}: {currencyRates: CustomCurrencyRates}) {
-  const [selectedCurrency] = useLocalStorage<CurrencyType>("currency", "KZT")
+
+  const [selectedCurrency, setSelectedCurrency] = useState<CurrencyType>("KZT");
+  const [storedCurrency] = useLocalStorage<CurrencyType>("currency", "KZT");
+
+  useEffect(() => {
+    if (storedCurrency) {
+      setSelectedCurrency(storedCurrency);
+    }
+  }, [storedCurrency]);
+
+
   const [cartItems] = useLocalStorage<CartItem[]>("cartItems", [])
 
   const [isShippingDialogOpened, setShippingDialogOpened] = useState<boolean>(false)
