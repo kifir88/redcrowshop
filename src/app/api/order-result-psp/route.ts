@@ -8,12 +8,13 @@ import {Callback} from "@/libs/gate";
 
 export async function POST(req: NextRequest)
 {
+    console.log("request psp callback received ");
+
   const body = await req.text(); // Parses the JSON body
    console.log("request psp callback");
    console.log(body);
 
   const params = new URLSearchParams(body); // Parse the URL-encoded data
-  const data = Object.fromEntries(params.entries());
 
   var callback = new Callback(body);
 
@@ -80,6 +81,15 @@ export async function POST(req: NextRequest)
 
           }
       }
+      else
+      {
+          console.log("not successful payment, signature is ok");
+          return NextResponse.json({ a: 'payment not succesful' });
+
+      }
+  } else {
+      console.log("invalid callback signature");
+      return NextResponse.json({ a: 'wrong signature' });
   }
 
 
