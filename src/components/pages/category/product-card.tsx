@@ -20,7 +20,6 @@ const ProductCard = ({product, currencyRates}: {product: Product; currencyRates:
     }
   }, [storedCurrency]);
 
-
   const image = product.images[0];
   const imageSrc = image?.src || "/category/product-image-placeholder.png";
   const imageAlt = image?.alt || "placeholder";
@@ -29,58 +28,59 @@ const ProductCard = ({product, currencyRates}: {product: Product; currencyRates:
 
   const priceValue = useMemo(() => {
     return formatCurrency(
-      parseFloat(product.price),
-      selectedCurrency,
-      currencyRates,
+        parseFloat(product.price),
+        selectedCurrency,
+        currencyRates,
     )
   }, [selectedCurrency, product, currencyRates]);
 
   const isOutOfStock = product.stock_status === "outofstock";
+  const isOnSale = product.on_sale;
 
   return (
-    <Link
-      key={product.id}
-      href={`/category/${categorySlug}/${product.slug}`}
-      className="group text-sm"
-    >
-      <div className={cn(
-        "relative aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-lg bg-gray-100",
-        !isOutOfStock && "group-hover:opacity-75"
-      )}>
-        <Image
-          className="aspect-square h-full w-full object-cover object-center"
-          src={imageSrc}
-          alt={imageAlt}
-          width={384}
-          height={384}
-        />
-
-        {isOutOfStock && (
-          <div
-            className={cn(
-            "backdrop-blur-sm bg-white/30",
-              "z-20 absolute top-0 left-0 right-0 bottom-0",
-              "flex justify-center items-center"
-            )}
-          >
-            <p
-              className={cn(
-                "text-center font-medium text-gray-900"
-              )}
-            >
-              Товара нет в наличии
-            </p>
-          </div>
-        )}
-      </div>
-      <h3 className="mt-4 font-medium text-gray-900">{product.name}</h3>
-      <p className="italic text-gray-500">{product.categories[0]?.name}</p>
-      <div
-        className="mt-2 font-medium text-gray-900"
+      <Link
+          key={product.id}
+          href={`/category/${categorySlug}/${product.slug}`}
+          className="group text-sm"
       >
-        {priceValue}
-      </div>
-    </Link>
+        <div className={cn(
+            "relative aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-lg bg-gray-100",
+            !isOutOfStock && "group-hover:opacity-75"
+        )}>
+          <Image
+              className="aspect-square h-full w-full object-cover object-center"
+              src={imageSrc}
+              alt={imageAlt}
+              width={384}
+              height={384}
+          />
+
+          {isOutOfStock && (
+              <div
+                  className={cn(
+                      "backdrop-blur-sm bg-white/30",
+                      "z-20 absolute top-0 left-0 right-0 bottom-0",
+                      "flex justify-center items-center"
+                  )}
+              >
+                <p
+                    className={cn(
+                        "text-center font-medium text-gray-900"
+                    )}
+                >
+                  Товара нет в наличии
+                </p>
+              </div>
+          )}
+        </div>
+        <h3 className="mt-4 font-medium text-gray-900">{product.name}</h3>
+        <p className="italic text-gray-500">{product.categories[0]?.name}</p>
+        <div
+            className={cn("mt-2 font-medium", isOnSale ? "text-red-500" : "text-gray-900")}
+        >
+          {priceValue} {isOnSale && "(SALE)"}
+        </div>
+      </Link>
   )
 }
 
