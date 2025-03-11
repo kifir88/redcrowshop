@@ -79,6 +79,7 @@ export default function ProductImageAttribute({
             product={product}
             currencyRates={currencyRates}
             selectedProductVariation={selectedProductVariation}
+            variationBase={productVariations[0] ?? null}
           />
         </div>
       </div>
