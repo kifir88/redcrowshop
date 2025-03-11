@@ -39,7 +39,6 @@ export default function OrderPaymentDialog({
         const pspHostPaymentURL = pspHostGeneratePaymentURL(order)
             .then(url => window.location.assign(url))
             .catch(err => console.error("Error generating PspHost payment URL:", err));
-        //window.location.assign(pspHostPaymentURL)
     }
 
     if (selectedOption === "uKassa") {

@@ -8,7 +8,7 @@ import {useEffect, useState} from "react";
 const CurrencySelect = () => {
 
     const [selectedCurrency, setSelectedCurrency] = useState<CurrencyType>("KZT");
-    const [storedCurrency] = useLocalStorage<CurrencyType>("currency", "KZT");
+    const [storedCurrency, setStoredCurrency] = useLocalStorage<CurrencyType>("currency", "KZT");
 
     useEffect(() => {
         if (storedCurrency) {
@@ -21,7 +21,8 @@ const CurrencySelect = () => {
         id="currencies"
         value={selectedCurrency}
         onChange={e => {
-          setSelectedCurrency(e.target.value as CurrencyType)
+            setStoredCurrency(e.target.value as CurrencyType);
+           setSelectedCurrency(e.target.value as CurrencyType);
         }}
       >
         {CURRENCIES.map((currency) => (
