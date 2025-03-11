@@ -24,13 +24,12 @@ export async function POST(req: NextRequest) {
 
     const currentTime = Date.now();
     const lastSentTime = emailCache.get(body.to);
-
-    if (lastSentTime && currentTime - lastSentTime < EMAIL_COOLDOWN_MS) {
+    /*if (lastSentTime && currentTime - lastSentTime < EMAIL_COOLDOWN_MS) {
       return NextResponse.json(
           { message: "Email was sent less than 3 minutes ago. Ignoring request." },
           { status: 429 }
       );
-    }
+    }*/
 
     const mailgunMessageData: MailgunMessageData = {
       from: "REDCROW KZ <mailgun@redcrow.kz>",
@@ -53,6 +52,7 @@ export async function POST(req: NextRequest) {
     emailCache.set(body.to, currentTime);
 
     return NextResponse.json(mailgunResponse);
+
   } catch (error) {
     console.error("Ошибка отправки имейла через MailGun:", error);
     return NextResponse.json({ error: error }, { status: 500 });
