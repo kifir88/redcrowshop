@@ -31,40 +31,6 @@ export async function POST(req: NextRequest)
           const orderData = await fetchOrder(orderId)
           const order = orderData.data;
 
-          const emailContent = generateOrderEmailText(order);
-
-          const emailPayload = {
-              to: orderData.data.billing.email,
-              subject: `REDCROW Успешная Оплата - Заказ #${orderId}\n`,
-              text: emailContent
-              //   (
-              //   `
-              //   <div>
-              //     <p>
-              //
-              //     </p>
-              //     <h4>${productList}</h4>
-              //     <p>
-              //        На сумму:
-              //     </p>
-              //     <h4>
-              //      ${formatPriceToKZT(orderData.data.total)}
-              //     </h4>
-              //   </div>
-              //   `
-              // )
-          }
-          await axios.post(
-              "/api/mailgun",
-              emailPayload,
-              {
-                  // TODO extract base url to env variable
-                  baseURL: "https://www.redcrow.kz/",
-                  headers: {
-                      "Content-type": "application/json"
-                  }
-              }
-          )
           const orderUpdatePayload: Partial<Order> = {
               payment_method: "PSP",
               transaction_id: orderId,
@@ -74,6 +40,45 @@ export async function POST(req: NextRequest)
           }
 
           updateOrder(orderId, orderUpdatePayload)
+
+          try {
+              const emailContent = generateOrderEmailText(order);
+
+              const emailPayload = {
+                  to: orderData.data.billing.email,
+                  subject: `REDCROW Успешная Оплата - Заказ #${orderId}\n`,
+                  text: emailContent
+                  //   (
+                  //   `
+                  //   <div>
+                  //     <p>
+                  //
+                  //     </p>
+                  //     <h4>${productList}</h4>
+                  //     <p>
+                  //        На сумму:
+                  //     </p>
+                  //     <h4>
+                  //      ${formatPriceToKZT(orderData.data.total)}
+                  //     </h4>
+                  //   </div>
+                  //   `
+                  // )
+              }
+              await axios.post(
+                  "/api/mailgun",
+                  emailPayload,
+                  {
+                      // TODO extract base url to env variable
+                      baseURL: "https://www.redcrow.kz/",
+                      headers: {
+                          "Content-type": "application/json"
+                      }
+                  }
+              )
+          } catch(e){
+
+          }
       }
   }
 
