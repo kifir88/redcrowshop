@@ -2,17 +2,14 @@ import crypto from 'crypto';
 import {Order} from "@/types/woo-commerce/order";
 import {fetchCurrencyRates} from "@/libs/woocommerce-rest-api";
 
-interface PaymentObject {
-    [key: string]: any;
-}
 
 const PROJECT_ID = "147386";
 const PROJECT_SECRET = "f96406756f8c31e914476d5b4b29cc7a311f0fc1db198979c9150cdfc9d22708d45f6bb8cbfe9a934f7756dd0ccb583879d2bb58f1cce374256b49fd0c3629c6";
 
 const ignoredParams = ['frame_mode'];
 
-const reducer = (obj: PaymentObject, prefix = '', ignored: string[] = []): string => {
-    const ordered: PaymentObject = {};
+const reducer = (obj: any, prefix = '', ignored: string[] = []): string => {
+    const ordered: any = {};
 
     Object.keys(obj).sort().forEach((key) => {
         if (!ignored.includes(key)) {
@@ -32,7 +29,7 @@ const reducer = (obj: PaymentObject, prefix = '', ignored: string[] = []): strin
     return str;
 };
 
-export const generateSignature = (obj: PaymentObject, salt: string): string => {
+export const generateSignature = (obj: any, salt: string): string => {
     const hmac = crypto.createHmac('sha512', salt);
 
     var str = reducer(obj, '', ignoredParams);
@@ -43,13 +40,13 @@ export const generateSignature = (obj: PaymentObject, salt: string): string => {
 
 export class Callback {
     private secret: string;
-    private callback: PaymentObject;
+    private callback: any;
     private signature?: string;
 
-    constructor(data: string | PaymentObject) {
-        const obj = typeof data === 'string' ? JSON.parse(data) : { ...data };
+    constructor(data: any) {
         this.secret = PROJECT_SECRET;
-        this.callback = obj;
+        this.callback = data;
+
         this.removeSignature(this.callback);
 
         if (!this.isValid()) {
@@ -57,7 +54,10 @@ export class Callback {
         }
     }
 
-    private removeSignature(obj: PaymentObject): void {
+    private removeSignature(obj: any): void {
+
+        if (!obj || typeof obj !== 'object') return;
+
         Object.keys(obj).forEach((key) => {
             if (typeof obj[key] === 'object') {
                 this.removeSignature(obj[key]);
@@ -84,9 +84,9 @@ export class Callback {
 export class Payment {
     private salt: string;
     private baseURI: string;
-    private params: PaymentObject;
+    private params: any;
 
-    constructor(projectId: string, salt: string, obj: PaymentObject = {}, url = 'https://paymentpage.paygo.kz') {
+    constructor(projectId: string, salt: string, obj: any = {}, url = 'https://paymentpage.paygo.kz') {
 
         this.salt = salt;
         this.baseURI = url;
@@ -102,7 +102,7 @@ export class Payment {
      * Set multiple parameters at once.
      * @param obj Object containing payment parameters
      */
-    public setParams(obj: PaymentObject): void {
+    public setParams(obj: any): void {
         Object.entries(obj).forEach(([key, val]) => {
             this.setParam(key, val);
         });
@@ -168,8 +168,8 @@ export const pspHostGeneratePaymentURL = async (order: Order): Promise<string> =
     payment.setParam('paymentCurrency', order.currency);
 
 
-    //const urlll = 'https://1654-195-7-13-231.ngrok-free.app';
-    const urlll = 'https://redcrow.kz';
+    const urlll = 'https://84e3-195-7-13-231.ngrok-free.app';
+    //const urlll = 'https://redcrow.kz';
 
     payment.setParam('redirect_success_url', urlll+'/payment-success-psp?InvId='+order.id);
     payment.setParam('merchant_callback_url', urlll+'/api/order-result-psp')

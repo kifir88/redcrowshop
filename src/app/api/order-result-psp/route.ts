@@ -10,13 +10,11 @@ export async function POST(req: NextRequest)
 {
     console.log("request psp callback received ");
 
-  const body = await req.text(); // Parses the JSON body
+   const params = await req.json(); // Parses the JSON body
    console.log("request psp callback");
-   console.log(body);
+   console.log(params);
 
-  const params = new URLSearchParams(body); // Parse the URL-encoded data
-
-  var callback = new Callback(body);
+  var callback = new Callback(params);
 
   if(callback?.isValid() === true)
   {
