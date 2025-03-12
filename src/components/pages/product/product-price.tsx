@@ -21,7 +21,7 @@ export default function ProductPrice({
     const [selectedCurrency] = useLocalStorage<CurrencyType>("currency", "KZT");
 
     // Получаем regular_price: если у продукта его нет, берём из первой вариации
-    const productRegularPrice = product.regular_price || (variationBase?.regular_price || product.price);
+    const productRegularPrice = product.regular_price || (variationBase?.regular_price || product.regular_price);
 
     const price1 = selectedProductVariation
         ? selectedProductVariation.regular_price
