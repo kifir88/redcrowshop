@@ -61,39 +61,49 @@ export default function MobileMenu({
         <Drawer.Items>
           <ul className="mt-4 space-y-4 sm:mb-4 md:mb-0">
             <Link
-              href={`/shop`}
-              className="font-semibold text-gray-900"
-              onClick={handleClose}
+                href={`/shop`}
+                className="font-semibold text-gray-900"
+                onClick={handleClose}
             >
               Магазин
             </Link>
 
-            {parentCategories?.map(pc => {
-              const selectedSubcategories = productCategories
-                .filter(subPc => subPc.parent === pc.id); // Changed variable name here
+            <div key="sale-item">
+              <Link
+                  href={`/shop?sale=1`}
+                  className="font-semibold text-red-500"
+                  onClick={handleClose}
+              >
+                Распродажа
+              </Link>
+            </div>
 
-              return (
-                <div key={pc.id}>
-                  <Link
-                    href={`/category/${pc.slug}`}
-                    className="font-semibold text-gray-900"
-                    onClick={handleClose}
-                  >
-                    {pc.name}
-                  </Link>
-                  <ul className="mt-4 ml-2 space-y-4 sm:mb-4 md:mb-0">
-                    {selectedSubcategories.map(subcategory => (
-                      <Subcategory
-                        key={subcategory.id}
-                        subcategory={subcategory}
-                        productCategories={productCategories}
-                        handleCloseMobileMenu={handleClose}
-                      />
-                    ))}
-                  </ul>
-                </div>
-              )
-            })}
+              {parentCategories?.map(pc => {
+                const selectedSubcategories = productCategories
+                    .filter(subPc => subPc.parent === pc.id); // Changed variable name here
+
+                return (
+                    <div key={pc.id}>
+                      <Link
+                          href={`/category/${pc.slug}`}
+                          className="font-semibold text-gray-900"
+                          onClick={handleClose}
+                      >
+                        {pc.name}
+                      </Link>
+                      <ul className="mt-4 ml-2 space-y-4 sm:mb-4 md:mb-0">
+                        {selectedSubcategories.map(subcategory => (
+                            <Subcategory
+                                key={subcategory.id}
+                                subcategory={subcategory}
+                                productCategories={productCategories}
+                                handleCloseMobileMenu={handleClose}
+                            />
+                        ))}
+                      </ul>
+                    </div>
+                )
+              })}
           </ul>
         </Drawer.Items>
       </Drawer>
