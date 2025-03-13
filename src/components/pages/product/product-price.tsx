@@ -29,7 +29,7 @@ export default function ProductPrice({
 
     const regularPrice = formatCurrency(parseFloat(price1), selectedCurrency, currencyRates);
 
-    const price = selectedProductVariation?.sale_price || (variationBase?.sale_price || null)
+    const price = selectedProductVariation?.sale_price || (variationBase?.sale_price || product?.sale_price);
 
     const salePrice = price
         ? formatCurrency(parseFloat(price), selectedCurrency, currencyRates)

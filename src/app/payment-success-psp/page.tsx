@@ -33,14 +33,14 @@ export default async function PaymentSuccessPagePSP({
         'Expires': '0' // Proxies and others
       }
     }),
-    fetchOrder(searchParams?.InvId)
+    fetchOrder(searchParams?.InvId, searchParams?.order_token)
   ])
 
   const txt = await strapiPaymentSuccessPageData.json();
 
   const parsedStrapiPage = txt.content.rendered
     .replace("[[ORDER_ID]]", searchParams?.InvId)
-    .replace("[[ORDER_DETAILS]]", generateOrderText(orderData.data))
+    .replace("[[ORDER_DETAILS]]", generateOrderText(orderData!.data))
 
   return (
     <section className="bg-white py-8 antialiased dark:bg-gray-900 md:py-16">
@@ -65,7 +65,10 @@ export default async function PaymentSuccessPagePSP({
 }
 
 
-function generateOrderText(order: Order): string {
+function generateOrderText(order: Order | null): string {
+
+  if (order===null) return "none";
+
   const { billing, shipping, line_items, total } = order;
 
   return `

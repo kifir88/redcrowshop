@@ -137,7 +137,22 @@ export default function CartListItemSimple({
             </div>
             <div className="text-end md:order-4 md:w-32">
     <p className="text-base font-bold text-gray-900 dark:text-white">
-        {currencyRates ? formatCurrency(Number(data.data.price), selectedCurrency, currencyRates) : "Loading..."}
+        {currencyRates ? (
+            data.data.on_sale ? (
+                <p className="text-base font-bold text-red-600" style={{marginLeft: 20}}>
+                    {formatCurrency(Number(data.data.sale_price), selectedCurrency, currencyRates)}
+                    <span className="ml-2 text-gray-500 line-through" style={{fontSize: "0.7rem"}}>
+                          {formatCurrency(Number(data.data.regular_price), selectedCurrency, currencyRates)}
+                        </span>
+                </p>
+            ) : (
+                <p className="text-base font-bold text-gray-900 dark:text-white" style={{marginLeft: 20}}>
+                    {formatCurrency(Number(data.data.price), selectedCurrency, currencyRates)}
+                </p>
+            )
+        ) : (
+            "Loading..."
+        )}
         </p>
         </div>
         </div>

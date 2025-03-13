@@ -69,14 +69,16 @@ export default function ProductDetailAttributesForm({
                 `Товара с названием ${product.name} в наличии только ${stockQuantity}`
             );
           }
-        } else {
+        }
+        else
+        {
           if (stockQuantity > 0) {
             const newCartItem = {
               productId: product.id,
               productVariationId: -1,
               name: product.name,
               quantity: 1,
-              price: Number(product.price),
+              price: product.on_sale ? (product.sale_price ? Number(product.sale_price) : Number(product.price)) : Number(product.price),
               imageSrc: product.images?.[0]?.src || null,
               imageAlt: product.images?.[0]?.alt || null,
               attributes: [],

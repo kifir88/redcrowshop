@@ -117,9 +117,39 @@ export const fetchProduct = (productId: number, params?: any): Promise<AxiosResp
 export const fetchOrders = (params?: any): Promise<AxiosResponse<Order[]>> => {
   return wooCommerceApiInstance.get("orders", params)
 }
-export const fetchOrder = (orderId: string): Promise<AxiosResponse<Order>> => {
-  return wooCommerceApiInstance.get(`orders/${orderId}`)
+
+// Define the expected type for meta_data
+interface MetaData {
+  key: string;
+  value: string;
 }
+
+export const fetchOrder = async (orderId: string, orderToken: string): Promise<AxiosResponse<Order> | null> => {
+  try {
+    const response = await wooCommerceApiInstance.get(`orders/${orderId}`);
+    const order = response.data;
+
+    // Check if order token matches
+    if (!order.meta_data) {
+      return null;
+    }
+
+    const tokenMeta = order.meta_data.find((meta: MetaData) => meta.key === "order_token");
+    const storedToken = tokenMeta ? tokenMeta.value : null;
+
+    if (!storedToken || storedToken !== orderToken) {
+      return null;
+    }
+
+    return response;
+
+  } catch (error) {
+    return null;
+  }
+};
+
+
+
 export const updateOrder = (orderId: string, payload: any): Promise<AxiosResponse<Order>> => {
   return wooCommerceApiInstance.put(`orders/${orderId}`, payload)
 }

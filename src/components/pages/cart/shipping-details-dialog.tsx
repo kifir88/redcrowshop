@@ -16,6 +16,7 @@ import {useRouter} from "next/navigation";
 import {fetchCurrencyRates} from "@/libs/woocommerce-rest-api";
 import {CustomCurrencyRates} from "@/types/woo-commerce/custom-currency-rates";
 import {amountCurrency, CurrencyType} from "@/libs/currency-helper";
+import { v4 as uuidv4 } from 'uuid';
 
 interface ShippingDetailsDialogProps {
   isOpen: boolean;
@@ -49,6 +50,9 @@ export default function ShippingDetailsDialog({
   const countryData = CountryList.getData();
 
   const createOrderMutation = useCreateOrder()
+
+  // Generate a unique order token
+  const orderToken = uuidv4();
 
   const form = useForm<FormValues>({
     initialValues: {
@@ -96,7 +100,13 @@ export default function ShippingDetailsDialog({
       shipping: address,
       line_items: lineItems,
       shipping_lines: [],
-      currency: selectedCurrency
+      currency: selectedCurrency,
+      meta_data: [
+        {
+          key: "order_token",
+          value: orderToken
+        }
+      ]
     }
 
     console.log("create order selected currency : "+selectedCurrency);
@@ -108,7 +118,7 @@ export default function ShippingDetailsDialog({
       },
       onSuccess: (res) => {
         clearCartItems()
-        router.push(`/orders/${res.data.id}`)
+        router.push(`/orders/${res.data.id}?order_token=${orderToken}`)
         toast.success("Заказ успешно создан")
       },
     })
