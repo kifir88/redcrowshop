@@ -11,10 +11,15 @@ export async function POST(req: NextRequest)
 
    const params = await req.json(); // Parses the JSON body
 
-    const { searchParams } = new URL(req.url);
-    const orderToken = searchParams.get("order_token") ?? "";
+    var callback = null;
 
-  var callback = new Callback(params);
+    try
+    {
+        callback = new Callback(params);
+    }
+    catch {
+        console.log("Callback parsing error!!!");
+    }
 
   if(callback?.isValid() === true)
   {
@@ -23,13 +28,6 @@ export async function POST(req: NextRequest)
       if(callback?.isPaymentSuccess())
       {
           const orderId = callback?.getPaymentId() ?? "none";
-
-          console.log("order id:");
-          console.log(orderId);
-
-          const orderData = await fetchOrder(orderId, orderToken)
-          const order = orderData?.data;
-
           const orderUpdatePayload: Partial<Order> = {
               payment_method: "PSP",
               transaction_id: orderId,
@@ -37,8 +35,16 @@ export async function POST(req: NextRequest)
               customer_note: "[ ЗАКАЗ ОПЛАЧЕН ]",
               status: "processing",
           }
+          await updateOrder(orderId, orderUpdatePayload)
 
-          updateOrder(orderId, orderUpdatePayload)
+          console.log("order id:");
+          console.log(orderId);
+
+          const { searchParams } = new URL(req.url);
+          const orderToken = searchParams.get("order_token") ?? "";
+
+          const orderData = await fetchOrder(orderId, orderToken)
+          const order = orderData?.data;
 
           try {
               const emailContent = generateOrderEmailText(order ?? null);

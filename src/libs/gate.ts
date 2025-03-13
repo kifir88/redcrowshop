@@ -168,7 +168,7 @@ export const pspHostGeneratePaymentURL = async (order: Order): Promise<string> =
     payment.setParam('paymentCurrency', order.currency);
 
 
-    //const urlll = 'https://0431-195-7-13-231.ngrok-free.app';
+    //const urlll = 'https://4bb2-195-7-13-231.ngrok-free.app';
     const urlll = 'https://redcrow.kz';
 
     const tokenMeta = order.meta_data.find((meta) => meta.key === "order_token");
