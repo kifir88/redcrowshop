@@ -1,6 +1,5 @@
 import {NextRequest, NextResponse} from "next/server";
-import {robokassaIsValidCallbackRequest} from "@/libs/robokassa-rest-api";
-import {fetchOrder, updateOrder} from "@/libs/woocommerce-rest-api";
+import {fetchOrder, fetchOrderServer, updateOrder} from "@/libs/woocommerce-rest-api";
 import {formatPriceToKZT, formatPriceToLocale} from "@/libs/helper-functions";
 import axios from "axios";
 import {Order} from "@/types/woo-commerce/order";
@@ -8,7 +7,6 @@ import {Callback} from "@/libs/gate";
 
 export async function POST(req: NextRequest)
 {
-
    const params = await req.json(); // Parses the JSON body
 
     var callback = null;
@@ -37,13 +35,7 @@ export async function POST(req: NextRequest)
           }
           await updateOrder(orderId, orderUpdatePayload)
 
-          console.log("order id:");
-          console.log(orderId);
-
-          const { searchParams } = new URL(req.url);
-          const orderToken = searchParams.get("order_token") ?? "";
-
-          const orderData = await fetchOrder(orderId, orderToken)
+          const orderData = await fetchOrderServer(orderId)
           const order = orderData?.data;
 
           try {

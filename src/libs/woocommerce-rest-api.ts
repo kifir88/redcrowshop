@@ -148,6 +148,12 @@ export const fetchOrder = async (orderId: string, orderToken: string): Promise<A
   }
 };
 
+export const fetchOrderServer = async (orderId: string): Promise<AxiosResponse<Order> | null> => {
+  const response = await wooCommerceApiInstance.get(`orders/${orderId}`);
+  return response;
+};
+
+
 
 
 export const updateOrder = (orderId: string, payload: any): Promise<AxiosResponse<Order>> => {

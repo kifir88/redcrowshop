@@ -8,6 +8,7 @@ import {robokassaGeneratePaymentURL} from "@/libs/robokassa-rest-api";
 import useYookassaCreatePayment from "@/hooks/yookassa/useYookassaCreatePayment";
 import toast from "react-hot-toast";
 import {pspHostGeneratePaymentURL} from "@/libs/gate";
+import {CartItem} from "@/types/cart";
 
 type Payment =
   | 'uKassa'
@@ -36,6 +37,7 @@ export default function OrderPaymentDialog({
 
     if(selectedOption == 'PspHost')
     {
+
         const pspHostPaymentURL = pspHostGeneratePaymentURL(order)
             .then(url => window.location.assign(url))
             .catch(err => console.error("Error generating PspHost payment URL:", err));

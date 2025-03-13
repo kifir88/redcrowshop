@@ -109,8 +109,6 @@ export default function ShippingDetailsDialog({
       ]
     }
 
-    console.log("create order selected currency : "+selectedCurrency);
-
     createOrderMutation.mutate(payload, {
       onError: (e) => {
         console.error(e, "create-order-error")

@@ -9,7 +9,7 @@ interface OrderDetailProps {
 
 export default async function OrderDetail({ params: { orderId }, searchParams  }: OrderDetailProps) {
 
-  const orderToken = searchParams.order_token;
+  const orderToken = searchParams.order_token ?? "";
 
   if (!orderToken) {
     return notFound(); // Show 404 if no token is provided

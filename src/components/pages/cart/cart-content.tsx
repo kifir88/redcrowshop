@@ -30,8 +30,6 @@ export default function CartContent({currencyRates}: {currencyRates: CustomCurre
 
   const totalOriginalPrice = cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
 
-  console.log(cartItems.length);
-
   const handleOpenShippingDialog = () => {
     setShippingDialogOpened(true)
   }
