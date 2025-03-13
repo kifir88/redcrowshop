@@ -28,7 +28,7 @@ export async function POST(req: NextRequest)
           console.log(orderId);
 
           const orderData = await fetchOrder(orderId, orderToken)
-          const order = orderData!.data;
+          const order = orderData?.data;
 
           const orderUpdatePayload: Partial<Order> = {
               payment_method: "PSP",
@@ -41,7 +41,7 @@ export async function POST(req: NextRequest)
           updateOrder(orderId, orderUpdatePayload)
 
           try {
-              const emailContent = generateOrderEmailText(order);
+              const emailContent = generateOrderEmailText(order ?? null);
 
               const emailPayload = {
                   to: orderData!.data.billing.email,
@@ -95,7 +95,10 @@ export async function POST(req: NextRequest)
   return NextResponse.json({ a: 'ok' });
 }
 
-function generateOrderEmailText(order: Order): string {
+function generateOrderEmailText(order: Order | null): string {
+
+    if (order == null) return "none";
+
   const { billing, shipping, line_items, total } = order;
 
   return `
