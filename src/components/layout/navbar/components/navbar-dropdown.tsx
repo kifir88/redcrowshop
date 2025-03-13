@@ -53,16 +53,20 @@ export default function NavbarDropdown({
             Магазин
           </a>
 
+          <a href={`/shop?sale=1`} className="font-bold text-red-500">
+            Распродажа
+          </a>
+
           {parentCategories?.map((pc) => (
-            <MegaMenu.DropdownToggle
-              key={pc.id}
-              onMouseEnter={() => handleSelectProductCategory(pc.id)}
-              className="w-auto"
-            >
-              <a href={`/category/${pc.slug}`}>
-                {pc.name}
-              </a>
-            </MegaMenu.DropdownToggle>
+              <MegaMenu.DropdownToggle
+                  key={pc.id}
+                  onMouseEnter={() => handleSelectProductCategory(pc.id)}
+                  className="w-auto"
+              >
+                <a href={`/category/${pc.slug}`}>
+                  {pc.name}
+                </a>
+              </MegaMenu.DropdownToggle>
           ))}
         </div>
 
