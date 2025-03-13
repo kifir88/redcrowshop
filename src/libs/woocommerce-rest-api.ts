@@ -83,7 +83,9 @@ export const fetchProducts = (params?: any): Promise<AxiosResponse<Product[]>> =
   return wooCommerceApiInstance.get("products?"+new Date().getTime(), defaultParams)
 }
 export const fetchProductCategories = (params?: any): Promise<AxiosResponse<ProductCategory[]>> => {
-  return wooCommerceApiInstance.get("products/categories", params)
+  const cacheBuster = { _timestamp: new Date().getTime() };
+  const defaultParams = { ...params, ...cacheBuster };
+  return wooCommerceApiInstance.get("products/categories", defaultParams)
 }
 export const fetchProductCategory = (productCategoryId: number) => {
   return wooCommerceApiInstance.get(`products/categories/${productCategoryId}`)

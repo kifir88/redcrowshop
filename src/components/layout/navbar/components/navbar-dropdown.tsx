@@ -21,7 +21,7 @@ export default function NavbarDropdown({
   const [selectedProductId, setSelectedProductId] = useState<number | null>(null);
 
   const parentCategories = useMemo(() => {
-    // ID 320 - Номенклатура
+    // ID 378 - Номенклатура
     return productCategories.filter(pc => pc.parent === 378)
   }, [productCategories])
 
