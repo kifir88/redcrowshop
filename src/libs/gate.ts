@@ -168,13 +168,13 @@ export const pspHostGeneratePaymentURL = async (order: Order): Promise<string> =
     payment.setParam('paymentCurrency', order.currency);
 
 
-    //const urlll = 'https://84e3-195-7-13-231.ngrok-free.app';
+    //const urlll = 'https://0431-195-7-13-231.ngrok-free.app';
     const urlll = 'https://redcrow.kz';
 
     const tokenMeta = order.meta_data.find((meta) => meta.key === "order_token");
 
-    payment.setParam('redirect_success_url', urlll+'/payment-success-psp?InvId='+order.id + '&order_token='+tokenMeta);
-    payment.setParam('merchant_callback_url', urlll+'/api/order-result-psp?order_token='+tokenMeta);
+    payment.setParam('redirect_success_url', urlll+'/payment-success-psp?InvId='+order.id + '&order_token='+tokenMeta?.value);
+    payment.setParam('merchant_callback_url', urlll+'/api/order-result-psp?order_token='+tokenMeta?.value);
 
     // set another parameters, like success or fail callback URL, customer details, etc.
 

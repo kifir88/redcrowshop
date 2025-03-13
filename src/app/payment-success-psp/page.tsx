@@ -5,6 +5,7 @@ import ReactMarkdown from "react-markdown";
 import {Order} from "@/types/woo-commerce/order";
 import axios from "axios";
 import config from "@/config"
+import {notFound} from "next/navigation";
 
 export default async function PaymentSuccessPagePSP({
   searchParams
@@ -12,13 +13,14 @@ export default async function PaymentSuccessPagePSP({
   searchParams: Record<string, string>
 }) {
 
-
-  console.log("Search Params:", searchParams);
-
   // Check if the environment variable is loaded and has the key
   const pageId = config.PAGES && config.PAGES['payment_success']
       ? config.PAGES['payment_success']
       : 0;
+
+  if (!searchParams.order_token) {
+    return notFound(); // Show 404 if no token is provided
+  }
 
   const [
     strapiPaymentSuccessPageData,
@@ -37,6 +39,10 @@ export default async function PaymentSuccessPagePSP({
   ])
 
   const txt = await strapiPaymentSuccessPageData.json();
+
+  if (!orderData) {
+    return notFound(); // Show 404 if no token is provided
+  }
 
   const parsedStrapiPage = txt.content.rendered
     .replace("[[ORDER_ID]]", searchParams?.InvId)
