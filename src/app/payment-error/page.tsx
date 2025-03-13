@@ -30,7 +30,7 @@ export default async function PaymentErrorPage({
             'Expires': '0' // Proxies and others
           }
         }),
-    fetchOrder(searchParams?.InvId)
+    fetchOrder(searchParams?.InvId, searchParams.order_token)
   ])
 
   const txt = await strapiPaymentSuccessPageData.json();
@@ -41,7 +41,7 @@ export default async function PaymentErrorPage({
 
   const parsedStrapiPage = txt.content.rendered
     .replace("[[ORDER_ID]]", searchParams?.InvId)
-    .replace("[[TOTAL_PRICE]]", formatPriceToKZT(orderData.data.total))
+    .replace("[[TOTAL_PRICE]]", formatPriceToKZT(orderData!.data.total))
     .replace("[[PRODUCT_LIST]]", productList);
 
   return (

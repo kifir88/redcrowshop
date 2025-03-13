@@ -13,18 +13,22 @@ export async function POST(req: NextRequest)
   const params = new URLSearchParams(body); // Parse the URL-encoded data
   const data = Object.fromEntries(params.entries());
 
+    const { searchParams } = new URL(req.url);
+    const orderToken = searchParams.get("order_token") ?? "";
+
+
   const isValid = robokassaIsValidCallbackRequest(data);
 
   if (isValid) {
     const invId = data["InvId"]; // Get specific parameters
 
-    const orderData = await fetchOrder(data["InvId"])
-    const order = orderData.data;
+    const orderData = await fetchOrder(data["InvId"], orderToken)
+    const order = orderData!.data;
 
     const emailContent = generateOrderEmailText(order);
 
     const emailPayload = {
-        to: orderData.data.billing.email,
+        to: orderData!.data.billing.email,
         subject: `REDCROW Успешная Оплата - Заказ #${invId}\n`,
         text: emailContent
         //   (

@@ -17,6 +17,7 @@ export default async function PaymentSuccessPage({
       ? config.PAGES['payment_success']
       : 0;
 
+  const orderToken = searchParams.order_token;
 
   const [
     strapiPaymentSuccessPageData,
@@ -31,14 +32,14 @@ export default async function PaymentSuccessPage({
         'Expires': '0' // Proxies and others
       }
     }),
-    fetchOrder(searchParams?.InvId)
+    fetchOrder(searchParams?.InvId, orderToken)
   ])
 
   const txt = await strapiPaymentSuccessPageData.json();
 
   const parsedStrapiPage = txt.content.rendered
     .replace("[[ORDER_ID]]", searchParams?.InvId)
-    .replace("[[ORDER_DETAILS]]", generateOrderText(orderData.data))
+    .replace("[[ORDER_DETAILS]]", generateOrderText(orderData!.data))
 
   return (
     <section className="bg-white py-8 antialiased dark:bg-gray-900 md:py-16">

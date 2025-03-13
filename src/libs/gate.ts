@@ -174,7 +174,7 @@ export const pspHostGeneratePaymentURL = async (order: Order): Promise<string> =
     const tokenMeta = order.meta_data.find((meta) => meta.key === "order_token");
 
     payment.setParam('redirect_success_url', urlll+'/payment-success-psp?InvId='+order.id + '&order_token='+tokenMeta);
-    payment.setParam('merchant_callback_url', urlll+'/api/order-result-psp')
+    payment.setParam('merchant_callback_url', urlll+'/api/order-result-psp?order_token='+tokenMeta);
 
     // set another parameters, like success or fail callback URL, customer details, etc.
 

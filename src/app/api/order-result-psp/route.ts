@@ -8,11 +8,11 @@ import {Callback} from "@/libs/gate";
 
 export async function POST(req: NextRequest)
 {
-    console.log("request psp callback received ");
 
    const params = await req.json(); // Parses the JSON body
-   console.log("request psp callback");
-   console.log(params);
+
+    const { searchParams } = new URL(req.url);
+    const orderToken = searchParams.get("order_token") ?? "";
 
   var callback = new Callback(params);
 
@@ -27,8 +27,8 @@ export async function POST(req: NextRequest)
           console.log("order id:");
           console.log(orderId);
 
-          const orderData = await fetchOrder(orderId)
-          const order = orderData.data;
+          const orderData = await fetchOrder(orderId, orderToken)
+          const order = orderData!.data;
 
           const orderUpdatePayload: Partial<Order> = {
               payment_method: "PSP",
@@ -44,7 +44,7 @@ export async function POST(req: NextRequest)
               const emailContent = generateOrderEmailText(order);
 
               const emailPayload = {
-                  to: orderData.data.billing.email,
+                  to: orderData!.data.billing.email,
                   subject: `REDCROW Успешная Оплата - Заказ #${orderId}\n`,
                   text: emailContent
                   //   (
