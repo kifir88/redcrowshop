@@ -72,6 +72,10 @@ const generateAllAttributeCombinations = (attributes: CustomProductAttribute[]):
 // Refactored function to process categories and attributes for the sitemap
 const processCategoriesForSitemap = async (categoriesData: ProductCategory[], sitemap: SitemapStream) => {
   for (const category of categoriesData) {
+
+    if(category === null || category === undefined)
+      continue;
+
     sitemap.write({ url: `/category/${category.slug}`, changefreq: 'weekly', priority: 0.9 });
 
     const productAttributes = await fetchCustomProductAttributes({

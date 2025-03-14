@@ -161,13 +161,10 @@ export const pspHostGeneratePaymentURL = async (order: Order): Promise<string> =
 
     const payment = new Payment(PROJECT_ID, PROJECT_SECRET);
 
-    //var amountRUB = await convertKZTtoRUB(+order.total);
-
     payment.setParam('paymentAmount', (Number(order.total) * 100).toString());
     payment.setParam('paymentId', order.id);
     payment.setParam('customerId', 1);
     payment.setParam('paymentCurrency', order.currency);
-
 
     //const urlll = 'https://f485-195-7-13-231.ngrok-free.app';
     const urlll = 'https://redcrow.kz';
@@ -177,14 +174,6 @@ export const pspHostGeneratePaymentURL = async (order: Order): Promise<string> =
     payment.setParam('redirect_success_url', urlll+'/payment-success-psp?InvId='+order.id + '&order_token='+tokenMeta?.value);
     payment.setParam('merchant_callback_url', urlll+'/api/order-result-psp');
 
-    // set another parameters, like success or fail callback URL, customer details, etc.
-
-    // get payment URL
-    const url = payment.getUrl();
-
-    console.log(url);
-
-
-    return url;
+    return payment.getUrl();
 
 }
