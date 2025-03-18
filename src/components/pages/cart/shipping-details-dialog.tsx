@@ -17,6 +17,9 @@ import {fetchCurrencyRates} from "@/libs/woocommerce-rest-api";
 import {CustomCurrencyRates} from "@/types/woo-commerce/custom-currency-rates";
 import {amountCurrency, CurrencyType} from "@/libs/currency-helper";
 import { v4 as uuidv4 } from 'uuid';
+import axios from "axios";
+import {Order} from "@/types/woo-commerce/order";
+import {formatPriceToKZT} from "@/libs/helper-functions";
 
 interface ShippingDetailsDialogProps {
   isOpen: boolean;
@@ -109,13 +112,71 @@ export default function ShippingDetailsDialog({
       ]
     }
 
+    function generateOrderCreatedEmailText(order: Order): string {
+      const { billing, shipping, line_items, total } = order;
+
+      return `
+Ваш заказ создан и ожидает оплату!
+
+Детали оплаты:
+Имя: ${billing.first_name} ${billing.last_name}
+Электронная почта: ${billing.email}
+Телефон: ${billing.phone}
+
+Адрес для выставления счета:
+${billing.address_1}
+${billing.address_2 ? billing.address_2 + '\n' : ''}${billing.city}, ${billing.state} ${billing.postcode}
+${billing.country}
+
+Адрес доставки:
+${shipping.address_1}
+${shipping.address_2 ? shipping.address_2 + '\n' : ''}${shipping.city}, ${shipping.state} ${shipping.postcode}
+${shipping.country}
+
+Состав заказа:
+${line_items
+          .map(
+              (item) =>
+                  `${item.name} - Количество: ${item.quantity} - Цена: ${formatPriceToKZT(item.price)}`
+          )
+          .join('\n')}
+
+Итого:
+${formatPriceToKZT(total)}
+  `.trim();
+    }
+
     createOrderMutation.mutate(payload, {
       onError: (e) => {
         console.error(e, "create-order-error")
         toast.error(`${e.response?.data}`)
       },
       onSuccess: (res) => {
-        clearCartItems()
+        clearCartItems();
+
+        try {
+          const emailContent = generateOrderCreatedEmailText(res.data ?? null);
+
+          const emailPayload = {
+            to: res.data.billing.email,
+            subject: `REDCROW Заказ #${res.data.id} Создан!\n`,
+            text: emailContent
+          }
+          axios.post(
+              "/api/mailgun",
+              emailPayload,
+              {
+                // TODO extract base url to env variable
+                baseURL: "https://www.redcrow.kz/",
+                headers: {
+                  "Content-type": "application/json"
+                }
+              }
+          )
+        } catch(e){
+
+        }
+
         router.push(`/orders/${res.data.id}?order_token=${orderToken}`)
         toast.success("Заказ успешно создан")
       },
