@@ -25,6 +25,7 @@ export const SITE_DATA = {
   foot_enjoy: "Подпишитесь на нашу рассылку",
   foot_subscribe: "подписаться",
 
+  vk: "https://vk.com/redcrowstyle",
   instagram: "https://www.instagram.com/redcrowstyle",
   whatsapp: "https://wa.me/77770197765",
 };

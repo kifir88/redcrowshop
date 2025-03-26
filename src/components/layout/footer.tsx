@@ -18,6 +18,7 @@ export default async function Footer() {
               <FooterLinkGroup col>
                 <FooterLink href={SITE_DATA.instagram} className="underline-offset-4">Instagram</FooterLink>
                 <FooterLink href={SITE_DATA.whatsapp} className="underline-offset-4">Whatsapp</FooterLink>
+                <FooterLink href={SITE_DATA.vk} className="underline-offset-4">VKontakte</FooterLink>
               </FooterLinkGroup>
             </div>
             <div>
