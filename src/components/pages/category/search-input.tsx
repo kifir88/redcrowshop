@@ -6,6 +6,7 @@ import {KeyboardEventHandler, useEffect, useState} from "react";
 import {useDebounceValue} from "usehooks-ts";
 import {usePathname, useRouter, useSearchParams} from "next/navigation";
 import qs from "query-string";
+import { useCallback } from "react";
 
 export default function SearchInput() {
   const router = useRouter();
@@ -15,7 +16,7 @@ export default function SearchInput() {
   const [value, setValue] = useState("");
   const [debouncedValue] = useDebounceValue(value, 400)
 
-  const handleUpdateSearchParam = () => {
+  const handleUpdateSearchParam = useCallback(() => {
     const currentParams = qs.parse(searchParams.toString());
 
     const newParams = {
@@ -29,7 +30,7 @@ export default function SearchInput() {
     }, { skipEmptyString: true, skipNull: true });
 
     router.push(url);
-  };
+  }, [debouncedValue, pathname, router, searchParams]);
 
   const handleKeyDown: KeyboardEventHandler<HTMLInputElement> = (event) => {
     if (event.key === 'Enter') {
