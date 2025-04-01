@@ -28,14 +28,21 @@ interface ShippingLine {
   total: string;
 }
 
+interface OrderMetaData {
+  key: string;
+  value: string;
+}
+
 interface OrderCreate {
   payment_method: string;
   payment_method_title: string;
+  customer_note: string;
   set_paid: boolean;
   billing: Address;
   shipping: Address;
   line_items: LineItem[];
   shipping_lines: ShippingLine[];
+  meta_data?: OrderMetaData[]; // ✅ Add this field
 }
 
 export default function useCreateOrder(): UseMutationResult<
@@ -44,6 +51,31 @@ export default function useCreateOrder(): UseMutationResult<
   OrderCreate
 > {
   const mutationFn = (payload: OrderCreate) => {
+
+    const storedData = localStorage.getItem("referral_code");
+
+
+    if (storedData) {
+      var { code, expires } = JSON.parse(storedData);
+      if (Date.now() > expires) {
+        console.log("remove expired code: " + code);
+        code = null;
+        localStorage.removeItem("referral_code");
+      }
+    }
+
+
+    if (code) {
+      payload.meta_data = [
+        ...(payload.meta_data || []),
+        { key: "referral_code", value: code },
+      ];
+
+      payload.customer_note = `${payload.customer_note || ""} [Referral=${code}]`;
+    }
+
+
+
     return wooCommerceApiInstance.post("orders", payload)
   }
 

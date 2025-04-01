@@ -71,7 +71,7 @@ export default function OrderDetailClient({ orderData, currencyRates }: OrderDet
                                                     <Image
                                                         className="h-auto w-full max-h-full dark:hidden object-cover"
                                                         src={li.image.src}
-                                                        alt={li.image.alt}
+                                                        alt="altimage"
                                                         width={40}
                                                         height={40}
                                                     />

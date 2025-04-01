@@ -78,11 +78,46 @@ export default function ShippingDetailsDialog({
     }
   })
 
+  const calculatePrice = async () => {
+    try {
+      const response = await axios.post("/api/cdek", {
+        //date: new Date().toISOString(),
+        type: 1,
+        from_location: {
+          city: "Москва",
+          country_code: "RU",
+          postal_code: "101000"
+        },
+        to_location: {
+          city: "Санкт-Петербург",
+          country_code: "RU",
+          postal_code: "190000"
+        },
+        packages: [
+          {
+            weight: 1000, // в граммах
+            length: 10,   // в сантиметрах
+            width: 10,
+            height: 10
+          }
+        ]
+      });
+      console.log(response.data);
+      //setError(null);
+    } catch (err) {
+      //setError("Ошибка расчёта стоимости");
+      //setPrice(null);
+    }
+  };
+
   const handleSubmit = (formValues: FormValues) => {
     const address = {
       ...formValues,
       phone: formatPhoneNumberIntl(formValues.phone as string)
     }
+
+    //calculatePrice();
+    //return;
 
     const lineItems = cartItems.map(ci => (ci.productVariationId !== -1 ? {
       product_id: ci.productId,
@@ -330,6 +365,7 @@ ${formatPriceToKZT(total)}
                       >
                         Создать заказ
                       </Button>
+
                     </div>
                   </form>
                 </Dialog.Panel>

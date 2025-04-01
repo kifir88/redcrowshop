@@ -26,17 +26,21 @@ export async function POST(req: NextRequest)
       if(callback?.isPaymentSuccess())
       {
           const orderId = callback?.getPaymentId() ?? "none";
+
+
+          const orderData = await fetchOrderServer(orderId)
+          const order = orderData?.data;
+
+          const existingNote = order?.customer_note ?? "";
+
           const orderUpdatePayload: Partial<Order> = {
               payment_method: "PSP",
               transaction_id: orderId,
               set_paid: true,
-              customer_note: "[ ЗАКАЗ ОПЛАЧЕН ]",
+              customer_note: existingNote + " [ ЗАКАЗ ОПЛАЧЕН ]",
               status: "processing",
           }
           await updateOrder(orderId, orderUpdatePayload)
-
-          const orderData = await fetchOrderServer(orderId)
-          const order = orderData?.data;
 
           try {
               const emailContent = generateOrderEmailText(order ?? null);

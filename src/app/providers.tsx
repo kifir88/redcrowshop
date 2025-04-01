@@ -2,11 +2,16 @@
 
 import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
 import {Toaster} from "react-hot-toast";
+import {useReferralTracker} from "@/components/refferal_url_param";
 
 const queryClient = new QueryClient()
 
 const Providers = ({children}: {children: React.ReactNode}) => {
-  return (
+
+    useReferralTracker(); // Track referral codes when the layout mounts
+
+
+    return (
     <>
       <Toaster
         position="bottom-right"

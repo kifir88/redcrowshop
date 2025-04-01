@@ -1,3 +1,5 @@
+
+
 import type { Metadata } from "next";
 import {Roboto} from "next/font/google";
 import Providers from "@/app/providers";
@@ -8,6 +10,7 @@ import {SITE_DATA} from "@/metadata/site-data";
 
 import "./globals.css";
 import FullscreenModal from "@/components/fullscreen_modal";
+import Script from "next/script";
 
 const roboto = Roboto({
   subsets: ["latin", "cyrillic", "cyrillic-ext"],
@@ -24,15 +27,17 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
   return (
     <html lang="en" suppressHydrationWarning>
-      <head>
-        <ThemeModeScript />
-      </head>
-      <body className={roboto.className}>
-        <Providers>
-          <main>
-            <Navbar />
+    <head>
+        <Script src="./cdek.js" strategy="beforeInteractive" />
+        <ThemeModeScript/>
+    </head>
+    <body className={roboto.className}>
+    <Providers>
+        <main>
+            <Navbar/>
             {children}
             <Footer />
             {/*<FullscreenModal />*/}
