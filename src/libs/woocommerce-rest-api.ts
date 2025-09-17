@@ -7,6 +7,7 @@ import {ProductVariation} from "@/types/woo-commerce/product-variation";
 import {CustomProductAttribute} from "@/types/woo-commerce/custom-product-attribute";
 import {Order} from "@/types/woo-commerce/order";
 import {CustomCurrencyRates} from "@/types/woo-commerce/custom-currency-rates";
+import redis from "./redis";
 
 const options: IWooCommerceRestApiOptions = {
   url: "https://admin.redcrow.kz/",
@@ -65,11 +66,36 @@ export const fetchCurrencyRates = (): Promise<AxiosResponse<CustomCurrencyRates>
   return wooCommerceCustApiV1ApiInstance.get("cur_rates")
 }
 
+const CACHE_TTL_SECONDS = 60 * 5; // 5 min
+
 // API custom/v1
 
+// With REDIS cache
+
 export const fetchCustomProductAttributes = (params?: any): Promise<AxiosResponse<CustomProductAttribute[]>> => {
-  return wooCommerceCustomV1ApiInstance.get("product-attributes", params)
+    return wooCommerceCustomV1ApiInstance.get("product-attributes", params)
 }
+
+export async function fetchCustomProductAttributesCached(
+    params?: Record<string, any>
+): Promise<AxiosResponse<CustomProductAttribute[]>> {
+    const cacheKey = `product-attributes:${JSON.stringify(params || {})}`;
+
+    // 1️⃣ Try Redis cache
+    const cached = await redis.get(cacheKey);
+    if (cached) {
+        return JSON.parse(cached) as AxiosResponse<CustomProductAttribute[]>;
+    }
+
+    // 2️⃣ Fetch from WooCommerce
+    const response = await fetchCustomProductAttributes(params);
+
+    // 3️⃣ Save in Redis
+    await redis.set(cacheKey, JSON.stringify(response), "EX", CACHE_TTL_SECONDS);
+
+    return response;
+}
+
 export const fetchCustomProductCategoryMaxPrice = (productCategorySlug: string) => {
   return wooCommerceCustomApiV1ApiInstance.get(`max-price?category_slug=${productCategorySlug}`)
 }

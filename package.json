@@ -26,6 +26,7 @@
     "flowbite-react": "^0.10.1",
     "framer-motion": "^11.3.24",
     "i": "^0.3.7",
+    "ioredis": "^5.7.0",
     "libphonenumber-js": "^1.11.7",
     "lodash": "^4.17.21",
     "lucide-react": "^0.426.0",
@@ -50,6 +51,7 @@
   },
   "devDependencies": {
     "@types/country-list": "^2.1.4",
+    "@types/ioredis": "^5.0.0",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
