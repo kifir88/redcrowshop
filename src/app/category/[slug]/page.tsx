@@ -35,11 +35,11 @@ export async function generateMetadata(
         category_name: productCategory.slug,
     });
 
-    const formattedAttributes = productAttributesData.data
+    const formattedAttributes = productAttributesData
         .map(pa => `${pa.name}: ${pa.options.map(a => a.name).join(" и ")}`)
         .join(", ");
 
-    const formattedAttributesForDescription = productAttributesData.data
+    const formattedAttributesForDescription = productAttributesData
         .map(pa => `${pa.name.toLowerCase()} ${pa.options.map(a => a.name.toLowerCase()).join(" и ")}`)
         .join(", ");
 

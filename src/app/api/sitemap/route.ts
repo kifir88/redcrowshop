@@ -71,27 +71,27 @@ const generateAllAttributeCombinations = (attributes: CustomProductAttribute[]):
 };
 
 // Refactored function to process categories and attributes for the sitemap
+// Refactored function to process categories and attributes for the sitemap
 const processCategoriesForSitemap = async (categoriesData: ProductCategory[], sitemap: SitemapStream) => {
-  for (const category of categoriesData) {
+    for (const category of categoriesData) {
 
-    if(category === null || category === undefined)
-      continue;
+        if(category === null || category === undefined)
+            continue;
 
-    sitemap.write({ url: `/category/${category.slug}`, changefreq: 'weekly', priority: 0.9 });
+        sitemap.write({ url: `/category/${category.slug}`, changefreq: 'weekly', priority: 0.9 });
 
-    const productAttributes = await fetchCustomProductAttributes({
-      category_name: category.slug,
-    });
+        const productAttributes = await fetchCustomProductAttributes({
+            category_name: category.slug,
+        });
 
-    const allCombinations = generateAllAttributeCombinations(productAttributes.data);
+        const allCombinations = generateAllAttributeCombinations(productAttributes);
 
-    allCombinations.forEach(combination => {
-      const combinationUrl = `/category/${category.slug}?${combination}`;
-      sitemap.write({ url: combinationUrl, changefreq: 'weekly', priority: 0.8 });
-    });
-  }
+        allCombinations.forEach(combination => {
+            const combinationUrl = `/category/${category.slug}?${combination}`;
+            sitemap.write({ url: combinationUrl, changefreq: 'weekly', priority: 0.8 });
+        });
+    }
 };
-
 export async function GET() {
   /*try {
     // Fetch the product categories

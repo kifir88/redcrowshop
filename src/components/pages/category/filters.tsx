@@ -30,8 +30,8 @@ const Filters = ({
   const searchParams = useSearchParams();
 
   const productAttributes = useMemo(() => {
-    return data?.data.filter(pa => !pa.slug.includes("pa_yookassa"))
-  }, [data?.data]);
+    return data?.filter(pa => !pa.slug.includes("pa_yookassa"))
+  }, [data]);
 
   // Get current on-sale state from URL
   const isOnSale = searchParams.get("sale") === "1";

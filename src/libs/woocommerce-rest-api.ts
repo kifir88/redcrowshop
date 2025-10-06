@@ -71,9 +71,29 @@ const CACHE_TTL_SECONDS = 60 * 5; // 5 min
 // API custom/v1
 
 // With REDIS cache
+export async function fetchCustomProductAttributes(params?: any): Promise<CustomProductAttribute[]> {
 
-export const fetchCustomProductAttributes = (params?: any): Promise<AxiosResponse<CustomProductAttribute[]>> => {
-    return wooCommerceCustomV1ApiInstance.get("product-attributes", params)
+    console.log(JSON.stringify(params));
+
+    const search = new URLSearchParams();
+    for (const key in params) {
+        const value = params[key];
+        if (Array.isArray(value)) {
+            value.forEach(v => search.append(`${key}[]`, v));
+        } else if (typeof value === "object" && value !== null) {
+            search.append(key, JSON.stringify(value));
+        } else {
+            search.append(key, value);
+        }
+    }
+    console.log("fetching product-attributes via redis ");
+    const res = await fetch(`/api/redis/product-attributes?${search.toString()}`, { cache: "no-store" });
+
+    console.log("after fetch 1");
+    const raw = await res.json();
+    const attrs = raw as CustomProductAttribute[];
+
+    return attrs;
 }
 
 export async function fetchCustomProductAttributesCached(
