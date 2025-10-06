@@ -17,79 +17,67 @@ import CurrencySelect from "@/components/pages/category/category-list-currency";
 import {Metadata, ResolvingMetadata} from "next";
 
 interface ProductCategoryPageProps {
-  params: { slug: string },
-  searchParams: Record<string, string>
+    params: Promise<{ slug: string }>;
+    searchParams: Promise<Record<string, string>>;
 }
 
 export async function generateMetadata(
-  { params }: ProductCategoryPageProps,
-  parent: ResolvingMetadata
+    props: ProductCategoryPageProps,
+    parent: ResolvingMetadata
 ): Promise<Metadata> {
-  const productCategoryData = await fetchProductCategories({
-    slug: params.slug
-  })
-  const productCategory = productCategoryData.data[0]
+    const { params } = props;
+    const { slug } = await params;   // ✅ await
 
-  const productAttributesData = await fetchCustomProductAttributes({
-    category_name: productCategory.slug,
-  })
+    const productCategoryData = await fetchProductCategories({ slug });
+    const productCategory = productCategoryData.data[0];
 
-  const formattedAttributes = productAttributesData.data
-    .map(pa => {
-      const formattedAttributes = pa.options
-        .map(a => a.name)
-        .join(" и ")
+    const productAttributesData = await fetchCustomProductAttributes({
+        category_name: productCategory.slug,
+    });
 
-      return `${pa.name}: ${formattedAttributes}`
-    })
-    .join(", ")
-  const formattedAttributesForDescription = productAttributesData.data
-    .map(pa => {
-      const formattedAttributes = pa.options
-        .map(a => a.name.toLowerCase())
-        .join(" и ")
+    const formattedAttributes = productAttributesData.data
+        .map(pa => `${pa.name}: ${pa.options.map(a => a.name).join(" и ")}`)
+        .join(", ");
 
-      return `${pa.name.toLowerCase()} ${formattedAttributes}`
-    })
-    .join(", ")
+    const formattedAttributesForDescription = productAttributesData.data
+        .map(pa => `${pa.name.toLowerCase()} ${pa.options.map(a => a.name.toLowerCase()).join(" и ")}`)
+        .join(", ");
 
-  const title = `REDCROW Казахстан ${productCategory.name} - ${formattedAttributes}`;
-  const description = `Откройте для себя ${productCategory.name.toLowerCase()} ${formattedAttributesForDescription}. Идеальный выбор для стильного образа.`;
-
-  return {
-    title: title,
-    description: description,
-    keywords: [
-      "REDCROW Казахстан",
-      productCategory.name,
-      productCategory.name.toLowerCase(),
-      productCategory.description,
-      productCategory.description.toLowerCase(),
-    ]
-  }
+    return {
+        title: `REDCROW Казахстан ${productCategory.name} - ${formattedAttributes}`,
+        description: `Откройте для себя ${productCategory.name.toLowerCase()} ${formattedAttributesForDescription}. Идеальный выбор для стильного образа.`,
+        keywords: [
+            "REDCROW Казахстан",
+            productCategory.name,
+            productCategory.name.toLowerCase(),
+            productCategory.description,
+            productCategory.description.toLowerCase(),
+        ]
+    };
 }
 
 
-export default async function ProductCategoryPage({
-  params: { slug },
-  searchParams,
-}: ProductCategoryPageProps) {
-  const productCategoriesData = await fetchProductCategories({
-    exclude: [378],
-  });
-  const currentProductCategory = productCategoriesData?.data.find(
-    (pc: ProductCategory) => pc.slug === slug
-  );
+export default async function ProductCategoryPage(props: ProductCategoryPageProps) {
+    const { params, searchParams } = props;
+    const { slug } = await params;                 // ✅ await params
+    const resolvedSearchParams = await searchParams; // ✅ await searchParams
 
-  const {
-    search: searchParam,
-    max_price: maxPriceParam,
-    min_price: minPriceParam,
-    page: pageParam,
-    order: orderSearchParam,
-    orderby: orderbySearchParam,
-    ...attributeSearchParams
-  } = searchParams;
+    const productCategoriesData = await fetchProductCategories({
+        exclude: [378],
+    });
+    const currentProductCategory = productCategoriesData?.data.find(
+        (pc: ProductCategory) => pc.slug === slug
+    );
+
+    const {
+        search: searchParam,
+        max_price: maxPriceParam,
+        min_price: minPriceParam,
+        page: pageParam,
+        order: orderSearchParam,
+        orderby: orderbySearchParam,
+        ...attributeSearchParams
+    } = resolvedSearchParams;
 
   const formattedSearchParams = Object
     .entries(attributeSearchParams)

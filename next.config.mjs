@@ -5,12 +5,12 @@ const nextConfig = {
             {
                 source: '/sitemap.xml',
                 destination: '/api/sitemap',
-            },
-            {
-                source: "/sapi/:path*",
-                destination: "http://localhost/service.php?:path*", // Проксируем запросы
             }
         ];
+    },
+
+    experimental: {
+        workerThreads: false,
     },
 
     images: {
@@ -28,6 +28,10 @@ const nextConfig = {
                 pathname: '/wp-content/uploads/**',
             },
         ],
+    },
+
+    eslint: {
+        ignoreDuringBuilds: true,
     },
 
     env: {

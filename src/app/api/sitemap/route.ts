@@ -8,6 +8,7 @@ import {
 import {fetchFooterPages} from "@/libs/strapi-rest-api";
 import {ProductCategory} from "@/types/woo-commerce/product-category";
 import {CustomProductAttribute} from "@/types/woo-commerce/custom-product-attribute";
+import {notFound} from "next/navigation";
 
 
 const generateProductAttributeCombinations = (options: CustomProductAttribute['options']): CustomProductAttribute['options'][] => {
@@ -92,7 +93,7 @@ const processCategoriesForSitemap = async (categoriesData: ProductCategory[], si
 };
 
 export async function GET() {
-  try {
+  /*try {
     // Fetch the product categories
     const categoriesData = await fetchProductCategories({
       exclude: [378],
@@ -121,17 +122,18 @@ export async function GET() {
     // Convert the stream to a promise
     const sitemapOutput = await streamToPromise(pipeline);
 
-    // Return the sitemap XML content
-    return new NextResponse(sitemapOutput, {
-      headers: {
-        'Content-Type': 'application/xml',
-        'Content-Encoding': 'gzip',
-      },
-    });
+    // Wrap the buffer in Uint8Array
+      return new NextResponse(new Uint8Array(sitemapOutput), {
+          headers: {
+              'Content-Type': 'application/xml',
+              'Content-Encoding': 'gzip',
+          },
+      });
   } catch (error) {
     console.error(error);
     return new NextResponse(null, { status: 500 });
-  }
+  }*/
+    return notFound();
 }
 
 

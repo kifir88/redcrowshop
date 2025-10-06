@@ -1,5 +1,4 @@
-import WooCommerceRestApi, { type WooCommerceRestApiOptions } from "@woocommerce/woocommerce-rest-api";
-import {type AxiosResponse} from "axios";
+import WooCommerceRestApi, { type IWooCommerceRestApiOptions } from "@woocommerce/woocommerce-rest-api";import {type AxiosResponse} from "axios";
 import {Product} from "@/types/woo-commerce/product";
 import {ProductCategory} from "@/types/woo-commerce/product-category";
 import {ProductAttribute} from "@/types/woo-commerce/product-attribute";
@@ -9,7 +8,7 @@ import {CustomProductAttribute} from "@/types/woo-commerce/custom-product-attrib
 import {Order} from "@/types/woo-commerce/order";
 import {CustomCurrencyRates} from "@/types/woo-commerce/custom-currency-rates";
 
-const options: WooCommerceRestApiOptions = {
+const options: IWooCommerceRestApiOptions = {
   url: "https://admin.redcrow.kz/",
   consumerKey: "ck_901883160cd3f891e2eaa4b88e28b4b0198c9682",
   consumerSecret: "cs_8b64a8187c67dbeb6e0ccf618069d0b69b4dd690",
@@ -20,7 +19,7 @@ const options: WooCommerceRestApiOptions = {
     }
   }
 };
-const custom_v1_options: WooCommerceRestApiOptions = {
+const custom_v1_options: IWooCommerceRestApiOptions = {
   url: "https://admin.redcrow.kz/",
   consumerKey: "ck_901883160cd3f891e2eaa4b88e28b4b0198c9682",
   consumerSecret: "cs_8b64a8187c67dbeb6e0ccf618069d0b69b4dd690",
@@ -31,7 +30,7 @@ const custom_v1_options: WooCommerceRestApiOptions = {
     }
   }
 };
-const custom_api_v1_options: WooCommerceRestApiOptions = {
+const custom_api_v1_options: IWooCommerceRestApiOptions = {
   url: "https://admin.redcrow.kz/",
   consumerKey: "ck_901883160cd3f891e2eaa4b88e28b4b0198c9682",
   consumerSecret: "cs_8b64a8187c67dbeb6e0ccf618069d0b69b4dd690",
@@ -43,7 +42,7 @@ const custom_api_v1_options: WooCommerceRestApiOptions = {
   }
 
 };
-const cust_api_v1_options: WooCommerceRestApiOptions = {
+const cust_api_v1_options: IWooCommerceRestApiOptions = {
   url: "https://admin.redcrow.kz/",
   consumerKey: "ck_901883160cd3f891e2eaa4b88e28b4b0198c9682",
   consumerSecret: "cs_8b64a8187c67dbeb6e0ccf618069d0b69b4dd690",

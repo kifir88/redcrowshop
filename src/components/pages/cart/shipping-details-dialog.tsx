@@ -144,7 +144,8 @@ export default function ShippingDetailsDialog({
           key: "order_token",
           value: orderToken
         }
-      ]
+      ],
+      customer_note: ""
     }
 
     function generateOrderCreatedEmailText(order: Order): string {
