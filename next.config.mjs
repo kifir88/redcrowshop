@@ -65,7 +65,7 @@ const nextConfig = {
         REDIS_PORT: "6379",
         REDIS_PASSWORD: "myredispassword@#A!",
 
-        REDIS_PROXY_HOST: "https://redcrow.kz",
+        REDIS_PROXY_HOST: "https://www.redcrow.kz",
         REDIS_PROXY_HOST2: "redcrow.kz"
     }
 };
