@@ -96,26 +96,6 @@ export async function fetchCustomProductAttributes(params?: any): Promise<Custom
     return attrs;
 }
 
-export async function fetchCustomProductAttributesCached(
-    params?: Record<string, any>
-): Promise<AxiosResponse<CustomProductAttribute[]>> {
-    const cacheKey = `product-attributes:${JSON.stringify(params || {})}`;
-
-    // 1️⃣ Try Redis cache
-    const cached = await redis.get(cacheKey);
-    if (cached) {
-        return JSON.parse(cached) as AxiosResponse<CustomProductAttribute[]>;
-    }
-
-    // 2️⃣ Fetch from WooCommerce
-    const response = await fetchCustomProductAttributes(params);
-
-    // 3️⃣ Save in Redis
-    await redis.set(cacheKey, JSON.stringify(response), "EX", CACHE_TTL_SECONDS);
-
-    return response;
-}
-
 export const fetchCustomProductCategoryMaxPrice = (productCategorySlug: string) => {
   return wooCommerceCustomApiV1ApiInstance.get(`max-price?category_slug=${productCategorySlug}`)
 }
