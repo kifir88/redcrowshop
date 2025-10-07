@@ -28,7 +28,7 @@ export async function generateMetadata(
     const { productSlug } = await params; // ✅ await here
 
     const productsData = await fetchProducts({ slug: productSlug });
-    const productData = productsData?.data?.[0];
+    const productData = productsData?.data[0];
 
     const productVariationsData = await fetchProductVariations(productData.id, {
         parent: productData.id,
@@ -57,7 +57,7 @@ export default async function ProductPage(props: AppPageProps<ProductPageParams>
     const { slug, productSlug } = await params;
 
     const productsData = await fetchProducts({ slug: productSlug });
-    const productData = productsData?.data?.[0];
+    const productData = productsData?.data[0];
 
     const [
         currencyRatesData,
@@ -101,7 +101,7 @@ export default async function ProductPage(props: AppPageProps<ProductPageParams>
                     Вам также может понравится
                 </h1>
                 <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 md:grid-cols-3 lg:col-span-3 lg:gap-x-8">
-                    {productsRecommendedData?.data.map((product: Product) => (
+                    {productsRecommendedData?.data?.map((product: Product) => (
                         <ProductCard
                             key={product.id}
                             product={product}

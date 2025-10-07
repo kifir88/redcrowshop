@@ -1,5 +1,5 @@
 import WooCommerceRestApi, { type IWooCommerceRestApiOptions } from "@woocommerce/woocommerce-rest-api";import {type AxiosResponse} from "axios";
-import {Product} from "@/types/woo-commerce/product";
+import {Product, RedisCachedProducts} from "@/types/woo-commerce/product";
 import {ProductCategory} from "@/types/woo-commerce/product-category";
 import {ProductAttribute} from "@/types/woo-commerce/product-attribute";
 import {ProductAttributeTerm} from "@/types/woo-commerce/product-attribute-term";
@@ -73,8 +73,6 @@ const CACHE_TTL_SECONDS = 60 * 5; // 5 min
 // With REDIS cache
 export async function fetchCustomProductAttributes(params?: any): Promise<CustomProductAttribute[]> {
 
-    console.log(JSON.stringify(params));
-
     const search = new URLSearchParams();
     for (const key in params) {
         const value = params[key];
@@ -86,27 +84,58 @@ export async function fetchCustomProductAttributes(params?: any): Promise<Custom
             search.append(key, value);
         }
     }
-    console.log("fetching product-attributes via redis ");
-    const res = await fetch(`/api/redis/product-attributes?${search.toString()}`, { cache: "no-store" });
 
-    console.log("after fetch 1");
+    const baseUrl = typeof window !== "undefined"
+        ? ""
+        : `http://${process.env.REDIS_PROXY_HOST || 'localhost:3000'}`;
+
+    const res = await fetch(baseUrl+`/api/redis/product-attributes?${search.toString()}`, { cache: "no-store" });
+
     const raw = await res.json();
     const attrs = raw as CustomProductAttribute[];
 
     return attrs;
 }
 
-export const fetchCustomProductCategoryMaxPrice = (productCategorySlug: string) => {
-  return wooCommerceCustomApiV1ApiInstance.get(`max-price?category_slug=${productCategorySlug}`)
-}
-
 // API wc/v3
+export async function fetchProducts (params?: any): Promise<RedisCachedProducts> {
 
-export const fetchProducts = (params?: any): Promise<AxiosResponse<Product[]>> => {
-  const cacheBuster = { _timestamp: new Date().getTime() };
-  const defaultParams = { ...params, status: 'publish', ...cacheBuster };
-  return wooCommerceApiInstance.get("products?"+new Date().getTime(), defaultParams)
+    const search = new URLSearchParams();
+    for (const key in params) {
+        const value = params[key];
+
+        if(value==='undefined' || value===undefined)
+            continue;
+
+        if (Array.isArray(value)) {
+            value.forEach(v => search.append(`${key}[]`, v));
+        } else if (typeof value === "object" && value !== null) {
+            search.append(key, JSON.stringify(value));
+        } else {
+            search.append(key, value);
+        }
+    }
+
+    const baseUrl = typeof window !== "undefined"
+        ? ""
+        : `http://${process.env.REDIS_PROXY_HOST || 'localhost:3000'}`;
+
+    const res = await fetch(baseUrl+ `/api/redis/products?${search.toString()}`, { cache: "no-store" });
+
+    const raw = await res.json();
+
+    const products = raw as RedisCachedProducts;
+
+    console.log("loaded products: total pages "+ products.totalPages);
+
+    return products;
 }
+
+export const fetchCustomProductCategoryMaxPrice = (productCategorySlug: string) => {
+    return wooCommerceCustomApiV1ApiInstance.get(`max-price?category_slug=${productCategorySlug}`)
+}
+
+
 export const fetchProductCategories = (params?: any): Promise<AxiosResponse<ProductCategory[]>> => {
   const cacheBuster = { _timestamp: new Date().getTime() };
   const defaultParams = { ...params, ...cacheBuster };

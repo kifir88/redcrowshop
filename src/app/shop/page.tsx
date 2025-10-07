@@ -61,7 +61,7 @@ export default async function ProductCategoryPage({
     const productCategoryMaxPriceValue = productCategoryMaxPrice
         ? Number(productCategoryMaxPrice)
         : 0;
-    const totalPages: string = productsData?.headers["x-wp-totalpages"];
+    const totalPages: string = productsData?.totalPages;
 
     return (
         <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">

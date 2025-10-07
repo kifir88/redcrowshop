@@ -113,10 +113,10 @@ export default async function ProductCategoryPage(props: ProductCategoryPageProp
     })
   ])
 
-  const productCategoryMaxPrice = productCategoryMaxPriceData.data[0]?.price;
+  const productCategoryMaxPrice = productCategoryMaxPriceData?.data[0]?.price;
   const productCategoryMaxPriceValue = productCategoryMaxPrice ? Number(productCategoryMaxPrice) : 0;
 
-  const totalPages: string = productsData?.headers["x-wp-totalpages"]
+  const totalPages: string = productsData?.totalPages
 
   const breadCrumbItems = getCategoryHierarchyBySlug(productCategoriesData?.data, slug)
     .map(pc => ({name: pc.name, href: `/category/${pc.slug}`}))
@@ -168,7 +168,7 @@ export default async function ProductCategoryPage(props: ProductCategoryPageProp
             </div>
 
             <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 md:grid-cols-3 lg:gap-x-8">
-              {!productsData?.data.length && (
+              {!productsData?.data?.length && (
                 <div
                   className={cn(
                     "col-span-1 sm:col-span-2 md:col-span-3 h-min",
@@ -180,7 +180,7 @@ export default async function ProductCategoryPage(props: ProductCategoryPageProp
                   </p>
                 </div>
               )}
-              {productsData?.data.map((product: Product) => (
+              {productsData?.data?.map((product: Product) => (
                 <ProductCard
                   key={product.id}
                   product={product}

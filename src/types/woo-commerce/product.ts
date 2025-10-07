@@ -130,3 +130,8 @@ export interface Product {
   menu_order: number;
   meta_data: MetaData[];
 }
+
+export interface RedisCachedProducts {
+    totalPages: string; // read-only
+    data: Product[];
+}
