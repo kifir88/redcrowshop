@@ -87,7 +87,7 @@ export async function fetchCustomProductAttributes(params?: any): Promise<Custom
 
     const baseUrl = typeof window !== "undefined"
         ? ""
-        : `http://${process.env.REDIS_PROXY_HOST || 'localhost:3000'}`;
+        : process.env.REDIS_PROXY_HOST || 'http://localhost:3000';
 
     const res = await fetch(baseUrl+`/api/redis/product-attributes?${search.toString()}`, { cache: "no-store" });
 
@@ -118,7 +118,7 @@ export async function fetchProducts (params?: any): Promise<RedisCachedProducts>
 
     const baseUrl = typeof window !== "undefined"
         ? ""
-        : `http://${process.env.REDIS_PROXY_HOST || 'localhost:3000'}`;
+        : process.env.REDIS_PROXY_HOST || 'http://localhost:3000';
 
     const res = await fetch(baseUrl+ `/api/redis/products?${search.toString()}`, { cache: "no-store" });
 
