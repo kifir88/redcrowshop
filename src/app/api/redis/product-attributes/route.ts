@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import redis from "@/libs/redis";
 import { wooCommerceCustomV1ApiInstance } from "@/libs/woocommerce-rest-api";
 
-const CACHE_TTL_SECONDS = 60 * 5; // 5 min
+const CACHE_TTL_SECONDS = 60 * 60 * 24 * 7; // 7 days
 
 export async function GET(req: Request) {
 
