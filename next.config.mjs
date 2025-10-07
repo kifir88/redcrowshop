@@ -1,5 +1,20 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+
+    webpack: (config, { isServer }) => {
+        if (!isServer) {
+            // Эти модули есть только в Node.js, исключаем их из клиента
+            config.resolve.fallback = {
+                ...config.resolve.fallback,
+                fs: false,
+                tls: false,
+                net: false,
+                dgram: false,
+            };
+        }
+        return config;
+    },
+
     async rewrites() {
         return [
             {
