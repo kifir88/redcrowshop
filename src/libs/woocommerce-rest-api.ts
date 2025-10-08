@@ -122,8 +122,6 @@ export async function fetchProducts (params?: any): Promise<RedisCachedProducts>
 
     const products = raw as RedisCachedProducts;
 
-    console.log("loaded products: total pages "+ products.totalPages);
-
     return products;
 }
 
@@ -143,15 +141,30 @@ export const fetchProductCategory = (productCategoryId: number) => {
 export const fetchProductAttributes = (params?: any): Promise<AxiosResponse<ProductAttribute[]>> => {
   return wooCommerceApiInstance.get("products/attributes", params)
 }
-export const fetchProductAttributeTerms = (
+export const fetchProductAttributeTerms = async (
     attributeId: string,
     params?: any
-): Promise<AxiosResponse<ProductAttributeTerm[]>> => {
+): Promise<ProductAttributeTerm[]> => {
+    let allTerms: ProductAttributeTerm[] = [];
+    let page = 1;
+    let totalPages = 1;
 
-  return wooCommerceApiInstance.get(
-      `products/attributes/${attributeId}/terms?per_page=100`,
-      { params: params } // Pass the merged parameters
-  );
+    do {
+        const response: AxiosResponse<ProductAttributeTerm[]> = await wooCommerceApiInstance.get(
+            `products/attributes/${attributeId}/terms?per_page=100&page=${page}`
+        );
+
+        allTerms = allTerms.concat(response.data);
+
+        console.log('response: ' + page);
+        console.log(response.data);
+
+        // WooCommerce sends total pages in headers
+        totalPages = parseInt(response.headers["x-wp-totalpages"] || "1", 10);
+        page++;
+    } while (page <= totalPages);
+
+    return allTerms;
 };
 
 export const fetchProductVariations = (productId: number, params?: any): Promise<AxiosResponse<ProductVariation[]>> => {

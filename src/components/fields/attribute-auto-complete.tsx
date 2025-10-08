@@ -45,7 +45,7 @@ export default function AttributeAutoComplete({
 
 
   useEffect(() => {
-    if (isSuccess && data?.data) {
+    if (isSuccess && data) {
       const availableOptions = new Set<string>();
 
       // Логика фильтрации вариаций на основе выбранных значений в форме
@@ -85,15 +85,18 @@ export default function AttributeAutoComplete({
       setItems(
           Array.from(
               new Map<string, ItemAutoComplete>(
-                  data?.data
+                  data
                       ?.filter(i => availableOptions.has(i.name))
-                      .map(i => {
+                      .map(k => {
                         const isAvailable = filteredVariations.some(variation =>
-                            variation.attributes?.some(attr => attr.option === i.name) &&
+                            variation.attributes?.some(attr => {
+                                return attr.option === k.name;
+                            }
+                            ) &&
                             (variation?.stock_quantity || 0) > 0 && variation?.stock_status == "instock"
                         );
 
-                        return isAvailable ? [i.name, { label: i.name, value: i }] : null;
+                        return isAvailable ? [k.name, { label: k.name, value: k }] : null;
                       })
                       .filter((item): item is [string, ItemAutoComplete] => Boolean(item)) // Type guard to remove null values
               ).values()
@@ -102,7 +105,7 @@ export default function AttributeAutoComplete({
 
 
     }
-  }, [isSuccess, data?.data, productVariations, form.values, attribute.id, value]); // Добавляем зависимость от value
+  }, [isSuccess, data, productVariations, form.values, attribute.id, value]); // Добавляем зависимость от value
 
 
   const valueLabel = useMemo(() => {

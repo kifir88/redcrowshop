@@ -90,6 +90,7 @@ export default async function ProductCategoryPage({
 
                     {/* Product grid */}
                     <div className="col-span-1 sm:col-span-2 md:col-span-3 lg:col-span-3 h-min space-y-6">
+                        {/* Top controls */}
                         <div
                             className={cn(
                                 "flex flex-col md:flex-row justify-between md:items-center gap-y-5"
@@ -106,6 +107,15 @@ export default async function ProductCategoryPage({
                             />
                         </div>
 
+                        {/* 🔹 Pagination ABOVE products (centered horizontally) */}
+                        <div className="flex justify-center">
+                            <CategoryListPagination
+                                currentPage={pageParam ?? "1"}
+                                totalPages={totalPages}
+                            />
+                        </div>
+
+                        {/* Product grid */}
                         <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 md:grid-cols-3 lg:col-span-3 lg:gap-x-8">
                             {!productsData?.data.length && (
                                 <div
@@ -128,16 +138,18 @@ export default async function ProductCategoryPage({
                                 />
                             ))}
                         </div>
+
+                        {/* 🔹 Pagination BELOW products (centered horizontally) */}
+                        <div className="flex justify-center">
+                            <CategoryListPagination
+                                currentPage={pageParam ?? "1"}
+                                totalPages={totalPages}
+                            />
+                        </div>
                     </div>
-
-                    <div />
-
-                    <CategoryListPagination
-                        currentPage={pageParam ?? "1"}
-                        totalPages={totalPages}
-                    />
                 </div>
             </section>
+
         </main>
     );
 }

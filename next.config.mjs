@@ -1,4 +1,7 @@
 /** @type {import('next').NextConfig} */
+const isDev = process.env.NODE_ENV === 'development';
+
+
 const nextConfig = {
 
     webpack: (config, { isServer }) => {
@@ -65,8 +68,8 @@ const nextConfig = {
         REDIS_PORT: "6379",
         REDIS_PASSWORD: "myredispassword@#A!",
 
-        REDIS_PROXY_HOST: "https://www.redcrow.kz",
-        REDIS_PROXY_HOST2: "redcrow.kz"
+        REDIS_PROXY_HOST: isDev ? "http://localhost:3000" : "https://www.redcrow.kz",
+
     }
 };
 
