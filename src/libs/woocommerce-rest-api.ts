@@ -156,9 +156,6 @@ export const fetchProductAttributeTerms = async (
 
         allTerms = allTerms.concat(response.data);
 
-        console.log('response: ' + page);
-        console.log(response.data);
-
         // WooCommerce sends total pages in headers
         totalPages = parseInt(response.headers["x-wp-totalpages"] || "1", 10);
         page++;

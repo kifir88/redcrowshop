@@ -80,7 +80,7 @@ export default function OrderDetailClient({ orderData, currencyRates }: OrderDet
                                             </div>
                                         </td>
 
-                                        <td className="p-4 text-base font-normal text-gray-900 dark:text-white">
+                                        <td className="p-4 text-base font-normal text-gray-900 dark:text-white" style={{textAlign:"right"}}>
                                             {`x${li.quantity}`}
                                         </td>
 
