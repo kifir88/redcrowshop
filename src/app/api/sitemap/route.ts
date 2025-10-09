@@ -93,13 +93,13 @@ const processCategoriesForSitemap = async (categoriesData: ProductCategory[], si
     }
 };
 export async function GET() {
-  /*try {
+  try {
     // Fetch the product categories
     const categoriesData = await fetchProductCategories({
       exclude: [378],
     });
     const strapiFooterPagesData = await fetchFooterPages();
-    // const attributesData = await fetchProductAttributes();
+    //const attributesData = await fetchProductAttributes();
 
     // Set up sitemap stream and gzip it
     const sitemap = new SitemapStream({ hostname: `https://www.redcrow.kz` });
@@ -132,7 +132,7 @@ export async function GET() {
   } catch (error) {
     console.error(error);
     return new NextResponse(null, { status: 500 });
-  }*/
+  }
     return notFound();
 }
 
