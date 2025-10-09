@@ -35,7 +35,7 @@ export async function generateMetadata(
         per_page: 50,
     });
 
-    const formattedVariationsForDescription = productVariationsData.data
+    const formattedVariationsForDescription = productVariationsData
         .map((pv) =>
             pv.attributes.map((a) => `${a.name} ${a.option}`.toLowerCase()).join(" и ")
         )
@@ -91,7 +91,7 @@ export default async function ProductPage(props: AppPageProps<ProductPageParams>
             <div className="lg:grid lg:auto-rows-min lg:grid-cols-12 lg:gap-x-8">
                 <ProductImageAttribute
                     product={productData}
-                    productVariations={productVariationsData.data}
+                    productVariations={productVariationsData}
                     currencyRates={currencyRatesData.data}
                 />
             </div>

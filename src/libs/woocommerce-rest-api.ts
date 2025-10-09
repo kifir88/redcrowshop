@@ -160,29 +160,42 @@ export const fetchProductAttributeTerms = async (
     attributeId: string,
     params?: any
 ): Promise<ProductAttributeTerm[]> => {
-    let allTerms: ProductAttributeTerm[] = [];
-    let page = 1;
-    let totalPages = 1;
 
-    do {
-        const response: AxiosResponse<ProductAttributeTerm[]> = await wooCommerceApiInstance.get(
-            `products/attributes/${attributeId}/terms?per_page=100&page=${page}`
-        );
+    const baseUrl = process.env.REDIS_PROXY_HOST || 'http://localhost:3000';
+    const res = await fetch(baseUrl+ `/api/redis/product-attribute-terms?attributeId=${attributeId}`, { cache: "no-store" });
+    const raw = await res.json();
 
-        allTerms = allTerms.concat(response.data);
-
-        // WooCommerce sends total pages in headers
-        totalPages = parseInt(response.headers["x-wp-totalpages"] || "1", 10);
-        page++;
-    } while (page <= totalPages);
-
-    return allTerms;
+    return raw as ProductAttributeTerm[];
 };
 
-export const fetchProductVariations = (productId: number, params?: any, cache: boolean = true): Promise<AxiosResponse<ProductVariation[]>> => {
+export const fetchProductVariations = async (productId: number, params?: any, cache: boolean = true): Promise<ProductVariation[]> => {
   const defaultParams = { ...params, status: 'publish' };
-  return wooCommerceApiInstance.get(`products/${productId}/variations`, params)
+
+    const search = new URLSearchParams();
+    for (const key in params) {
+        const value = params[key];
+
+        if(value==='undefined' || value===undefined)
+            continue;
+
+        if (Array.isArray(value)) {
+            value.forEach(v => search.append(`${key}[]`, v));
+        } else if (typeof value === "object" && value !== null) {
+            search.append(key, JSON.stringify(value));
+        } else {
+            search.append(key, value);
+        }
+    }
+
+    search.append('productId', productId.toString());
+
+  const baseUrl = process.env.REDIS_PROXY_HOST || 'http://localhost:3000';
+  const res = await fetch(baseUrl+ `/api/redis/product-variations?=${search.toString()}`, { cache: "no-store" });
+  const raw = await res.json();
+
+  return raw as ProductVariation[];
 }
+
 export const fetchProductVariation = (productId: number, variationId: number, params?: any): Promise<AxiosResponse<ProductVariation>> => {
   return wooCommerceApiInstance.get(`products/${productId}/variations/${variationId}`, params)
 }

@@ -31,7 +31,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
     <head>
-        <Script src="./cdek.js" strategy="beforeInteractive" />
+        {/*--<Script src="./cdek.js" strategy="beforeInteractive" />-->*/}
         <ThemeModeScript/>
     </head>
     <body className={roboto.className}>
