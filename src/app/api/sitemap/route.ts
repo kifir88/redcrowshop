@@ -80,16 +80,18 @@ const processCategoriesForSitemap = async (categoriesData: ProductCategory[], si
 
         sitemap.write({ url: `/category/${category.slug}`, changefreq: 'weekly', priority: 0.9 });
 
-        const productAttributes = await fetchCustomProductAttributes({
+        /*const productAttributes = await fetchCustomProductAttributes({
             category_name: category.slug,
         }, false);
 
         const allCombinations = generateAllAttributeCombinations(productAttributes);
 
+        console.log('combinations:'  +allCombinations)
+
         allCombinations.forEach(combination => {
             const combinationUrl = `/category/${category.slug}?${combination}`;
             sitemap.write({ url: combinationUrl, changefreq: 'weekly', priority: 0.8 });
-        });
+        });*/
     }
 };
 export async function GET() {
