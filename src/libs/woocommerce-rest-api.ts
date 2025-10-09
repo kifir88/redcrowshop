@@ -96,7 +96,22 @@ export async function fetchCustomProductAttributes(params?: any): Promise<Custom
 }
 
 // API wc/v3
-export async function fetchProducts (params?: any): Promise<RedisCachedProducts> {
+export async function fetchProducts (params?: any, cache: boolean = true): Promise<RedisCachedProducts> {
+
+    // fetch from woocommerce if not cached by redis
+    if(!cache)
+    {
+        const cacheBuster = { _timestamp: new Date().getTime() };
+        const defaultParams = { ...params, status: 'publish', ...cacheBuster };
+
+        // 2️⃣ Fetch from WooCommerce
+        const response = await wooCommerceApiInstance.get("products?"+new Date().getTime(), defaultParams);
+        const data = response.data
+
+        const totalPages = response.headers["x-wp-totalpages"]
+
+        return {totalPages: totalPages, data: data} as RedisCachedProducts;
+    }
 
     const search = new URLSearchParams();
     for (const key in params) {
@@ -164,7 +179,7 @@ export const fetchProductAttributeTerms = async (
     return allTerms;
 };
 
-export const fetchProductVariations = (productId: number, params?: any): Promise<AxiosResponse<ProductVariation[]>> => {
+export const fetchProductVariations = (productId: number, params?: any, cache: boolean = true): Promise<AxiosResponse<ProductVariation[]>> => {
   const defaultParams = { ...params, status: 'publish' };
   return wooCommerceApiInstance.get(`products/${productId}/variations`, params)
 }

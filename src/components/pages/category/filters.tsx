@@ -29,9 +29,14 @@ const Filters = ({
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  const productAttributes = useMemo(() => {
-    return data?.filter(pa => !pa.slug.includes("pa_yookassa"))
-  }, [data]);
+    const productAttributes = useMemo(() => {
+        if (!data) return [];
+
+        return data
+            .filter(pa => !pa.slug.includes("pa_yookassa"))
+            .sort((a, b) => (a.slug === "pa_razmer" ? -1 : b.slug === "pa_razmer" ? 1 : 0));
+    }, [data]);
+
 
   // Get current on-sale state from URL
   const isOnSale = searchParams.get("sale") === "1";

@@ -82,27 +82,40 @@ export default function AttributeAutoComplete({
       );*/
 
       // new solution with hidden options which are out of stock
-      setItems(
-          Array.from(
-              new Map<string, ItemAutoComplete>(
-                  data
-                      ?.filter(i => availableOptions.has(i.name))
-                      .map(k => {
+        const notSortedItems=  Array.from(
+            new Map<string, ItemAutoComplete>(
+                data
+                    ?.filter(i => availableOptions.has(i.name))
+                    .map(k => {
                         const isAvailable = filteredVariations.some(variation =>
                             variation.attributes?.some(attr => {
-                                return attr.option === k.name;
-                            }
+                                    return attr.option === k.name;
+                                }
                             ) &&
                             (variation?.stock_quantity || 0) > 0 && variation?.stock_status == "instock"
                         );
 
                         return isAvailable ? [k.name, { label: k.name, value: k }] : null;
-                      })
-                      .filter((item): item is [string, ItemAutoComplete] => Boolean(item)) // Type guard to remove null values
-              ).values()
-          ) as ItemAutoComplete[]
-      );
+                    })
+                    .filter((item): item is [string, ItemAutoComplete] => Boolean(item)) // Type guard to remove null values
+            ).values());
 
+        // 🧩 Custom order for size (razmer)
+        const sizeOrder =     ["XS", "S", "M" ,"L", "XL", "2XL", "3XL", "4XL", "1", "2"]
+        let sortedOptions = notSortedItems;
+
+        if (attribute.name === "Размер") {
+            sortedOptions.sort((a, b) => {
+                const indexA = sizeOrder.indexOf(a.value.name);
+                const indexB = sizeOrder.indexOf(b.value.name);
+                if (indexA === -1 && indexB === -1) return 0;
+                if (indexA === -1) return 1;
+                if (indexB === -1) return -1;
+                return indexA - indexB;
+            });
+        }
+
+      setItems(sortedOptions);
 
     }
   }, [isSuccess, data, productVariations, form.values, attribute.id, value]); // Добавляем зависимость от value

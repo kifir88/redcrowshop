@@ -69,14 +69,14 @@ export default async function ProductPage(props: AppPageProps<ProductPageParams>
         fetchProducts({
             include: productData.related_ids,
             per_page: 3,
-        }),
+        }, false),
         fetchProductCategories({
             exclude: [378],
         }),
         fetchProductVariations(productData.id, {
             parent: productData.id,
             per_page: 50,
-        }),
+        }, false),
     ]);
 
     const breadCrumbItems = getCategoryHierarchyBySlug(

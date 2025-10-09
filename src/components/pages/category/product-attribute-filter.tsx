@@ -44,7 +44,7 @@ const ProductAttributeFilter = ({ customProductAttribute }: { customProductAttri
     };
 
     // 🧩 Custom order for size (razmer)
-    const sizeOrder = ["XS", "S", "M", "L", "XL", "2XL"];
+    const sizeOrder =     ["XS", "S", "M" ,"L", "XL", "2XL", "3XL", "4XL", "1", "2"]
     let sortedOptions = [...customProductAttribute.options];
 
     if (customProductAttribute.slug === "pa_razmer") {
