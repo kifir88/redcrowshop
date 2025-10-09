@@ -73,7 +73,7 @@ const CACHE_TTL_SECONDS = 60 * 5; // 5 min
 // With REDIS cache
 export async function fetchCustomProductAttributes(params?: any, cached:boolean=true): Promise<CustomProductAttribute[]> {
 
-    if(!cache)
+    if(!cached)
     {
         const response = await wooCommerceCustomV1ApiInstance.get("product-attributes", params);
         const data = response.data
