@@ -82,7 +82,7 @@ const processCategoriesForSitemap = async (categoriesData: ProductCategory[], si
 
         const productAttributes = await fetchCustomProductAttributes({
             category_name: category.slug,
-        });
+        }, false);
 
         const allCombinations = generateAllAttributeCombinations(productAttributes);
 
