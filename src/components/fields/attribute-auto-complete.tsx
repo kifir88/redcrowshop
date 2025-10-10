@@ -60,7 +60,8 @@ export default function AttributeAutoComplete({
       // Собираем доступные опции для данного атрибута из отфильтрованных вариаций
       filteredVariations.forEach(variation => {
         variation.attributes.forEach(attr => {
-          if (attr.id === attribute.id) {
+            console.log(variation.image);
+          if (attr.id === attribute.id && variation.image !== null) {
             availableOptions.add(attr.option);
           }
         });
