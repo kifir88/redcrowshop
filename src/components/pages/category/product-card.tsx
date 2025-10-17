@@ -34,6 +34,8 @@ const ProductCard = ({product, currencyRates}: {product: Product; currencyRates:
     )
   }, [selectedCurrency, product, currencyRates]);
 
+    const [isLoaded, setIsLoaded] = useState(false);
+
   const isOutOfStock = product.stock_status === "outofstock";
   const isOnSale = product.on_sale;
 
@@ -48,11 +50,18 @@ const ProductCard = ({product, currencyRates}: {product: Product; currencyRates:
             !isOutOfStock && "group-hover:opacity-75"
         )}>
           <Image
-              className="aspect-square h-full w-full object-cover object-center"
+              className={cn(
+                  "aspect-square h-full w-full object-cover object-center transition-opacity duration-500",
+                  isLoaded ? "opacity-100" : "opacity-0"
+              )}
               src={imageSrc}
               alt={imageAlt}
               width={384}
               height={384}
+              loading="lazy"           // ✅ explicitly lazy
+              placeholder="blur"       // ✅ optional blurred placeholder
+              blurDataURL="/category/product-image-placeholder.png" // ✅ base64 or placeholder
+              onLoadingComplete={() => setIsLoaded(true)}
           />
 
           {isOutOfStock && (
