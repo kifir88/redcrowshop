@@ -73,9 +73,7 @@ export default function MobileMenu({
                   href={`/shop?sale=1`}
                   className="font-semibold text-red-500"
                   onClick={handleClose}
-              >
-                Распродажа
-              </Link>
+              >outlet</Link>
             </div>
 
               {parentCategories?.map(pc => {

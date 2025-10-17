@@ -54,7 +54,7 @@ export default function NavbarDropdown({
           </a>
 
           <a href={`/shop?sale=1`} className="font-bold text-red-500">
-            Распродажа
+            outlet
           </a>
 
           {parentCategories?.map((pc) => (
