@@ -17,8 +17,9 @@ const ProductAttributeFilter = ({ customProductAttribute }: { customProductAttri
     const productAttributeTerms = productAttributeParam?.split("-i-");
 
     const handleSelectOption = (productAttributeTermSlug: string) => {
-        const currentParams = qs.parse(searchParams.toString());
-
+        const currentParams = Object.fromEntries(
+            Object.entries(qs.parse(searchParams.toString())).filter(([k]) => k !== 'page')
+        );
         const previousAttributeValues = productAttributeParam
             ? productAttributeParam.split("-i-")
             : [];

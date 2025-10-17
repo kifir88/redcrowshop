@@ -42,12 +42,15 @@ const Filters = ({
   const isOnSale = searchParams.get("sale") === "1";
 
   const handleOnSaleChange = () => {
-    const currentParams = qs.parse(searchParams.toString());
+      const currentParams = qs.parse(searchParams.toString());
+      const newParams = Object.fromEntries(
+          Object.entries({
+              ...currentParams,
+              sale: isOnSale ? undefined : '1',
+          }).filter(([key]) => key !== 'page')
+      );
 
-    const newParams = {
-      ...currentParams,
-      "sale": isOnSale ? undefined : "1",
-    };
+     delete newParams["page"];
 
     const url = qs.stringifyUrl({
       url: pathname,
