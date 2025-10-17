@@ -76,6 +76,7 @@ export default function ProductDetailAttributesForm({
             const newCartItem = {
               productId: product.id,
               productVariationId: -1,
+              product_url: window.location.href,
               name: product.name,
               quantity: 1,
               price: product.on_sale ? (product.sale_price ? Number(product.sale_price) : Number(product.price)) : Number(product.price),
@@ -128,6 +129,7 @@ export default function ProductDetailAttributesForm({
           productId: product.id,
           productVariationId: selectedProductVariation.id,
           name: product.name,
+          product_url: window.location.href,
           quantity: 1,
           price: Number(selectedProductVariation.price),
           imageSrc: selectedProductVariation.image?.src || null,
