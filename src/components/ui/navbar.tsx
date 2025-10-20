@@ -24,15 +24,20 @@ const Navbar = () => {
     setOpenDropdownIndex(null);
   };
 
-  const navItems = data?.data?.map(pc => (
-    <DropdownMenu
-      key={pc.id}
-      navItem={pc}
-      isOpen={openDropdownIndex === pc.id}
-      toggleOpen={() => toggleOpenState(pc.id)}
-      toggleClose={closeAllDropdowns}
-    />
-  ));
+  const navItems = data?.data?.filter(pc => pc.slug !== 'musor').map(pc => {
+      if(pc.name==='Мусор'){
+          return null;
+      }
+      return (
+            <DropdownMenu
+              key={pc.id}
+              navItem={pc}
+              isOpen={openDropdownIndex === pc.id}
+              toggleOpen={() => toggleOpenState(pc.id)}
+              toggleClose={closeAllDropdowns}
+            />
+    );
+  });
 
   return (
     <nav className="sticky top-0 z-50 w-full inset-x-0 mx-auto max-w-7xl py-6 px-4 sm:px-6 lg:px-8">

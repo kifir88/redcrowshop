@@ -22,7 +22,7 @@ export default function NavbarDropdown({
 
   const parentCategories = useMemo(() => {
     // ID 378 - Номенклатура
-    return productCategories.filter(pc => pc.parent === 378)
+    return productCategories.filter(pc => pc.parent === 378).filter(pc=>pc.slug!=='musor')
   }, [productCategories])
 
   const selectedSubcategories = useMemo(() => {

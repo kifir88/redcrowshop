@@ -3,6 +3,7 @@ import {fetchCurrencyRates, fetchProductCategories} from "@/libs/woocommerce-res
 import NavbarDropdown from "@/components/layout/navbar/components/navbar-dropdown";
 import MobileMenu from "@/components/layout/navbar/components/mobile-menu";
 import {cn} from "@/libs/utils";
+import {ProductCategory} from "@/types/woo-commerce/product-category";
 
 export default async function Navbar() {
   const [
@@ -16,6 +17,10 @@ export default async function Navbar() {
     })
   ]);
 
+    const filteredProductCategories = productCategoriesData?.data?.filter(
+        (pc: ProductCategory) => pc.slug !== 'musor'
+    );
+
   return (
     <>
       <div className="relative md:h-[72px] z-50">
@@ -26,14 +31,14 @@ export default async function Navbar() {
           )}
         >
           <NavbarDropdown
-            productCategories={productCategoriesData.data}
+            productCategories={filteredProductCategories}
             currencyRates={currencyRatesData.data}
           />
         </MegaMenu>
       </div>
 
       <MobileMenu
-        productCategories={productCategoriesData.data}
+        productCategories={filteredProductCategories}
         currencyRates={currencyRatesData.data}
       />
     </>

@@ -16,7 +16,8 @@ const Collection = ({
 
   return (
     <div className="flex flex-col gap-2">
-      {data?.data.map(i => {
+      {data?.data?.filter(pc => pc.slug !== 'musor').map(i => {
+
         const href = qs.stringifyUrl({
           url: '/shop',
           query: {

@@ -61,7 +61,7 @@ const ProductCard = ({product, currencyRates}: {product: Product; currencyRates:
               loading="lazy"           // ✅ explicitly lazy
               placeholder="blur"       // ✅ optional blurred placeholder
               blurDataURL="/category/product-image-placeholder.png" // ✅ base64 or placeholder
-              onLoadingComplete={() => setIsLoaded(true)}
+              onLoad={() => setIsLoaded(true)}
           />
 
           {isOutOfStock && (

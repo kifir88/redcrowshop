@@ -78,6 +78,9 @@ const processCategoriesForSitemap = async (categoriesData: ProductCategory[], si
         if(category === null || category === undefined)
             continue;
 
+        if(category.slug === 'musor')
+            continue;
+
         sitemap.write({ url: `/category/${category.slug}`, changefreq: 'weekly', priority: 0.9 });
 
         /*const productAttributes = await fetchCustomProductAttributes({
@@ -98,7 +101,7 @@ export async function GET() {
   try {
     // Fetch the product categories
     const categoriesData = await fetchProductCategories({
-      exclude: [378],
+      exclude: [378, 3359],
     });
     const strapiFooterPagesData = await fetchFooterPages();
     //const attributesData = await fetchProductAttributes();

@@ -25,7 +25,7 @@ export default function MobileMenu({
 
   const parentCategories = useMemo(() => {
     // ID 320 - Номенклатура
-    return productCategories.filter(pc => pc.parent === 378)
+    return productCategories.filter(pc => pc.parent === 378).filter(pc=> pc.slug!=='musor')
   }, [productCategories])
 
 
