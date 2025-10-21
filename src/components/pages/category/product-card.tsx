@@ -51,7 +51,7 @@ const ProductCard = ({product, currencyRates}: {product: Product; currencyRates:
         )}>
           <Image
               className={cn(
-                  "aspect-square h-full w-full object-cover object-center transition-opacity duration-500",
+                  "aspect-square h-full w-full object-cover object-top transition-opacity duration-500",
                   isLoaded ? "opacity-100" : "opacity-0"
               )}
               src={imageSrc}
