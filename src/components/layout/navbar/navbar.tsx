@@ -13,7 +13,7 @@ export default async function Navbar() {
     fetchCurrencyRates(),
     fetchProductCategories({
       order: "desc",
-      orderby: "name"
+      orderby: "name", exclude: [378],per_page: 50
     })
   ]);
 

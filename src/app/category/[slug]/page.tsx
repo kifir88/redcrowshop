@@ -63,7 +63,7 @@ export default async function ProductCategoryPage(props: ProductCategoryPageProp
     const resolvedSearchParams = await searchParams; // ✅ await searchParams
 
     const productCategoriesData = await fetchProductCategories({
-        exclude: [378],
+        exclude: [378],per_page: 50
     });
     const currentProductCategory = productCategoriesData?.data.find(
         (pc: ProductCategory) => pc.slug === slug

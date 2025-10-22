@@ -30,7 +30,7 @@ async function runPrewarmCategories() {
     try {
         // 1️⃣ Fetch all categories except 378
         const productCategoriesData = await fetchProductCategories({
-            exclude: [378],
+            exclude: [378],per_page: 50
         });
 
         const categories = productCategoriesData?.data || [];

@@ -71,7 +71,7 @@ export default async function ProductPage(props: AppPageProps<ProductPageParams>
             per_page: 3,
         }, false),
         fetchProductCategories({
-            exclude: [378],
+            exclude: [378],per_page: 50
         }),
         fetchProductVariations(productData.id, {
             parent: productData.id,
