@@ -31,6 +31,16 @@ export default function ProductDetailAttributesForm({
   const isAddToCartButtonDisabled =
       isOutOfStock || Object.keys(form.values).length !== product.attributes.length;
 
+  const order: Record<string, number> = { 'Размер': 1, 'Цвет': 2 };
+
+  const sorted = [...product.attributes].sort((a, b) => {
+        const aOrder = order[a.name] ?? 999;
+        const bOrder = order[b.name] ?? 999;
+
+        if (aOrder !== bOrder) return aOrder - bOrder;
+        return a.name.localeCompare(b.name);
+    });
+
   const showSuccessCartToast = () => {
     toast.custom((t) => (
         <Toast className={`${t.visible ? 'animate-enter' : 'animate-leave'}`}>
@@ -155,12 +165,7 @@ export default function ProductDetailAttributesForm({
         <form onSubmit={form.onSubmit(handleSubmit)}>
           {isOutOfStock && <p className="text-xl text-gray-900">Товара нет в наличии</p>}
 
-          {[...product.attributes].sort((a, b) => {
-              const order = { 'Размер': 1, 'Цвет': 2 }; // custom order
-              const aOrder = order[a.name] || 999;
-              const bOrder = order[b.name] || 999;
-              return aOrder - bOrder;
-          }).map((a) => {
+          {sorted.map((a) => {
             return (
                 <div key={a.id} className="mt-6">
                   <AttributeAutoComplete
