@@ -155,7 +155,12 @@ export default function ProductDetailAttributesForm({
         <form onSubmit={form.onSubmit(handleSubmit)}>
           {isOutOfStock && <p className="text-xl text-gray-900">Товара нет в наличии</p>}
 
-          {[...product.attributes].reverse().map((a) => {
+          {[...product.attributes].sort((a, b) => {
+              const order = { 'Размер': 1, 'Цвет': 2 }; // custom order
+              const aOrder = order[a.name] || 999;
+              const bOrder = order[b.name] || 999;
+              return aOrder - bOrder;
+          }).map((a) => {
             return (
                 <div key={a.id} className="mt-6">
                   <AttributeAutoComplete
