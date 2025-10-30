@@ -52,8 +52,9 @@ export default function ProductImageAttribute({
   const selectedProductVariationImage: Image | null = variationProductWithImage != null ? variationProductWithImage.image
                                                           : (selectedProductVariation?.image || null);
 
-  const productVariationImages = productVariations
-    ?.map(i => i.image)
+  const productVariationImages =
+      productVariations.filter(i =>
+          (i!==null && i.stock_quantity!==0))?.map(i => i.image)
     ?.filter(i => i !== null && product.images.find((gg) => i.src == gg.src) == null);
 
   const productImages = product.images
