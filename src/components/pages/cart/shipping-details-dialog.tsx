@@ -13,7 +13,7 @@ import {CartItem} from "@/types/cart";
 import toast from "react-hot-toast";
 import {Button} from "flowbite-react";
 import {useRouter} from "next/navigation";
-import {fetchCurrencyRates} from "@/libs/woocommerce-rest-api";
+import {fetchCurrencyRates, fetchProduct, fetchProductVariation, updateOrder} from "@/libs/woocommerce-rest-api";
 import {CustomCurrencyRates} from "@/types/woo-commerce/custom-currency-rates";
 import {amountCurrency, CurrencyType} from "@/libs/currency-helper";
 import { v4 as uuidv4 } from 'uuid';
@@ -78,7 +78,77 @@ export default function ShippingDetailsDialog({
     }
   })
 
-  const calculatePrice = async () => {
+    const validateCartItems = async (): Promise<{
+        valid: boolean;
+        updatedCart: CartItem[];
+        invalidIds: number[];
+    }> => {
+
+        const updatedCart: CartItem[] = [];
+        const invalidIds: number[] = [];
+
+        for (const item of cartItems) {
+            try {
+                const productId =
+                    item.productVariationId !== -1
+                        ? item.productVariationId
+                        : item.productId;
+
+                let productData: any = null;
+
+                console.log("validating item: " + productId);
+
+                // Fetch product or variation
+                if (item.productVariationId === -1) {
+                    const res = await fetchProduct(item.productId);
+                    productData = res.data;
+                } else {
+                    const res = await fetchProductVariation(
+                        item.productId,
+                        item.productVariationId
+                    );
+                    productData = res.data;
+                }
+
+                // ❌ Product deleted or unavailable
+                if (
+                    !productData ||
+                    productData.status === "trash" ||
+                    productData.stock_status === "outofstock"
+                ) {
+                    invalidIds.push(productId);
+                    continue;
+                }
+
+                // Stock validation
+                const hasStock =
+                    !productData.manage_stock ||
+                    productData.stock_quantity >= item.quantity;
+
+                if (hasStock) {
+
+                } else {
+                    invalidIds.push(productId);
+                }
+            } catch {
+                // Request failed — treat as invalid product
+                invalidIds.push(item.productId);
+                continue;
+            }
+        }
+
+        // FINAL RESULT
+        const valid = invalidIds.length === 0;
+
+        return {
+            valid,
+            updatedCart,
+            invalidIds,
+        };
+    };
+
+
+    const calculatePrice = async () => {
     try {
       const response = await axios.post("/api/cdek", {
         //date: new Date().toISOString(),
@@ -110,7 +180,17 @@ export default function ShippingDetailsDialog({
     }
   };
 
-  const handleSubmit = (formValues: FormValues) => {
+   const handleSubmit = async  (formValues: FormValues) =>  {
+
+      // ✅ validate cart stock before proceeding
+      const { valid, updatedCart, invalidIds } = await validateCartItems();
+
+      if (!valid) {
+          closeModal();
+          window.location.reload();
+          return;
+      }
+
     const address = {
       ...formValues,
       phone: formatPhoneNumberIntl(formValues.phone as string)
@@ -131,9 +211,10 @@ export default function ShippingDetailsDialog({
     }))
 
     const payload = {
+      status: "completed",
       payment_method: "",
       payment_method_title: "",
-      set_paid: false,
+      set_paid: true,
       billing: address,
       shipping: address,
       line_items: lineItems,
@@ -187,8 +268,17 @@ ${formatPriceToKZT(total)}
         console.error(e, "create-order-error")
         toast.error(`${e.response?.data}`)
       },
-      onSuccess: (res) => {
+      onSuccess: async (res) => {
         clearCartItems();
+
+          const orderId = res.data.id;
+
+          try {
+              await axios.post('https://admin.redcrow.kz/wp-json/custom/v1/reduce-stock', { orderId });
+          } catch (err) {
+              console.error('Failed to reduce stock', err);
+          }
+
 
         try {
           const emailContent = generateOrderCreatedEmailText(res.data ?? null);

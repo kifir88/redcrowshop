@@ -68,7 +68,7 @@ export default function ProductImageAttribute({
   if (selectedProductVariationImage!=null)
   {
     idx = allProductImages.indexOf(selectedProductVariationImage);
-    console.log(idx);
+
   }
 
   return (

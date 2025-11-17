@@ -142,8 +142,8 @@ export default function ProductDetailAttributesForm({
           product_url: window.location.href,
           quantity: 1,
           price: Number(selectedProductVariation.price),
-          imageSrc: selectedProductVariation.image?.src || null,
-          imageAlt: selectedProductVariation.image?.alt || null,
+          imageSrc: selectedProductVariation.image?.src || (product.images[0].src || null),
+          imageAlt: selectedProductVariation.image?.alt || (product.images[0].alt || null),
           attributes: Object.keys(formValues).map((attributeId) => {
             const attributeName = product.attributes.find((a) => a.id === Number(attributeId))?.name;
             const attributeVariation = formValues[attributeId]?.name;

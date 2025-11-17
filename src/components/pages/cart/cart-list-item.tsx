@@ -1,13 +1,13 @@
-"use client"
+"use client";
 
-import {CartItem} from "@/types/cart";
-import {useLocalStorage} from "usehooks-ts";
-import {useCallback, useEffect, useState} from "react";
-import {CustomCurrencyRates} from "@/types/woo-commerce/custom-currency-rates";
-import {CurrencyType, formatCurrency} from "@/libs/currency-helper";
+import { CartItem } from "@/types/cart";
+import { useLocalStorage } from "usehooks-ts";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { CustomCurrencyRates } from "@/types/woo-commerce/custom-currency-rates";
+import { CurrencyType, formatCurrency } from "@/libs/currency-helper";
 import Image from "next/image";
 import useProductVariation from "@/hooks/product-variations/use-product-variation";
-import {Spinner} from "flowbite-react";
+import { Spinner } from "flowbite-react";
 import toast from "react-hot-toast";
 import ClientOnly from "@/components/client_only";
 
@@ -17,7 +17,7 @@ const MinusSvg = (
         <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
               d="M1 1h16"/>
     </svg>
-)
+);
 
 const PlusSvg = (
     <svg className="h-2.5 w-2.5 text-gray-900" aria-hidden="true"
@@ -25,7 +25,7 @@ const PlusSvg = (
         <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
               d="M9 1v16M1 9h16"/>
     </svg>
-)
+);
 
 const Overlay = ({ children }: { children: React.ReactNode }) => (
     <div className="absolute inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-20">
@@ -38,9 +38,13 @@ const Overlay = ({ children }: { children: React.ReactNode }) => (
 export default function CartListItem({
                                          cartItem,
                                          currencyRates,
+                                         onOverlayOpen,
+                                         onOverlayClose,
                                      }: {
     cartItem: CartItem;
     currencyRates: CustomCurrencyRates;
+    onOverlayOpen?: () => void;
+    onOverlayClose?: () => void;
 }) {
 
     const [selectedCurrency] = useLocalStorage<CurrencyType>("currency", "KZT");
@@ -63,15 +67,16 @@ export default function CartListItem({
         if (isError) {
             handleRemove();
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isError]);
 
     const updateCartItemQuantity = useCallback((item: CartItem, newQuantity: number) => {
-        const updatedItems = cartItems.map(cartItem =>
-            cartItem.productVariationId === item.productVariationId && cartItem.productVariationId !== -1
-                ? { ...cartItem, quantity: newQuantity }
-                : cartItem.productVariationId === -1 && cartItem.productId === item.productId
-                    ? { ...cartItem, quantity: newQuantity }
-                    : cartItem
+        const updatedItems = cartItems.map(ci =>
+            ci.productVariationId === item.productVariationId && ci.productVariationId !== -1
+                ? { ...ci, quantity: newQuantity }
+                : ci.productVariationId === -1 && ci.productId === item.productId
+                    ? { ...ci, quantity: newQuantity }
+                    : ci
         );
 
         setCartItems(updatedItems);
@@ -108,6 +113,24 @@ export default function CartListItem({
     const stock = data?.data?.stock_quantity ?? 0;
     const hasNoStock = stock === 0;
     const notEnoughStock = stock > 0 && cartItem.quantity > stock;
+    const isOverlayOpen = Boolean(data?.data && (hasNoStock || notEnoughStock));
+    const overlayPrevRef = useRef<boolean>(false);
+
+    useEffect(() => {
+        const prev = overlayPrevRef.current;
+        if (!prev && isOverlayOpen) {
+            onOverlayOpen?.();
+        } else if (prev && !isOverlayOpen) {
+            onOverlayClose?.();
+        }
+        overlayPrevRef.current = isOverlayOpen;
+
+        return () => {
+            if (overlayPrevRef.current) {
+                onOverlayClose?.();
+            }
+        };
+    }, [isOverlayOpen, onOverlayOpen, onOverlayClose]);
 
     return (
         <ClientOnly>

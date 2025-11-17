@@ -7,5 +7,5 @@ export interface CartItem {
   quantity: number;
   imageSrc: string | null;
   imageAlt: string | null;
-  attributes: string[]
+  attributes: string[];
 }

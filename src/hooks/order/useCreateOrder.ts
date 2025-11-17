@@ -58,7 +58,6 @@ export default function useCreateOrder(): UseMutationResult<
     if (storedData) {
       var { code, expires } = JSON.parse(storedData);
       if (Date.now() > expires) {
-        console.log("remove expired code: " + code);
         code = null;
         localStorage.removeItem("referral_code");
       }
