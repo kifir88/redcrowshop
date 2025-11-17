@@ -40,6 +40,9 @@ export default function CartListItem({
     variationId: cartItem.productVariationId,
   });
 
+  if(isError){
+      handleRemove();
+  }
 
   const [selectedCurrency] = useLocalStorage<CurrencyType>("currency", "KZT");
   const [cartItems, setCartItems] = useLocalStorage<CartItem[]>("cartItems", []);

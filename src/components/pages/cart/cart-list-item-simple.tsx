@@ -34,9 +34,22 @@ export default function CartListItemSimple({
     currencyRates: CustomCurrencyRates;
 }) {
 
+    const handleRemove = () => {
+        const updatedItems = cartItems.filter(
+            item => item.productId != cartItem.productId
+        );
+        setCartItems(updatedItems);
+    };
+
     const {data, isLoading, isError} = useProduct({
         productId: cartItem.productId,
     });
+
+    if(isError)
+    {
+        handleRemove();
+    }
+
 
     const [selectedCurrency, setSelectedCurrency] = useState<CurrencyType>("KZT");
     const [storedCurrency] = useLocalStorage<CurrencyType>("currency", "KZT");
@@ -82,12 +95,7 @@ export default function CartListItemSimple({
         }
     };
 
-    const handleRemove = () => {
-        const updatedItems = cartItems.filter(
-            item => item.productId != cartItem.productId
-        );
-        setCartItems(updatedItems);
-    };
+
 
 
 
