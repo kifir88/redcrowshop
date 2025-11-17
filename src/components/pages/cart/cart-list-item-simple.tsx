@@ -50,10 +50,11 @@ export default function CartListItemSimple({
         productId: cartItem.productId,
     });
 
-    if(isError)
-    {
-        handleRemove();
-    }
+    useEffect(() => {
+        if (isError) {
+            handleRemove();
+        }
+    }, [isError]);
 
     useEffect(() => {
         if (storedCurrency) {

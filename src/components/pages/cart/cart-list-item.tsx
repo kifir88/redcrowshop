@@ -52,9 +52,11 @@ export default function CartListItem({
     variationId: cartItem.productVariationId,
   });
 
-  if(isError){
-      handleRemove();
-  }
+    useEffect(() => {
+        if (isError) {
+            handleRemove();
+        }
+    }, [isError]);
 
 
   const updateCartItemQuantity = useCallback((item: CartItem, newQuantity: number) => {
