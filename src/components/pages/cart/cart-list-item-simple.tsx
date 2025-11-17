@@ -34,6 +34,11 @@ export default function CartListItemSimple({
     currencyRates: CustomCurrencyRates;
 }) {
 
+    const [cartItems, setCartItems] = useLocalStorage<CartItem[]>("cartItems", []);
+    const [selectedCurrency, setSelectedCurrency] = useState<CurrencyType>("KZT");
+    const [storedCurrency] = useLocalStorage<CurrencyType>("currency", "KZT");
+
+
     const handleRemove = () => {
         const updatedItems = cartItems.filter(
             item => item.productId != cartItem.productId
@@ -50,18 +55,12 @@ export default function CartListItemSimple({
         handleRemove();
     }
 
-
-    const [selectedCurrency, setSelectedCurrency] = useState<CurrencyType>("KZT");
-    const [storedCurrency] = useLocalStorage<CurrencyType>("currency", "KZT");
-
     useEffect(() => {
         if (storedCurrency) {
             setSelectedCurrency(storedCurrency);
         }
     }, [storedCurrency]);
 
-
-    const [cartItems, setCartItems] = useLocalStorage<CartItem[]>("cartItems", []);
 
     const updateCartItemQuantity = useCallback((item: CartItem, newQuantity: number) => {
         const updatedItems = cartItems.map(cartItem =>
