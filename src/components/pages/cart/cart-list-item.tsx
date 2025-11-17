@@ -35,7 +35,15 @@ export default function CartListItem({
   currencyRates: CustomCurrencyRates;
 }) {
 
-  const {data, isLoading, isError} = useProductVariation({
+    const handleRemove = () => {
+        const updatedItems = cartItems.filter(
+            item => item.productVariationId !== cartItem.productVariationId || (item.productVariationId === -1 && item.productId != cartItem.productId)
+        );
+        setCartItems(updatedItems);
+    };
+
+
+    const {data, isLoading, isError} = useProductVariation({
     productId: cartItem.productId,
     variationId: cartItem.productVariationId,
   });
@@ -84,12 +92,6 @@ export default function CartListItem({
     }
   };
 
-  const handleRemove = () => {
-    const updatedItems = cartItems.filter(
-        item => item.productVariationId !== cartItem.productVariationId || (item.productVariationId === -1 && item.productId != cartItem.productId)
-    );
-    setCartItems(updatedItems);
-  };
 
 
 
