@@ -211,7 +211,6 @@ export default function ShippingDetailsDialog({
     }))
 
     const payload = {
-      status: "completed",
       payment_method: "",
       payment_method_title: "",
       set_paid: true,
@@ -408,7 +407,7 @@ ${formatPriceToKZT(total)}
                       />
                     </label>
                     <label className="block">
-                      Регион / Провинция
+                      Регион
                       <input
                         type="text"
                         className="w-full rounded-md border px-2 py-1 focus:border-black focus:outline-none"
