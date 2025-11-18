@@ -213,6 +213,7 @@ export default function ShippingDetailsDialog({
     const payload = {
       payment_method: "",
       payment_method_title: "",
+      set_paid: false,
       billing: address,
       shipping: address,
       line_items: lineItems,
