@@ -1,51 +1,22 @@
 'use client';
 
 import { cn } from "@/libs/utils";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import qs from "query-string";
 import ProductAttributeTermCheckbox from "@/components/pages/category/product-attribute-term-checkbox";
 import { CustomProductAttribute } from "@/types/woo-commerce/custom-product-attribute";
 
-const ProductAttributeFilter = ({ customProductAttribute }: { customProductAttribute: CustomProductAttribute }) => {
-    const router = useRouter();
-    const pathname = usePathname();
-    const searchParams = useSearchParams();
+interface ProductAttributeFilterProps {
+    customProductAttribute: CustomProductAttribute;
+    activeValues: string[]; // выбранные значения из родителя
+    onChange: (value: string) => void; // вызываем при клике
+}
 
-    const formattedSlug = customProductAttribute.slug.replace("pa_", "");
-
-    const productAttributeParam = searchParams.get(formattedSlug);
-    const productAttributeTerms = productAttributeParam?.split("-i-");
-
-    const handleSelectOption = (productAttributeTermSlug: string) => {
-        const currentParams = Object.fromEntries(
-            Object.entries(qs.parse(searchParams.toString())).filter(([k]) => k !== 'page')
-        );
-        const previousAttributeValues = productAttributeParam
-            ? productAttributeParam.split("-i-")
-            : [];
-
-        const newAttributeValues = previousAttributeValues.includes(productAttributeTermSlug)
-            ? previousAttributeValues.filter((v) => v !== productAttributeTermSlug)
-            : [...previousAttributeValues, productAttributeTermSlug];
-
-        const newParams = {
-            ...currentParams,
-            [formattedSlug]: newAttributeValues.join("-i-"),
-        };
-
-        const url = qs.stringifyUrl(
-            {
-                url: pathname,
-                query: newParams,
-            },
-            { skipEmptyString: true, skipNull: true }
-        );
-
-        router.push(url);
-    };
-
-    // 🧩 Custom order for size (razmer)
-    const sizeOrder =     ["XS", "S", "M" ,"L", "XL", "2XL", "3XL", "4XL", "1", "2"]
+const ProductAttributeFilter = ({
+                                    customProductAttribute,
+                                    activeValues,
+                                    onChange
+                                }: ProductAttributeFilterProps) => {
+    // 🧩 Custom sort для размера
+    const sizeOrder = ["XS", "S", "M", "L", "XL", "2XL", "3XL", "4XL", "1", "2"];
     let sortedOptions = [...customProductAttribute.options];
 
     if (customProductAttribute.slug === "pa_razmer") {
@@ -69,12 +40,12 @@ const ProductAttributeFilter = ({ customProductAttribute }: { customProductAttri
                 </div>
             </h3>
             <div className="pt-6 space-y-4">
-                {sortedOptions.map((productAttributeOption) => (
+                {sortedOptions.map(option => (
                     <ProductAttributeTermCheckbox
-                        key={productAttributeOption.slug}
-                        productAttributeOption={productAttributeOption}
-                        isActive={!!productAttributeTerms?.includes(productAttributeOption.slug)}
-                        onChange={() => handleSelectOption(productAttributeOption.slug)}
+                        key={option.slug}
+                        productAttributeOption={option}
+                        isActive={activeValues.includes(option.slug)}
+                        onChange={() => onChange(option.slug)}
                     />
                 ))}
             </div>
