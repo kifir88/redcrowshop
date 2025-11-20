@@ -29,7 +29,14 @@ const Filters = ({
     const pathname = usePathname();
     const searchParams = useSearchParams();
 
-    const productAttributes = data?.filter(pa => !pa.slug.includes("pa_yookassa")) || [];
+    const productAttributes = data?.filter(pa =>
+        !pa.slug.includes("pa_yookassa")).sort((a, b) => {
+        if (a.slug === "pa_razmer") return -1;
+        if (b.slug === "pa_razmer") return 1;
+        if (a.slug === "pa_tsvet") return -1;
+        if (b.slug === "pa_tsvet") return 1;
+        return 0;
+    }) || [];
 
     // === state фильтров ===
     const [filters, setFilters] = useState<Record<string, string[]>>(() => {
