@@ -89,7 +89,7 @@ const Filters = ({
 
                 const url = qs.stringifyUrl({ url: pathname, query: newParams }, { skipEmptyString: true, skipNull: true });
                 router.replace(url);
-            }, 3000);
+            }, 1300);
 
             return updatedFilters; // important: return updated state
         });
