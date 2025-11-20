@@ -49,9 +49,6 @@ export default function NavbarDropdown({
 
       <Navbar.Collapse className="flex flex-1">
         <div className="flex flex-1 justify-evenly gap-10 ml-10">
-          <a href={`/shop`} onMouseEnter={handleClearSelectedProductCategory}>
-            Магазин
-          </a>
 
           <a href={`/shop?sale=1`} className="font-bold text-red-500">
             outlet
