@@ -28,8 +28,19 @@ export default function ProductDetailAttributesForm({
 
   const isOutOfStock = product.stock_status === "outofstock";
 
-  const isAddToCartButtonDisabled =
-      isOutOfStock || Object.keys(form.values).length !== product.attributes.length;
+    const simpleOutOfStock =
+        product.type === "simple" &&
+        (product.stock_quantity ?? 0) < 1;
+
+    const variationOutOfStock =
+        product.type === "variable" &&
+        (!selectedProductVariation || (selectedProductVariation.stock_quantity ?? 0) < 1);
+
+    const isAddToCartButtonDisabled =
+        simpleOutOfStock ||
+        isOutOfStock ||
+        variationOutOfStock ||
+        Object.keys(form.values).length !== product.attributes.length;
 
   const order: Record<string, number> = { 'Размер': 1, 'Цвет': 2 };
 
