@@ -135,7 +135,7 @@ export default function OrderPaymentDialog({
                             onChange={() => setSelectedOption("PspHost")}
                         />
                         <Label htmlFor="PspHost">
-                          PspHost
+                          Оплата Картой
                         </Label>
                       </div>
                     </fieldset>

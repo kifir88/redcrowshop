@@ -50,10 +50,6 @@ export default function NavbarDropdown({
       <Navbar.Collapse className="flex flex-1">
         <div className="flex flex-1 justify-evenly gap-10 ml-10">
 
-          <a href={`/shop?sale=1`} className="font-bold text-red-500">
-            outlet
-          </a>
-
           {parentCategories?.map((pc) => (
               <MegaMenu.DropdownToggle
                   key={pc.id}
@@ -65,6 +61,11 @@ export default function NavbarDropdown({
                 </a>
               </MegaMenu.DropdownToggle>
           ))}
+
+            <a href={`/shop?sale=1`} className="font-bold text-red-500">
+                outlet
+            </a>
+
         </div>
 
         <div className="order-2 hidden items-center md:flex">

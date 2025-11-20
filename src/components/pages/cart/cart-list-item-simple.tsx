@@ -2,11 +2,11 @@
 
 import { CartItem } from "@/types/cart";
 import { useLocalStorage } from "usehooks-ts";
-import { useCallback, useEffect, useState, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { CustomCurrencyRates } from "@/types/woo-commerce/custom-currency-rates";
 import { CurrencyType, formatCurrency } from "@/libs/currency-helper";
 import Image from "next/image";
-import { Spinner } from "flowbite-react";
+import { Spinner, Button } from "flowbite-react";
 import toast from "react-hot-toast";
 import ClientOnly from "@/components/client_only";
 import useProduct from "@/hooks/products/useProduct";
@@ -27,9 +27,9 @@ const PlusSvg = (
     </svg>
 );
 
-const Overlay = ({ children }: { children: React.ReactNode }) => (
-    <div className="absolute inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-20">
-        <div className="bg-white p-4 rounded-lg shadow text-center space-y-3">
+const SmallOverlay = ({ children }: { children: React.ReactNode }) => (
+    <div className="absolute inset-0 bg-white/80 backdrop-blur-sm flex items-center justify-center z-20 rounded-lg">
+        <div className="p-3 text-center space-y-3 w-full max-w-xs">
             {children}
         </div>
     </div>
@@ -48,13 +48,10 @@ export default function CartListItemSimple({
 }) {
 
     const [cartItems, setCartItems] = useLocalStorage<CartItem[]>("cartItems", []);
-    const [selectedCurrency, setSelectedCurrency] = useState<CurrencyType>("KZT");
-    const [storedCurrency] = useLocalStorage<CurrencyType>("currency", "KZT");
+    const [selectedCurrency] = useLocalStorage<CurrencyType>("currency", "KZT");
 
     const handleRemove = () => {
-        const updatedItems = cartItems.filter(
-            item => item.productId !== cartItem.productId
-        );
+        const updatedItems = cartItems.filter(item => item.productId !== cartItem.productId);
         setCartItems(updatedItems);
     };
 
@@ -63,17 +60,8 @@ export default function CartListItemSimple({
     });
 
     useEffect(() => {
-        if (isError) {
-            handleRemove();
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+        if (isError) handleRemove();
     }, [isError]);
-
-    useEffect(() => {
-        if (storedCurrency) {
-            setSelectedCurrency(storedCurrency);
-        }
-    }, [storedCurrency]);
 
     const updateCartItemQuantity = useCallback((item: CartItem, newQuantity: number) => {
         const updatedItems = cartItems.map(ci =>
@@ -84,172 +72,147 @@ export default function CartListItemSimple({
 
     const handleIncrement = () => {
         const incrementedValue = cartItem.quantity + 1;
-        const hasAttrs = cartItem.attributes !== null && cartItem.attributes.length > 0;
-        const attrs = cartItem.attributes.join(", ");
-
+        const attrsText = cartItem.attributes?.length ? cartItem.attributes.join(", ") : "";
         if (data?.data) {
             if (incrementedValue <= (data?.data.stock_quantity || 0)) {
                 updateCartItemQuantity(cartItem, incrementedValue);
             } else {
-                toast.error(
-                    `Товара ${cartItem.name}${hasAttrs ? " (" + attrs + ")" : ""} в наличии только ${
-                        data?.data.stock_quantity || 0
-                    }`
-                );
+                toast.error(`Товара ${cartItem.name}${attrsText ? " (" + attrsText + ")" : ""} есть только ${data?.data.stock_quantity || 0}`);
             }
         }
     };
 
     const handleDecrement = () => {
-        if (cartItem.quantity > 1) {
-            updateCartItemQuantity(cartItem, cartItem.quantity - 1);
-        }
+        if (cartItem.quantity > 1) updateCartItemQuantity(cartItem, cartItem.quantity - 1);
     };
 
-    // === STOCK CHECKS ===
     const stock = data?.data?.stock_quantity ?? 0;
-    const hasNoStock = stock === 0;
     const notEnoughStock = stock > 0 && cartItem.quantity > stock;
-
-    // overlay open state derived
+    const hasNoStock = stock === 0;
     const isOverlayOpen = Boolean(data?.data && (hasNoStock || notEnoughStock));
     const overlayPrevRef = useRef<boolean>(false);
 
-    // notify parent when overlay state changes (open/close)
     useEffect(() => {
         const prev = overlayPrevRef.current;
-        if (!prev && isOverlayOpen) {
-            onOverlayOpen?.();
-        } else if (prev && !isOverlayOpen) {
-            onOverlayClose?.();
-        }
+        if (!prev && isOverlayOpen) onOverlayOpen?.();
+        else if (prev && !isOverlayOpen) onOverlayClose?.();
         overlayPrevRef.current = isOverlayOpen;
 
-        // cleanup on unmount: if overlay was open, ensure parent is notified
-        return () => {
-            if (overlayPrevRef.current) {
-                onOverlayClose?.();
-            }
-        };
-        // we intentionally only depend on isOverlayOpen and handlers
+        return () => { if (overlayPrevRef.current) onOverlayClose?.(); }
     }, [isOverlayOpen, onOverlayOpen, onOverlayClose]);
 
     return (
         <ClientOnly>
             <div className="relative rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800 md:p-6">
 
-                {/* === OVERLAYS (как в основном CartListItem) === */}
-
-                {data?.data && hasNoStock && (
-                    <Overlay>
-                        <p className="text-red-600 font-semibold">Товар недоступен</p>
-                        <button
-                            onClick={handleRemove}
-                            className="px-4 py-2 rounded bg-red-600 text-white"
-                        >
-                            Удалить из корзины
-                        </button>
-                    </Overlay>
-                )}
-
-                {data?.data && notEnoughStock && (
-                    <Overlay>
-                        <p className="text-yellow-600 font-semibold">
-                            Доступно только: {stock}
-                        </p>
-                        <button
-                            onClick={() => updateCartItemQuantity(cartItem, stock)}
-                            className="px-4 py-2 rounded bg-yellow-500 text-white"
-                        >
-                            Установить {stock} шт.
-                        </button>
-                    </Overlay>
-                )}
-
-                {isLoading && (
-                    <div className="flex w-full justify-center">
-                        <Spinner />
-                    </div>
-                )}
+                {isLoading && <div className="flex w-full justify-center"><Spinner /></div>}
 
                 {data?.data && (
                     <div className="space-y-4 md:flex md:items-center md:justify-between md:gap-6 md:space-y-0">
+
+                        {/* PRODUCT IMAGE */}
                         <div className="shrink-0 md:order-1">
                             <Image
                                 className="h-20 w-20 object-cover"
-                                src={
-                                    data?.data?.images.length > 0
-                                        ? data?.data?.images[0].src
-                                        : "/category/product-image-placeholder.png"
-                                }
-                                alt={
-                                    data?.data?.images.length > 0
-                                        ? data?.data?.images[0].src
-                                        : "image-placeholder"
-                                }
+                                src={data?.data.images?.[0]?.src || "/category/product-image-placeholder.png"}
+                                alt={data?.data.images?.[0]?.src || "image-placeholder"}
                                 width={80}
                                 height={80}
                             />
                         </div>
 
-                        <label htmlFor="counter-input" className="sr-only">Choose quantity:</label>
+                        {/* === QTY + PRICE BLOCK WITH OVERLAY === */}
+                        <div className="relative flex flex-col sm:flex-row items-center justify-between md:order-3 md:justify-end mt-2 md:mt-0">
 
-                        <div className="flex items-center justify-between md:order-3 md:justify-end">
-                            <div className="flex items-center">
+                            {(hasNoStock || notEnoughStock) && (
+                                <SmallOverlay>
+                                    {hasNoStock && (
+                                        <>
+                                            <p className="text-red-600 font-semibold">Товар закончился</p>
+                                            <Button
+                                                type="submit"
+                                                color="dark"
+                                                fullSized
+                                                className="mt-3"
+                                                onClick={handleRemove}
+                                            >
+                                                Удалить из корзины
+                                            </Button>
+                                        </>
+                                    )}
+
+                                    {notEnoughStock && (
+                                        <>
+                                            <p className="text-red-600 font-semibold">Доступно только: {stock} шт.</p>
+                                            <Button
+                                                type="submit"
+                                                color="dark"
+                                                fullSized
+                                                className="mt-3"
+                                                onClick={() => updateCartItemQuantity(cartItem, stock)}
+                                            >
+                                                Установить {stock} шт.
+                                            </Button>
+                                        </>
+                                    )}
+                                </SmallOverlay>
+                            )}
+
+                            {/* QTY FIELD */}
+                            <div className="flex items-center z-10 mt-2 sm:mt-0">
                                 <button
                                     type="button"
                                     onClick={handleDecrement}
-                                    className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-md border border-gray-300 bg-gray-100 hover:bg-gray-200 focus:outline-none"
+                                    className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-md border
+                                    border-gray-300 bg-gray-100 hover:bg-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:hover:bg-gray-600"
                                 >
                                     {MinusSvg}
                                 </button>
 
                                 <input
                                     type="text"
-                                    className="w-10 shrink-0 border-0 bg-transparent text-center text-sm font-medium text-gray-900 focus:outline-none dark:text-white"
-                                    value={cartItem.quantity}
                                     readOnly
+                                    className="w-10 shrink-0 border-0 bg-transparent text-center text-sm font-medium text-gray-900 dark:text-white"
+                                    value={cartItem.quantity}
                                 />
 
                                 <button
                                     type="button"
                                     onClick={handleIncrement}
-                                    className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-md border border-gray-300 bg-gray-100 hover:bg-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:hover:bg-gray-600"
+                                    className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-md border
+                                    border-gray-300 bg-gray-100 hover:bg-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:hover:bg-gray-600"
                                 >
                                     {PlusSvg}
                                 </button>
                             </div>
 
-                            <div className="text-end md:order-4 md:w-32">
+                            {/* PRICE */}
+                            <div className="text-end md:order-4 md:w-32 ml-4 z-10 mt-2 sm:mt-0">
                                 {currencyRates ? (
                                     data.data.on_sale ? (
-                                        <p className="text-base font-bold text-red-600 ml-5">
+                                        <p className="text-base font-bold text-red-600">
                                             {formatCurrency(Number(data.data.sale_price), selectedCurrency, currencyRates)}
                                             <span className="ml-2 text-gray-500 line-through text-xs">
                                                 {formatCurrency(Number(data.data.regular_price), selectedCurrency, currencyRates)}
                                             </span>
                                         </p>
                                     ) : (
-                                        <p className="text-base font-bold text-gray-900 dark:text-white ml-5">
+                                        <p className="text-base font-bold text-gray-900 dark:text-white">
                                             {formatCurrency(Number(data.data.price), selectedCurrency, currencyRates)}
                                         </p>
                                     )
-                                ) : (
-                                    "Loading..."
-                                )}
+                                ) : "Loading..."}
                             </div>
                         </div>
 
+                        {/* PRODUCT NAME + REMOVE */}
                         <div className="w-full min-w-0 flex-1 space-y-4 md:order-2 md:max-w-md">
-                            <a
-                                href={cartItem.product_url}
-                                className="text-base font-medium text-gray-900 hover:underline dark:text-white"
-                            >
+                            <a href={cartItem.product_url} className="text-base font-medium text-gray-900 hover:underline dark:text-white">
                                 {[cartItem.name, ...cartItem.attributes].join(", ")}
                             </a>
 
                             <div className="flex items-center gap-4">
-                                <button
+                                <Button
                                     type="button"
                                     onClick={handleRemove}
                                     className="inline-flex items-center text-sm font-medium text-red-600 hover:underline dark:text-red-500"
@@ -261,9 +224,10 @@ export default function CartListItemSimple({
                                               d="M6 18 17.94 6M18 18 6.06 6"/>
                                     </svg>
                                     Удалить
-                                </button>
+                                </Button>
                             </div>
                         </div>
+
                     </div>
                 )}
             </div>

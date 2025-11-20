@@ -68,14 +68,6 @@ export default function MobileMenu({
               Магазин
             </Link>
 
-            <div key="sale-item">
-              <Link
-                  href={`/shop?sale=1`}
-                  className="font-semibold text-red-500"
-                  onClick={handleClose}
-              >outlet</Link>
-            </div>
-
               {parentCategories?.map(pc => {
                 const selectedSubcategories = productCategories
                     .filter(subPc => subPc.parent === pc.id); // Changed variable name here
@@ -102,6 +94,15 @@ export default function MobileMenu({
                     </div>
                 )
               })}
+
+              <div key="sale-item">
+                  <Link
+                      href={`/shop?sale=1`}
+                      className="font-semibold text-red-500"
+                      onClick={handleClose}
+                  >outlet</Link>
+              </div>
+
           </ul>
         </Drawer.Items>
       </Drawer>

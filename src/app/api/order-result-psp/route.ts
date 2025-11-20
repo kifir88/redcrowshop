@@ -37,7 +37,7 @@ export async function POST(req: NextRequest)
               payment_method: "PSP",
               transaction_id: orderId,
               set_paid: true,
-              customer_note: existingNote + " [ ЗАКАЗ ОПЛАЧЕН ]",
+              customer_note: existingNote + " [ ЗАКАЗ ОПЛАЧЕН ] ("+order?.currency +")",
               status: "processing",
           }
           await updateOrder(orderId, orderUpdatePayload)
