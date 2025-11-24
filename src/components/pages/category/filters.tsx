@@ -87,6 +87,9 @@ const Filters = ({
                             newParams[s] = values.length ? values.join("-i-") : null;
                         });
 
+                        // ⛔ УДАЛЯЕМ page при любом обновлении фильтра
+                        delete newParams["page"];
+
                 const url = qs.stringifyUrl({ url: pathname, query: newParams }, { skipEmptyString: true, skipNull: true });
                 router.replace(url);
             }, 800);
