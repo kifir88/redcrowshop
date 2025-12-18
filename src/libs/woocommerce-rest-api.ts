@@ -11,8 +11,8 @@ import redis from "./redis";
 
 const options: IWooCommerceRestApiOptions = {
   url: "https://admin.redcrow.kz/",
-  consumerKey: "ck_901883160cd3f891e2eaa4b88e28b4b0198c9682",
-  consumerSecret: "cs_8b64a8187c67dbeb6e0ccf618069d0b69b4dd690",
+  consumerKey: "ck_1ccb9e2537521f30a7341992b3cdc0300f3bed67",
+  consumerSecret: "cs_10d6987abfb5b2b1570a11ec70e323a66fa6f514",
   version: "wc/v3",
   axiosConfig: {
     headers: {
@@ -22,8 +22,8 @@ const options: IWooCommerceRestApiOptions = {
 };
 const custom_v1_options: IWooCommerceRestApiOptions = {
   url: "https://admin.redcrow.kz/",
-  consumerKey: "ck_901883160cd3f891e2eaa4b88e28b4b0198c9682",
-  consumerSecret: "cs_8b64a8187c67dbeb6e0ccf618069d0b69b4dd690",
+  consumerKey: "ck_1ccb9e2537521f30a7341992b3cdc0300f3bed67",
+  consumerSecret: "cs_10d6987abfb5b2b1570a11ec70e323a66fa6f514",
   version: "custom/v1" as any,
   axiosConfig: {
     headers: {
@@ -33,8 +33,8 @@ const custom_v1_options: IWooCommerceRestApiOptions = {
 };
 const custom_api_v1_options: IWooCommerceRestApiOptions = {
   url: "https://admin.redcrow.kz/",
-  consumerKey: "ck_901883160cd3f891e2eaa4b88e28b4b0198c9682",
-  consumerSecret: "cs_8b64a8187c67dbeb6e0ccf618069d0b69b4dd690",
+  consumerKey: "ck_1ccb9e2537521f30a7341992b3cdc0300f3bed67",
+  consumerSecret: "cs_10d6987abfb5b2b1570a11ec70e323a66fa6f514",
   version: "custom-api/v1" as any,
   axiosConfig: {
     headers: {
@@ -45,8 +45,8 @@ const custom_api_v1_options: IWooCommerceRestApiOptions = {
 };
 const cust_api_v1_options: IWooCommerceRestApiOptions = {
   url: "https://admin.redcrow.kz/",
-  consumerKey: "ck_901883160cd3f891e2eaa4b88e28b4b0198c9682",
-  consumerSecret: "cs_8b64a8187c67dbeb6e0ccf618069d0b69b4dd690",
+  consumerKey: "ck_1ccb9e2537521f30a7341992b3cdc0300f3bed67",
+  consumerSecret: "cs_10d6987abfb5b2b1570a11ec70e323a66fa6f514",
   version: "cust_api/v1" as any,
   axiosConfig: {
     headers: {
