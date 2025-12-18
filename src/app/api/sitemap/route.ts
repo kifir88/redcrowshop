@@ -11,32 +11,17 @@ import { fetchFooterPages } from "@/libs/strapi-rest-api";
 import type { ProductCategory } from "@/types/woo-commerce/product-category";
 import type { CustomProductAttribute } from "@/types/woo-commerce/custom-product-attribute";
 
-// Required for zlib/streams
+// Required for zlib/streams in Next Route Handlers
 export const runtime = "nodejs";
 
 const HOSTNAME = "https://www.redcrow.kz";
 
-// ---- Types for safer access (keeps your libs untouched) ----
+// ---- Loose “axios-like” error typing ----
 type MaybeAxiosError = {
     message?: string;
     response?: { status?: number; data?: unknown };
     config?: { url?: string };
 };
-
-type WooCategoriesResponse = {
-    data: ProductCategory[];
-};
-
-type StrapiFooterPagesResponse = {
-    data: {
-        data: Array<{
-            attributes: { slug: string };
-        }>;
-    };
-};
-
-// ---- Helpers ----
-const safeArray = <T>(v: unknown): T[] => (Array.isArray(v) ? (v as T[]) : []);
 
 const getAxiosLikeInfo = (err: unknown) => {
     const e = err as MaybeAxiosError;
@@ -45,6 +30,15 @@ const getAxiosLikeInfo = (err: unknown) => {
         status: e?.response?.status,
         url: e?.config?.url,
         data: e?.response?.data,
+    };
+};
+
+// ---- Helpers ----
+const safeArray = <T>(v: unknown): T[] => (Array.isArray(v) ? (v as T[]) : []);
+
+type StrapiFooterPage = {
+    attributes?: {
+        slug?: string;
     };
 };
 
@@ -101,8 +95,10 @@ const generateAllAttributeCombinations = (
             });
     };
 
+    // all attributes combined
     combineAttributes(0, []);
 
+    // each attribute separately
     attributes.forEach((attribute) => {
         const optionsCombinations = generateProductAttributeCombinations(
             attribute.options
@@ -135,20 +131,21 @@ const processCategoriesForSitemap = async (
             priority: 0.9,
         });
 
-        // If you ever re-enable this block, keep it wrapped in try/catch
-        // because it can also 401 and break the sitemap.
+        // If you re-enable this, wrap with try/catch so it can't break sitemap on 401
         /*
         try {
           const productAttributes = await fetchCustomProductAttributes(
             { category_name: category.slug },
             false
           );
-
           const allCombinations = generateAllAttributeCombinations(productAttributes);
 
           allCombinations.forEach((combination) => {
-            const combinationUrl = `/category/${category.slug}?${combination}`;
-            sitemap.write({ url: combinationUrl, changefreq: "weekly", priority: 0.8 });
+            sitemap.write({
+              url: `/category/${category.slug}?${combination}`,
+              changefreq: "weekly",
+              priority: 0.8,
+            });
           });
         } catch (err) {
           console.error("SITEMAP: attributes failed", getAxiosLikeInfo(err));
@@ -158,14 +155,14 @@ const processCategoriesForSitemap = async (
 };
 
 export async function GET() {
-    // During next build / export, external APIs often don’t have env/auth -> 401.
-    // We skip them so build won’t fail.
+    // During `next build` / export env/auth may be missing -> 401.
+    // Skip external calls so the build won't crash.
     const isBuildPhase = process.env.NEXT_PHASE === PHASE_PRODUCTION_BUILD;
 
     const sitemap = new SitemapStream({ hostname: HOSTNAME });
     const pipeline = sitemap.pipe(createGzip());
 
-    // Always include base routes (so sitemap still exists even if APIs fail)
+    // Always include base URLs
     sitemap.write({ url: `/`, changefreq: "weekly", priority: 0.9 });
     sitemap.write({ url: `/shop`, changefreq: "weekly", priority: 0.9 });
     sitemap.write({ url: `/cart`, changefreq: "weekly", priority: 0.9 });
@@ -176,22 +173,27 @@ export async function GET() {
             const categoriesRes = (await fetchProductCategories({
                 exclude: [378],
                 per_page: 50,
-            })) as unknown as WooCategoriesResponse;
+            })) as unknown;
 
-            await processCategoriesForSitemap(categoriesRes?.data ?? [], sitemap);
+            const categories = safeArray<ProductCategory>(
+                (categoriesRes as any)?.data?.data ?? (categoriesRes as any)?.data
+            );
+
+            await processCategoriesForSitemap(categories, sitemap);
         } catch (err) {
             console.error("SITEMAP: Woo categories failed", getAxiosLikeInfo(err));
         }
 
         // Strapi footer pages (never throw)
         try {
-            const strapiRes =
-                (await fetchFooterPages()) as unknown as StrapiFooterPagesResponse;
+            const strapiRes = (await fetchFooterPages()) as unknown;
 
-            const pages = safeArray(strapiRes?.data?.data);
+            const pages = safeArray<StrapiFooterPage>(
+                (strapiRes as any)?.data?.data ?? (strapiRes as any)?.data
+            );
 
             for (const sfp of pages) {
-                const slug = sfp?.attributes?.slug;
+                const slug = sfp.attributes?.slug;
                 if (!slug) continue;
 
                 sitemap.write({
@@ -207,9 +209,11 @@ export async function GET() {
 
     sitemap.end();
 
-    const sitemapOutput = await streamToPromise(pipeline);
+    // streamToPromise returns Buffer -> convert to Uint8Array for NextResponse BodyInit typing
+    const gzBuffer = await streamToPromise(pipeline); // Buffer
+    const body = new Uint8Array(gzBuffer);
 
-    return new NextResponse(sitemapOutput, {
+    return new NextResponse(body, {
         headers: {
             "Content-Type": "application/xml",
             "Content-Encoding": "gzip",
