@@ -98,7 +98,7 @@ export default async function ProductCategoryPage(props: ProductCategoryPageProp
       category: currentProductCategory?.id,
       order: orderFiltersExist ? orderSearchParam : undefined,
       orderby: orderFiltersExist ? orderbySearchParam : undefined,
-      page: pageParam ? Number(pageParam) : undefined,
+      page: pageParam ? Number(pageParam) : 1,
       per_page: 12,
       search: searchParam ? searchParam : undefined,
       max_price: maxPriceParam ? maxPriceParam : 10000000000,
