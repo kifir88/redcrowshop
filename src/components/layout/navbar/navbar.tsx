@@ -1,9 +1,9 @@
-import {MegaMenu} from 'flowbite-react';
-import {fetchCurrencyRates, fetchProductCategories} from "@/libs/woocommerce-rest-api";
+import { MegaMenu } from 'flowbite-react';
+import { fetchCurrencyRates, fetchProductCustomCategories } from "@/libs/woocommerce-rest-api";
 import NavbarDropdown from "@/components/layout/navbar/components/navbar-dropdown";
 import MobileMenu from "@/components/layout/navbar/components/mobile-menu";
-import {cn} from "@/libs/utils";
-import {ProductCategory} from "@/types/woo-commerce/product-category";
+import { cn } from "@/libs/utils";
+import { ProductCategory } from "@/types/woo-commerce/product-category";
 
 export default async function Navbar() {
   const [
@@ -11,15 +11,15 @@ export default async function Navbar() {
     productCategoriesData,
   ] = await Promise.all([
     fetchCurrencyRates(),
-    fetchProductCategories({
+    fetchProductCustomCategories({
       order: "desc",
-      orderby: "name", exclude: [378],per_page: 50
+      orderby: "name", exclude: [378], per_page: 50
     })
   ]);
 
-    const filteredProductCategories = productCategoriesData?.data?.filter(
-        (pc: ProductCategory) => pc.slug !== 'musor'
-    );
+  const filteredProductCategories = productCategoriesData?.data?.filter(
+    (pc: ProductCategory) => pc.slug !== 'musor' && pc.count > 0
+  );
 
   return (
     <>
