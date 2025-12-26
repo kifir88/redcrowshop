@@ -1,14 +1,14 @@
 "use client"
 
-import {MegaMenu, Navbar} from "flowbite-react";
+import { MegaMenu, Navbar } from "flowbite-react";
 import Link from "next/link";
 import ShoppingCartButton from "@/components/layout/navbar/components/shopping-cart-button";
 import Subcategory from "@/components/layout/navbar/components/subcategory";
-import {useMemo, useState} from "react";
-import {ProductCategory} from "@/types/woo-commerce/product-category";
+import { useMemo, useState } from "react";
+import { ProductCategory } from "@/types/woo-commerce/product-category";
 import Image from "next/image";
-import {cn} from "@/libs/utils";
-import {CustomCurrencyRates} from "@/types/woo-commerce/custom-currency-rates";
+import { cn } from "@/libs/utils";
+import { CustomCurrencyRates } from "@/types/woo-commerce/custom-currency-rates";
 import ClientOnly from "@/components/client_only";
 
 export default function NavbarDropdown({
@@ -22,7 +22,7 @@ export default function NavbarDropdown({
 
   const parentCategories = useMemo(() => {
     // ID 378 - Номенклатура
-    return productCategories.filter(pc => pc.parent === 378).filter(pc=>pc.slug!=='musor')
+    return productCategories.filter(pc => pc.parent === 378).filter(pc => pc.slug !== 'musor')
   }, [productCategories])
 
   const selectedSubcategories = useMemo(() => {
@@ -30,7 +30,8 @@ export default function NavbarDropdown({
   }, [productCategories, selectedProductId])
 
   const handleSelectProductCategory = (productCategoryId: number) => {
-    setSelectedProductId(productCategoryId);
+    let childs = productCategories.filter(pc => pc.parent === productCategoryId)
+    setSelectedProductId(childs.length > 0 ? productCategoryId : null);
   };
   const handleClearSelectedProductCategory = () => {
     setSelectedProductId(null);
@@ -51,20 +52,20 @@ export default function NavbarDropdown({
         <div className="flex flex-1 justify-evenly gap-10 ml-10">
 
           {parentCategories?.map((pc) => (
-              <MegaMenu.DropdownToggle
-                  key={pc.id}
-                  onMouseEnter={() => handleSelectProductCategory(pc.id)}
-                  className="w-auto"
-              >
-                <a href={`/category/${pc.slug}`}>
-                  {pc.name}
-                </a>
-              </MegaMenu.DropdownToggle>
+            <MegaMenu.DropdownToggle
+              key={pc.id}
+              onMouseEnter={() => handleSelectProductCategory(pc.id)}
+              className="w-auto"
+            >
+              <a href={`/category/${pc.slug}`}>
+                {pc.name}
+              </a>
+            </MegaMenu.DropdownToggle>
           ))}
 
-            <a href={`/shop?sale=1`} className="font-bold text-red-500">
-                outlet
-            </a>
+          <a href={`/shop?sale=1`} className="font-bold text-red-500">
+            outlet
+          </a>
 
         </div>
 
