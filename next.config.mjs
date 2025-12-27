@@ -18,6 +18,26 @@ const nextConfig = {
         return config;
     },
 
+       async headers() {
+        return [
+            {
+                source: '/(.*)',
+                headers: [
+                    // {
+                    //     key: 'Cache-Control',
+                    //     value: 'public, no-store, no-cache, must-revalidate, proxy-revalidate',
+                    // },
+                  
+                    {
+                        key: 'Cache-Control',
+                        value: 'public, s-maxage=86400, stale-while-revalidate',
+                    },
+                  
+                ],
+            },
+        ]
+    },
+
     async rewrites() {
         return [
             {
