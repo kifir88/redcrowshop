@@ -9,6 +9,8 @@ import {Order} from "@/types/woo-commerce/order";
 import {CustomCurrencyRates} from "@/types/woo-commerce/custom-currency-rates";
 import redis from "./redis";
 
+const baseUrl = process.env.BASE_URL;
+
 const options: IWooCommerceRestApiOptions = {
   url: "https://admin.redcrow.kz/",
   consumerKey: "ck_31ed56e528afad94e82ef3e705639a1af0b933b5",
@@ -92,8 +94,6 @@ export async function fetchCustomProductAttributes(params?: any, cached:boolean=
         }
     }
 
-    const baseUrl = process.env.REDIS_PROXY_HOST || 'http://localhost:3000';
-
     const res = await fetch(baseUrl+`/api/redis/product-attributes?${search.toString()}`, { cache: "no-store" });
 
     const raw = await res.json();
@@ -136,8 +136,6 @@ export async function fetchProducts (params?: any, cache: boolean = true): Promi
         }
     }
 
-    const baseUrl = process.env.REDIS_PROXY_HOST || 'http://localhost:3000';
-
     const res = await fetch(baseUrl+ `/api/redis/products?${search.toString()}`, { cache: "no-store" });
 
     const raw = await res.json();
@@ -173,7 +171,6 @@ export const fetchProductAttributeTerms = async (
     params?: any
 ): Promise<ProductAttributeTerm[]> => {
 
-    const baseUrl = process.env.REDIS_PROXY_HOST || 'http://localhost:3000';
     const res = await fetch(baseUrl+ `/api/redis/product-attribute-terms?attributeId=${attributeId}`, { cache: "no-store" });
     const raw = await res.json();
 
@@ -201,7 +198,6 @@ export const fetchProductVariations = async (productId: number, params?: any, ca
 
     search.append('productId', productId.toString());
 
-  const baseUrl = process.env.REDIS_PROXY_HOST || 'http://localhost:3000';
   const res = await fetch(baseUrl+ `/api/redis/product-variations?=${search.toString()}`, { cache: "no-store" });
   const raw = await res.json();
 

@@ -1,8 +1,24 @@
 /** @type {import('next').NextConfig} */
-const isDev = process.env.NODE_ENV === 'development';
 
+import * as fs from 'fs';
+import * as path from 'path';
+
+export function checkIfFileExistsSync(filename) {
+  const filePath = path.join(process.cwd(), 'public', filename);
+
+  return fs.existsSync(filePath);
+}
+
+let base_url = process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : 'https://www.redcrow.kz';
+
+if(checkIfFileExistsSync('staging.pid')) {
+    base_url = 'https://dev.redcrow.kz';
+}
 
 const nextConfig = {
+
+
+    allowedDevOrigins: ['localhost', '*.redcrow.kz'],
 
     webpack: (config, { isServer }) => {
         if (!isServer) {
@@ -18,7 +34,7 @@ const nextConfig = {
         return config;
     },
 
-       async headers() {
+    async headers() {
         return [
             {
                 source: '/(.*)',
@@ -27,12 +43,12 @@ const nextConfig = {
                     //     key: 'Cache-Control',
                     //     value: 'public, no-store, no-cache, must-revalidate, proxy-revalidate',
                     // },
-                  
+
                     {
                         key: 'Cache-Control',
                         value: 'public, s-maxage=86400, stale-while-revalidate',
                     },
-                  
+
                 ],
             },
         ]
@@ -88,7 +104,7 @@ const nextConfig = {
         REDIS_PORT: "6379",
         REDIS_PASSWORD: "myredispassword@#A!",
 
-        REDIS_PROXY_HOST: isDev ? "http://localhost:3000" : "https://redcrow.kz",
+        BASE_URL: base_url,
 
     }
 };
