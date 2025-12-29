@@ -4,8 +4,8 @@ import {fetchCurrencyRates} from "@/libs/woocommerce-rest-api";
 import {CartItem} from "@/types/cart";
 
 
-const PROJECT_ID = "147386";
-const PROJECT_SECRET = "f96406756f8c31e914476d5b4b29cc7a311f0fc1db198979c9150cdfc9d22708d45f6bb8cbfe9a934f7756dd0ccb583879d2bb58f1cce374256b49fd0c3629c6";
+const PROJECT_ID = "147396";
+const PROJECT_SECRET = "0dbca7f5a15a7031feeaead7f208f1abd177f40422f653eed2001b3ad6a0f8886b68e7f25f8a189e0b9d7fb81c7a67fc2e84ca1944bd1a8d0c138e1daa8ab99a";
 
 const ignoredParams = ['frame_mode'];
 
