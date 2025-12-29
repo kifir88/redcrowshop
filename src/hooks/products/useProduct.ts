@@ -1,12 +1,12 @@
-import type {AxiosResponse} from "axios";
-import {fetchProduct} from "@/libs/woocommerce-rest-api";
-import {Product} from "@/types/woo-commerce/product";
-import {useQuery} from "@tanstack/react-query";
+import type { AxiosResponse } from "axios";
+import { fetchProduct } from "@/libs/woocommerce-rest-api";
+import { Product } from "@/types/woo-commerce/product";
+import { useQuery } from "@tanstack/react-query";
 
 export default function useProduct({
-                                       productId,
-                                   }: {
-    productId: number;
+    productId, refreshKey
+}: {
+    productId: number, refreshKey?: number
 }) {
     const queryFn = (): Promise<AxiosResponse<Product>> => {
         return fetchProduct(productId);
@@ -17,7 +17,7 @@ export default function useProduct({
     }
 
     return useQuery({
-        queryKey: ["product-simple", productId],
+        queryKey: ["product-simple", productId, refreshKey], // добавили refreshKey
         queryFn,
         refetchOnReconnect: false,
         refetchOnWindowFocus: false,

@@ -13,6 +13,9 @@ import ClientOnly from "@/components/client_only";
 import CartListItemSimple from "@/components/pages/cart/cart-list-item-simple";
 
 export default function CartContent({ currencyRates }: { currencyRates: CustomCurrencyRates }) {
+    const [refreshProducts, setRefreshProducts] = useState<number>(0);
+    const [productsLoading, setProductsLoading] = useState(0);
+    const [waitShippingDialog, setWaitShippingDialog] = useState(false);
 
     const [selectedCurrency, setSelectedCurrency] = useState<CurrencyType>("KZT");
 
@@ -31,9 +34,21 @@ export default function CartContent({ currencyRates }: { currencyRates: CustomCu
 
     const totalOriginalPrice = cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
 
+
     const handleOpenShippingDialog = () => {
-        setShippingDialogOpened(true);
+        setProductsLoading(cartItems.length);
+        setRefreshProducts(prev => prev + 1);
+        setWaitShippingDialog(true);
     };
+
+    useEffect(() => {
+        if (waitShippingDialog && productsLoading === 0) {
+            setShippingDialogOpened(activeOverlays > 0 ? false : true);
+            setWaitShippingDialog(false);
+        }
+
+    }, [waitShippingDialog, productsLoading, activeOverlays]);
+
     const handleCloseShippingDialog = () => {
         setShippingDialogOpened(false);
     };
@@ -68,7 +83,6 @@ export default function CartContent({ currencyRates }: { currencyRates: CustomCu
                                     </div>
                                 )}
                                 {cartItems.map((ct) => {
-
                                     return ct.productVariationId === -1 ? (
                                         <div key={ct.productId}>
                                             <CartListItemSimple
@@ -76,6 +90,8 @@ export default function CartContent({ currencyRates }: { currencyRates: CustomCu
                                                 currencyRates={currencyRates}
                                                 onOverlayOpen={registerOverlay}
                                                 onOverlayClose={unregisterOverlay}
+                                                refreshProducts={refreshProducts}
+                                                setProductsLoading={setProductsLoading}
                                             />
                                         </div>
                                     ) : (
@@ -85,6 +101,8 @@ export default function CartContent({ currencyRates }: { currencyRates: CustomCu
                                                 currencyRates={currencyRates}
                                                 onOverlayOpen={registerOverlay}
                                                 onOverlayClose={unregisterOverlay}
+                                                refreshProducts={refreshProducts}
+                                                setProductsLoading={setProductsLoading}
                                             />
                                         </div>
                                     );

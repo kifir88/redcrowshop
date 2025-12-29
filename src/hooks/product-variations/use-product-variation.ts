@@ -7,16 +7,18 @@ import {Product} from "@/types/woo-commerce/product";
 export default function useProductVariation({
   productId,
   variationId,
+  refreshKey,
 }: {
   productId: number;
   variationId: number;
+  refreshKey?: number;
 }) {
   const queryFn = (): Promise<AxiosResponse<ProductVariation>> => {
     return fetchProductVariation(productId, variationId);
   }
 
   return useQuery({
-    queryKey: ["product-variation", productId, variationId],
+    queryKey: ["product-variation", productId, variationId, refreshKey],
     queryFn,
     refetchOnReconnect: false,
     refetchOnWindowFocus: false,

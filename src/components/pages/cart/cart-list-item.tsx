@@ -36,15 +36,19 @@ const SmallOverlay = ({ children }: { children: React.ReactNode }) => (
 );
 
 export default function CartListItem({
-                                         cartItem,
-                                         currencyRates,
-                                         onOverlayOpen,
-                                         onOverlayClose,
-                                     }: {
+    cartItem,
+    currencyRates,
+    onOverlayOpen,
+    onOverlayClose,
+    refreshProducts,
+    setProductsLoading
+}: {
     cartItem: CartItem;
     currencyRates: CustomCurrencyRates;
     onOverlayOpen?: () => void;
     onOverlayClose?: () => void;
+    refreshProducts?: number;
+    setProductsLoading?: (n: (prev: number) => number) => void;
 }) {
 
     const [selectedCurrency] = useLocalStorage<CurrencyType>("currency", "KZT");
@@ -61,7 +65,19 @@ export default function CartListItem({
     const {data, isLoading, isError} = useProductVariation({
         productId: cartItem.productId,
         variationId: cartItem.productVariationId,
+        refreshKey: refreshProducts 
     });
+
+    const wasLoading = useRef(false);
+    useEffect(() => {
+        if (!setProductsLoading) return;
+        if (isLoading) {
+            wasLoading.current = true;
+        } else if (wasLoading.current && !isLoading) {
+            setProductsLoading(prev => Math.max(prev - 1, 0));
+            wasLoading.current = false;
+        }
+    }, [isLoading]);
 
     useEffect(() => {
         if (isError) handleRemove();

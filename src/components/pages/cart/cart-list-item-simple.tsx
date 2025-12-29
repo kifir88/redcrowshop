@@ -13,17 +13,17 @@ import useProduct from "@/hooks/products/useProduct";
 
 const MinusSvg = (
     <svg className="h-2.5 w-2.5 text-gray-900" aria-hidden="true"
-         xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 2">
+        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 2">
         <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
-              d="M1 1h16"/>
+            d="M1 1h16" />
     </svg>
 );
 
 const PlusSvg = (
     <svg className="h-2.5 w-2.5 text-gray-900" aria-hidden="true"
-         xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
+        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
         <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
-              d="M9 1v16M1 9h16"/>
+            d="M9 1v16M1 9h16" />
     </svg>
 );
 
@@ -36,15 +36,19 @@ const SmallOverlay = ({ children }: { children: React.ReactNode }) => (
 );
 
 export default function CartListItemSimple({
-                                               cartItem,
-                                               currencyRates,
-                                               onOverlayOpen,
-                                               onOverlayClose,
-                                           }: {
+    cartItem,
+    currencyRates,
+    onOverlayOpen,
+    onOverlayClose,
+    refreshProducts,
+    setProductsLoading
+}: {
     cartItem: CartItem;
     currencyRates: CustomCurrencyRates;
     onOverlayOpen?: () => void;
     onOverlayClose?: () => void;
+    refreshProducts?: number;
+    setProductsLoading?: (n: (prev: number) => number) => void;
 }) {
 
     const [cartItems, setCartItems] = useLocalStorage<CartItem[]>("cartItems", []);
@@ -57,7 +61,19 @@ export default function CartListItemSimple({
 
     const { data, isLoading, isError } = useProduct({
         productId: cartItem.productId,
+        refreshKey: refreshProducts 
     });
+
+    const wasLoading = useRef(false);
+    useEffect(() => {
+        if (!setProductsLoading) return;
+        if (isLoading) {
+            wasLoading.current = true;
+        } else if (wasLoading.current && !isLoading) {
+            setProductsLoading(prev => Math.max(prev - 1, 0));
+            wasLoading.current = false;
+        }
+    }, [isLoading]);
 
     useEffect(() => {
         if (isError) handleRemove();
@@ -218,10 +234,10 @@ export default function CartListItemSimple({
                                     className="inline-flex items-center text-sm font-medium text-red-600 hover:underline dark:text-red-500"
                                 >
                                     <svg className="me-1.5 h-5 w-5" aria-hidden="true"
-                                         xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                         fill="none" viewBox="0 0 24 24">
+                                        xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                        fill="none" viewBox="0 0 24 24">
                                         <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
-                                              d="M6 18 17.94 6M18 18 6.06 6"/>
+                                            d="M6 18 17.94 6M18 18 6.06 6" />
                                     </svg>
                                     Удалить
                                 </Button>
