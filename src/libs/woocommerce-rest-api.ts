@@ -9,7 +9,7 @@ import {Order} from "@/types/woo-commerce/order";
 import {CustomCurrencyRates} from "@/types/woo-commerce/custom-currency-rates";
 import redis from "./redis";
 
-const baseUrl = process.env.BASE_URL;
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
 const options: IWooCommerceRestApiOptions = {
   url: "https://admin.redcrow.kz/",

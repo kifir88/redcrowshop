@@ -291,8 +291,7 @@ ${formatPriceToKZT(total)}
               "/api/mailgun",
               emailPayload,
               {
-                // TODO extract base url to env variable
-                baseURL: "https://www.redcrow.kz/",
+                baseURL: process.env.NEXT_PUBLIC_BASE_URL,
                 headers: {
                   "Content-type": "application/json"
                 }

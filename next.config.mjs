@@ -4,7 +4,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 export function checkIfFileExistsSync(filename) {
-  const filePath = path.join(process.cwd(), 'public', filename);
+  const filePath = path.join(process.cwd(), filename);
 
   return fs.existsSync(filePath);
 }
@@ -104,7 +104,7 @@ const nextConfig = {
         REDIS_PORT: "6379",
         REDIS_PASSWORD: "myredispassword@#A!",
 
-        BASE_URL: base_url,
+        NEXT_PUBLIC_BASE_URL: base_url,
 
     }
 };
