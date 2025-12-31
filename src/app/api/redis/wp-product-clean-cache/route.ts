@@ -46,6 +46,7 @@ async function runPrewarmCategories() {
                 orderby: undefined,
                 page: undefined,
                 per_page: 12,
+                stock_status: "instock",
             });
 
             console.log(

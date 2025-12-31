@@ -103,13 +103,16 @@ export default async function ProductCategoryPage(props: ProductCategoryPageProp
       search: searchParam ? searchParam : undefined,
       max_price: maxPriceParam ? maxPriceParam : 10000000000,
       min_price: minPriceParam ? minPriceParam : 0,
+      stock_status: "instock",
       ...formattedSearchParams,
+      
     }),
     fetchProducts({
       category: currentProductCategory?.id,
       per_page: 1,
       order: "desc",
       orderby: "price"
+      stock_status: "instock",
     })
   ])
 

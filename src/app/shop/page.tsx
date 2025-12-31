@@ -48,12 +48,14 @@ export default async function ProductCategoryPage({
                 search: searchParam ?? undefined,
                 max_price: maxPriceParam ? Number(maxPriceParam) : 1000000000,
                 min_price: minPriceParam ? Number(minPriceParam) : 0,
+                stock_status: "instock",
                 ...formattedSearchParams,
             }),
             fetchProducts({
                 per_page: 1,
                 order: "desc",
                 orderby: "price",
+                stock_status: "instock",
             }),
         ]);
 
