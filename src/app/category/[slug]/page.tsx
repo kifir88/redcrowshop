@@ -111,7 +111,7 @@ export default async function ProductCategoryPage(props: ProductCategoryPageProp
       category: currentProductCategory?.id,
       per_page: 1,
       order: "desc",
-      orderby: "price"
+      orderby: "price",
       stock_status: "instock",
     })
   ])
