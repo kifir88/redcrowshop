@@ -1,18 +1,18 @@
-import WooCommerceRestApi, { type IWooCommerceRestApiOptions } from "@woocommerce/woocommerce-rest-api";import {type AxiosResponse} from "axios";
-import {Product, RedisCachedProducts} from "@/types/woo-commerce/product";
-import {ProductCategory} from "@/types/woo-commerce/product-category";
-import {ProductAttribute} from "@/types/woo-commerce/product-attribute";
-import {ProductAttributeTerm} from "@/types/woo-commerce/product-attribute-term";
-import {ProductVariation} from "@/types/woo-commerce/product-variation";
-import {CustomProductAttribute} from "@/types/woo-commerce/custom-product-attribute";
-import {Order} from "@/types/woo-commerce/order";
-import {CustomCurrencyRates} from "@/types/woo-commerce/custom-currency-rates";
+import WooCommerceRestApi, { type IWooCommerceRestApiOptions } from "@woocommerce/woocommerce-rest-api"; import { type AxiosResponse } from "axios";
+import { Product, RedisCachedProducts } from "@/types/woo-commerce/product";
+import { ProductCategory } from "@/types/woo-commerce/product-category";
+import { ProductAttribute } from "@/types/woo-commerce/product-attribute";
+import { ProductAttributeTerm } from "@/types/woo-commerce/product-attribute-term";
+import { ProductVariation } from "@/types/woo-commerce/product-variation";
+import { CustomProductAttribute } from "@/types/woo-commerce/custom-product-attribute";
+import { Order } from "@/types/woo-commerce/order";
+import { CustomCurrencyRates } from "@/types/woo-commerce/custom-currency-rates";
 import redis from "./redis";
 
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
 const options: IWooCommerceRestApiOptions = {
-  url: "https://admin.redcrow.kz/",
+  url: process.env.NEXT_PUBLIC_WP_URL || "https://admin.redcrow.kz/",
   consumerKey: "ck_31ed56e528afad94e82ef3e705639a1af0b933b5",
   consumerSecret: "cs_6f47b0927beb71748064d394afccec38bb1cdf49",
   version: "wc/v3",
@@ -23,7 +23,7 @@ const options: IWooCommerceRestApiOptions = {
   }
 };
 const custom_v1_options: IWooCommerceRestApiOptions = {
-  url: "https://admin.redcrow.kz/",
+  url: process.env.NEXT_PUBLIC_WP_URL || "https://admin.redcrow.kz/",
   consumerKey: "ck_31ed56e528afad94e82ef3e705639a1af0b933b5",
   consumerSecret: "cs_6f47b0927beb71748064d394afccec38bb1cdf49",
   version: "custom/v1" as any,
@@ -34,7 +34,7 @@ const custom_v1_options: IWooCommerceRestApiOptions = {
   }
 };
 const custom_api_v1_options: IWooCommerceRestApiOptions = {
-  url: "https://admin.redcrow.kz/",
+  url: process.env.NEXT_PUBLIC_WP_URL || "https://admin.redcrow.kz/",
   consumerKey: "ck_31ed56e528afad94e82ef3e705639a1af0b933b5",
   consumerSecret: "cs_6f47b0927beb71748064d394afccec38bb1cdf49",
   version: "custom-api/v1" as any,
@@ -46,7 +46,7 @@ const custom_api_v1_options: IWooCommerceRestApiOptions = {
 
 };
 const cust_api_v1_options: IWooCommerceRestApiOptions = {
-  url: "https://admin.redcrow.kz/",
+  url: process.env.NEXT_PUBLIC_WP_URL || "https://admin.redcrow.kz/",
   consumerKey: "ck_31ed56e528afad94e82ef3e705639a1af0b933b5",
   consumerSecret: "cs_6f47b0927beb71748064d394afccec38bb1cdf49",
   version: "cust_api/v1" as any,
@@ -73,85 +73,85 @@ const CACHE_TTL_SECONDS = 60 * 5; // 5 min
 // API custom/v1
 
 // With REDIS cache
-export async function fetchCustomProductAttributes(params?: any, cached:boolean=true): Promise<CustomProductAttribute[]> {
+export async function fetchCustomProductAttributes(params?: any, cached: boolean = true): Promise<CustomProductAttribute[]> {
 
-    if(!cached)
-    {
-        const response = await wooCommerceCustomV1ApiInstance.get("product-attributes", params);
-        const data = response.data
-        return data as CustomProductAttribute[];
+  if (!cached) {
+    const response = await wooCommerceCustomV1ApiInstance.get("product-attributes", params);
+    const data = response.data
+    return data as CustomProductAttribute[];
+  }
+
+  const search = new URLSearchParams();
+  for (const key in params) {
+    const value = params[key];
+    if (Array.isArray(value)) {
+      value.forEach(v => search.append(`${key}[]`, v));
+    } else if (typeof value === "object" && value !== null) {
+      search.append(key, JSON.stringify(value));
+    } else {
+      search.append(key, value);
     }
+  }
 
-    const search = new URLSearchParams();
-    for (const key in params) {
-        const value = params[key];
-        if (Array.isArray(value)) {
-            value.forEach(v => search.append(`${key}[]`, v));
-        } else if (typeof value === "object" && value !== null) {
-            search.append(key, JSON.stringify(value));
-        } else {
-            search.append(key, value);
-        }
-    }
+  const res = await fetch(baseUrl + `/api/redis/product-attributes?${search.toString()}`, { cache: "no-store" });
 
-    const res = await fetch(baseUrl+`/api/redis/product-attributes?${search.toString()}`, { cache: "no-store" });
+  const raw = await res.json();
+  const attrs = raw as CustomProductAttribute[];
 
-    const raw = await res.json();
-    const attrs = raw as CustomProductAttribute[];
-
-    return attrs;
+  return attrs;
 }
 
 // API wc/v3
-export async function fetchProducts (params?: any, cache: boolean = true): Promise<RedisCachedProducts> {
+export async function fetchProducts(params?: any, cache: boolean = true): Promise<RedisCachedProducts> {
 
-    // fetch from woocommerce if not cached by redis
-    if(!cache)
-    {
-        const cacheBuster = { _timestamp: new Date().getTime() };
-        const defaultParams = { ...params, status: 'publish', ...cacheBuster };
+  // fetch from woocommerce if not cached by redis
 
-        // 2️⃣ Fetch from WooCommerce
-        const response = await wooCommerceApiInstance.get("products?"+new Date().getTime(), defaultParams);
-        const data = response.data
+  if (!cache) {
+    const cacheBuster = { _timestamp: new Date().getTime() };
+    const defaultParams = { ...params, status: 'publish', ...cacheBuster };
 
-        const totalPages = response.headers["x-wp-totalpages"]
 
-        return {totalPages: totalPages, data: data} as RedisCachedProducts;
+    // 2️⃣ Fetch from WooCommerce
+    const response = await wooCommerceApiInstance.get("products?" + new Date().getTime(), defaultParams);
+    const data = response.data
+
+    const totalPages = response.headers["x-wp-totalpages"]
+
+    return { totalPages: totalPages, data: data } as RedisCachedProducts;
+  }
+
+  const search = new URLSearchParams();
+  for (const key in params) {
+    const value = params[key];
+
+    if (value === 'undefined' || value === undefined)
+      continue;
+
+    if (Array.isArray(value)) {
+      value.forEach(v => search.append(`${key}[]`, v));
+    } else if (typeof value === "object" && value !== null) {
+      search.append(key, JSON.stringify(value));
+    } else {
+      search.append(key, value);
     }
+  }
 
-    const search = new URLSearchParams();
-    for (const key in params) {
-        const value = params[key];
+  const res = await fetch(baseUrl + `/api/redis/products?${search.toString()}`, { cache: "no-store" });
 
-        if(value==='undefined' || value===undefined)
-            continue;
+  const raw = await res.json();
 
-        if (Array.isArray(value)) {
-            value.forEach(v => search.append(`${key}[]`, v));
-        } else if (typeof value === "object" && value !== null) {
-            search.append(key, JSON.stringify(value));
-        } else {
-            search.append(key, value);
-        }
-    }
+  const products = raw as RedisCachedProducts;
 
-    const res = await fetch(baseUrl+ `/api/redis/products?${search.toString()}`, { cache: "no-store" });
-
-    const raw = await res.json();
-
-    const products = raw as RedisCachedProducts;
-
-    return products;
+  return products;
 }
 
 export const fetchCustomProductCategoryMaxPrice = (productCategorySlug: string) => {
-    return wooCommerceCustomApiV1ApiInstance.get(`max-price?category_slug=${productCategorySlug}`)
+  return wooCommerceCustomApiV1ApiInstance.get(`max-price?category_slug=${productCategorySlug}`)
 }
 
 
 export const fetchProductCustomCategories = async (params?: any): Promise<AxiosResponse<ProductCategory[]>> => {
-  let cats = await wooCommerceCustomApiV1ApiInstance.get('categories')  
+  let cats = await wooCommerceCustomApiV1ApiInstance.get('categories')
   return cats;
 }
 
@@ -167,38 +167,38 @@ export const fetchProductAttributes = (params?: any): Promise<AxiosResponse<Prod
   return wooCommerceApiInstance.get("products/attributes", params)
 }
 export const fetchProductAttributeTerms = async (
-    attributeId: string,
-    params?: any
+  attributeId: string,
+  params?: any
 ): Promise<ProductAttributeTerm[]> => {
 
-    const res = await fetch(baseUrl+ `/api/redis/product-attribute-terms?attributeId=${attributeId}`, { cache: "no-store" });
-    const raw = await res.json();
+  const res = await fetch(baseUrl + `/api/redis/product-attribute-terms?attributeId=${attributeId}`, { cache: "no-store" });
+  const raw = await res.json();
 
-    return raw as ProductAttributeTerm[];
+  return raw as ProductAttributeTerm[];
 };
 
 export const fetchProductVariations = async (productId: number, params?: any, cache: boolean = true): Promise<ProductVariation[]> => {
   const defaultParams = { ...params, status: 'publish' };
 
-    const search = new URLSearchParams();
-    for (const key in params) {
-        const value = params[key];
+  const search = new URLSearchParams();
+  for (const key in params) {
+    const value = params[key];
 
-        if(value==='undefined' || value===undefined)
-            continue;
+    if (value === 'undefined' || value === undefined)
+      continue;
 
-        if (Array.isArray(value)) {
-            value.forEach(v => search.append(`${key}[]`, v));
-        } else if (typeof value === "object" && value !== null) {
-            search.append(key, JSON.stringify(value));
-        } else {
-            search.append(key, value);
-        }
+    if (Array.isArray(value)) {
+      value.forEach(v => search.append(`${key}[]`, v));
+    } else if (typeof value === "object" && value !== null) {
+      search.append(key, JSON.stringify(value));
+    } else {
+      search.append(key, value);
     }
+  }
 
-    search.append('productId', productId.toString());
+  search.append('productId', productId.toString());
 
-  const res = await fetch(baseUrl+ `/api/redis/product-variations?=${search.toString()}`, { cache: "no-store" });
+  const res = await fetch(baseUrl + `/api/redis/product-variations?=${search.toString()}`, { cache: "no-store" });
   const raw = await res.json();
 
   return raw as ProductVariation[];

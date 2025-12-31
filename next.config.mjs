@@ -4,15 +4,19 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 export function checkIfFileExistsSync(filename) {
-  const filePath = path.join(process.cwd(), filename);
+    const filePath = path.join(process.cwd(), filename);
 
-  return fs.existsSync(filePath);
+    return fs.existsSync(filePath);
 }
 
 let base_url = process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : 'https://www.redcrow.kz';
 
-if(checkIfFileExistsSync('staging.pid')) {
+let WP_URL = 'https://admin.redcrow.kz';
+let REDIS_HOST = "redcrow.kz";
+if (checkIfFileExistsSync('staging.pid')) {
     base_url = 'https://dev.redcrow.kz';
+    WP_URL = 'https://dev2.redcrow.kz/';
+    REDIS_HOST = "localhost";
 }
 
 const nextConfig = {
@@ -81,6 +85,18 @@ const nextConfig = {
                 port: '',
                 pathname: '/wp-content/uploads/**',
             },
+                  {
+                protocol: 'https',
+                hostname: 'dev.redcrow.kz',
+                port: '',
+                pathname: '/uploads/**',
+            },
+            {
+                protocol: 'https',
+                hostname: 'dev2.redcrow.kz',
+                port: '',
+                pathname: '/wp-content/uploads/**',
+            },
         ],
     },
 
@@ -100,11 +116,12 @@ const nextConfig = {
         MAILGUN_API_KEY: "9085566ba3ba48dbf8024860b652aba3-d010bdaf-9b12ac21",
         PUBLIC_YANDEX_MAPS_API_KEY: "2c06c95c-520a-4355-b5f8-5237109ba380",
 
-        REDIS_HOST: "redcrow.kz",
+        REDIS_HOST: REDIS_HOST || "redcrow.kz",
         REDIS_PORT: "6379",
         REDIS_PASSWORD: "myredispassword@#A!",
 
         NEXT_PUBLIC_BASE_URL: base_url,
+        NEXT_PUBLIC_WP_URL: WP_URL,
 
     }
 };
