@@ -14,6 +14,7 @@ export default async function Home() {
       orderby: "popularity",
       order: "desc",
       per_page: 6,
+      stock_status: "instock"
     }),
     fetchSlider()
   ])
