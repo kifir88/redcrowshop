@@ -9,7 +9,7 @@ export async function GET() {
         const pageId  = config.PAGES['popup_ad_1'];
 
         const res = await fetch(
-            `https://admin.redcrow.kz/wp-json/wp/v2/posts/${pageId}?v=${new Date().getTime()}`,
+            `${process.env.NEXT_PUBLIC_WP_URL}/wp-json/wp/v2/posts/${pageId}?v=${new Date().getTime()}`,
             {
                 method: "GET",
                 headers: {

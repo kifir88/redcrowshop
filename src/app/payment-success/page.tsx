@@ -17,7 +17,7 @@ export default async function PaymentSuccessPage({
 
     const [strapiPaymentPageData, orderData] = await Promise.all([
         fetch(
-            `https://admin.redcrow.kz/wp-json/wp/v2/posts/${pageId}?v=${new Date().getTime()}`,
+            `${process.env.NEXT_PUBLIC_WP_URL}/wp-json/wp/v2/posts/${pageId}?v=${new Date().getTime()}`,
             {
                 method: "GET",
                 headers: {

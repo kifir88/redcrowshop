@@ -20,7 +20,7 @@ export default async function InfoStrapiPage({
     const [strapiFooterPages, strapiPageData] = await Promise.all([
         fetchFooterPages(),
         fetch(
-            `https://admin.redcrow.kz/wp-json/wp/v2/posts/${pageId}?v=${new Date().getTime()}`,
+            `${process.env.NEXT_PUBLIC_WP_URL}/wp-json/wp/v2/posts/${pageId}?v=${new Date().getTime()}`,
             {
                 method: "GET",
                 headers: {

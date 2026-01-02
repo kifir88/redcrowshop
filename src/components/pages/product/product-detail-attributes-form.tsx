@@ -117,7 +117,6 @@ export default function ProductDetailAttributesForm({
         return;
       }
     }
-
     // Handle adding a variable product to the cart
     const productVariationFromCart = cartValues.find(
         (cv) => cv.productVariationId === selectedProductVariation.id

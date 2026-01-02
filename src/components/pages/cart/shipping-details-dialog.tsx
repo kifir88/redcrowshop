@@ -273,7 +273,7 @@ ${formatPriceToKZT(total)}
           const orderId = res.data.id;
 
           try {
-              await axios.post('https://admin.redcrow.kz/wp-json/custom/v1/reduce-stock', { orderId });
+              await axios.post(`${process.env.NEXT_PUBLIC_WP_URL}/wp-json/custom/v1/reduce-stock`, { orderId });
           } catch (err) {
               console.error('Failed to reduce stock', err);
           }

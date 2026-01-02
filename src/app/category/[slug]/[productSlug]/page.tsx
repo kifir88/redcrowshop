@@ -69,6 +69,7 @@ export default async function ProductPage(props: AppPageProps<ProductPageParams>
         fetchProducts({
             include: productData.related_ids,
             per_page: 3,
+            stock_status: "instock",
         }, false),
         fetchProductCategories({
             exclude: [378],per_page: 50
