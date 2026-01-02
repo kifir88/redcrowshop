@@ -1,14 +1,14 @@
 "use client"
 
-import {Dialog, Transition} from "@headlessui/react";
-import React, {useState} from "react";
-import {Button, Radio, Label} from "flowbite-react";
-import {Order} from "@/types/woo-commerce/order";
-import {robokassaGeneratePaymentURL} from "@/libs/robokassa-rest-api";
+import { Dialog, Transition } from "@headlessui/react";
+import React, { useState } from "react";
+import { Button, Radio, Label } from "flowbite-react";
+import { Order } from "@/types/woo-commerce/order";
+import { robokassaGeneratePaymentURL } from "@/libs/robokassa-rest-api";
 import useYookassaCreatePayment from "@/hooks/yookassa/useYookassaCreatePayment";
 import toast from "react-hot-toast";
-import {pspHostGeneratePaymentURL} from "@/libs/gate";
-import {CartItem} from "@/types/cart";
+import { pspHostGeneratePaymentURL } from "@/libs/paygo_gate";
+import { CartItem } from "@/types/cart";
 
 type Payment =
   | 'uKassa'
@@ -35,12 +35,14 @@ export default function OrderPaymentDialog({
       window.location.assign(robokassaPaymentURL)
     }
 
-    if(selectedOption == 'PspHost')
-    {
-
-        const pspHostPaymentURL = pspHostGeneratePaymentURL(order)
-            .then(url => window.location.assign(url))
-            .catch(err => console.error("Error generating PspHost payment URL:", err));
+    if (selectedOption == 'PspHost') {
+      if (['KZT', 'RUB'].includes(order.currency)== false) {
+        toast.error("Оплата в данной валюте не поддерживается. Пожалуйста, свяжитесь с поддержкой.")
+        return;
+      }
+      const pspHostPaymentURL = pspHostGeneratePaymentURL(order)
+        .then(url => window.location.assign(url))
+        .catch(err => console.error("Error generating PspHost payment URL:", err));
     }
 
     if (selectedOption === "uKassa") {
@@ -128,11 +130,11 @@ export default function OrderPaymentDialog({
                       </div>*/}
                       <div className="flex items-center gap-2">
                         <Radio
-                            id="PspHost"
-                            name="paymentOption"
-                            value="PspHost"
-                            checked={selectedOption === "PspHost"}
-                            onChange={() => setSelectedOption("PspHost")}
+                          id="PspHost"
+                          name="paymentOption"
+                          value="PspHost"
+                          checked={selectedOption === "PspHost"}
+                          onChange={() => setSelectedOption("PspHost")}
                         />
                         <Label htmlFor="PspHost">
                           Оплата Картой
@@ -142,11 +144,11 @@ export default function OrderPaymentDialog({
 
                     <div className="mt-10">
                       <Button
-                          color="dark"
-                          fullSized
-                          disabled={!selectedOption}
-                          isProcessing={yookassaCreatePaymentMutation.isPending}
-                          onClick={handleConfirmClick}
+                        color="dark"
+                        fullSized
+                        disabled={!selectedOption}
+                        isProcessing={yookassaCreatePaymentMutation.isPending}
+                        onClick={handleConfirmClick}
                       >
                         Подтвердить
                       </Button>

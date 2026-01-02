@@ -1,11 +1,20 @@
 import crypto from 'crypto';
-import {Order} from "@/types/woo-commerce/order";
-import {fetchCurrencyRates} from "@/libs/woocommerce-rest-api";
-import {CartItem} from "@/types/cart";
+import { Order } from "@/types/woo-commerce/order";
+import { fetchCurrencyRates } from "@/libs/woocommerce-rest-api";
+import { CartItem } from "@/types/cart";
+import { recordTraceEvents } from 'next/dist/trace';
 
+const KEYS: Record<string, { id: string, secret: string } | undefined> ={
+    'KZT': {
+        'id':"148586",
+        'secret':"8852c0ae0851e0d909bdcdead3defae7d9018a3e32e4dd904d3a871616d3e19e048e4f7cae25def7033b74fd84186299a81e40edb155eb0fce84b55788e9bd44"
+    },
+    'RUB': {
+        'id':"147396",
+        'secret':"0dbca7f5a15a7031feeaead7f208f1abd177f40422f653eed2001b3ad6a0f8886b68e7f25f8a189e0b9d7fb81c7a67fc2e84ca1944bd1a8d0c138e1daa8ab99a"
+    },
+}
 
-const PROJECT_ID = "148586";
-const PROJECT_SECRET = "8852c0ae0851e0d909bdcdead3defae7d9018a3e32e4dd904d3a871616d3e19e048e4f7cae25def7033b74fd84186299a81e40edb155eb0fce84b55788e9bd44";
 
 const ignoredParams = ['frame_mode'];
 
@@ -18,7 +27,7 @@ const reducer = (obj: any, prefix = '', ignored: string[] = []): string => {
         }
     });
 
-    const str= Object.entries(ordered).reduce((acc, [prop, value]) => {
+    const str = Object.entries(ordered).reduce((acc, [prop, value]) => {
         if (value === null) value = '';
         if (typeof value === 'object') {
             return acc + reducer(value, prefix ? `${prefix}:${prop}` : prop, ignored);
@@ -34,7 +43,7 @@ export const generateSignature = (obj: any, salt: string): string => {
     const hmac = crypto.createHmac('sha512', salt);
 
     var str = reducer(obj, '', ignoredParams);
-    str =  str.endsWith(";") ? str.slice(0, -1) : str;
+    str = str.endsWith(";") ? str.slice(0, -1) : str;
     hmac.update(str);
     return hmac.digest('base64')
 };
@@ -45,13 +54,14 @@ export class Callback {
     private signature?: string;
 
     constructor(data: any) {
+        const PROJECT_SECRET = KEYS[data.payment?.currency || 'KZT']?.secret || "";
         this.secret = PROJECT_SECRET;
         this.callback = data;
 
         this.removeSignature(this.callback);
 
         if (!this.isValid()) {
-            console.log("NOT VALID PAYMENT: "+ data);
+            console.log("NOT VALID PAYMENT: " + data);
         }
     }
 
@@ -159,6 +169,13 @@ export class Payment {
 
 export const pspHostGeneratePaymentURL = async (order: Order): Promise<string> => {
 
+    if (order.currency in KEYS == false)
+        throw new Error("Unsupported currency for PspHost: " + order.currency);
+
+    const PROJECT_ID = KEYS[order.currency]?.id;
+    const PROJECT_SECRET = KEYS[order.currency]?.secret;
+
+    // @ts-expect-error: Проверка выше исключает возможность undefined
     const payment = new Payment(PROJECT_ID, PROJECT_SECRET);
 
     payment.setParam('paymentAmount', (Number(order.total) * 100).toString());
@@ -167,12 +184,12 @@ export const pspHostGeneratePaymentURL = async (order: Order): Promise<string> =
     payment.setParam('paymentCurrency', order.currency);
 
     //const urlll = 'https://f485-195-7-13-231.ngrok-free.app';
-    const urlll = 'https://www.redcrow.kz';
+    const calback_url = process.env.NEXT_PUBLIC_BASE_URL;
 
     const tokenMeta = order.meta_data.find((meta) => meta.key === "order_token");
 
-    payment.setParam('redirect_success_url', urlll+'/payment-success-psp?InvId='+order.id + '&order_token='+tokenMeta?.value);
-    payment.setParam('merchant_callback_url', urlll+'/api/order-result-psp');
+    payment.setParam('redirect_success_url', calback_url + '/payment-success-psp?InvId=' + order.id + '&order_token=' + tokenMeta?.value);
+    payment.setParam('merchant_callback_url', calback_url + '/api/order-result-psp');
 
     return payment.getUrl();
 

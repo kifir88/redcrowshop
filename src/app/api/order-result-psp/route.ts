@@ -3,7 +3,7 @@ import {fetchOrder, fetchOrderServer, updateOrder} from "@/libs/woocommerce-rest
 import {formatPriceToKZT, formatPriceToLocale} from "@/libs/helper-functions";
 import axios from "axios";
 import {Order} from "@/types/woo-commerce/order";
-import {Callback} from "@/libs/gate";
+import {Callback} from "@/libs/paygo_gate";
 
 export async function POST(req: NextRequest)
 {

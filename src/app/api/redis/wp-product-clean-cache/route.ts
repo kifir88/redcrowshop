@@ -35,6 +35,8 @@ async function runPrewarmCategories() {
 
         const categories = productCategoriesData?.data || [];
 
+
+        let prevarm_result = [];
         // 2️⃣ Loop through each category
         for (const category of categories) {
             const categoryId = category.id;
@@ -49,15 +51,14 @@ async function runPrewarmCategories() {
                 stock_status: "instock",
             });
 
-            console.log(
-                `✅ Prewarmed category "${category.name}" (${categoryId}) — ${productsResponse?.data?.length || 0} products loaded`
-            );
+            prevarm_result.push({'id': categoryId, 'name':category.name, 'count':productsResponse?.data?.length || 0});
 
             // Optional small delay between calls to avoid server overload
             await new Promise((res) => setTimeout(res, 500));
         }
-
+        console.log(prevarm_result);
         console.log("🎉 Prewarm completed for all categories.");
+
     } catch (err) {
         console.error("❌ Prewarm failed:", err);
     }
