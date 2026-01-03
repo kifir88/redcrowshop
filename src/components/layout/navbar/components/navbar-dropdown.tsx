@@ -10,6 +10,8 @@ import Image from "next/image";
 import { cn } from "@/libs/utils";
 import { CustomCurrencyRates } from "@/types/woo-commerce/custom-currency-rates";
 import ClientOnly from "@/components/client_only";
+import CurrencySelect from "@/components/currency-select";
+import { usePathname } from "next/navigation";
 
 export default function NavbarDropdown({
   productCategories,
@@ -19,7 +21,8 @@ export default function NavbarDropdown({
   currencyRates: CustomCurrencyRates;
 }) {
   const [selectedProductId, setSelectedProductId] = useState<number | null>(null);
-
+  const pathname = usePathname();
+  const isOrderPage = pathname.includes('/orders/')
   const parentCategories = useMemo(() => {
     // ID 378 - Номенклатура
     return productCategories.filter(pc => pc.parent === 378).filter(pc => pc.slug !== 'musor')
@@ -73,6 +76,10 @@ export default function NavbarDropdown({
           <ClientOnly>
             <ShoppingCartButton currencyRates={currencyRates} />
           </ClientOnly>
+          <div style={{ visibility: isOrderPage ? 'hidden' :'visible' }}>
+            <CurrencySelect />
+          </div>
+          
         </div>
       </Navbar.Collapse>
       <MegaMenu.Dropdown

@@ -36,11 +36,7 @@ export default function OrderPaymentDialog({
     }
 
     if (selectedOption == 'PspHost') {
-      if (['KZT', 'RUB'].includes(order.currency)== false) {
-        toast.error("Оплата в данной валюте не поддерживается. Пожалуйста, свяжитесь с поддержкой.")
-        return;
-      }
-      const pspHostPaymentURL = pspHostGeneratePaymentURL(order)
+      pspHostGeneratePaymentURL(order)
         .then(url => window.location.assign(url))
         .catch(err => console.error("Error generating PspHost payment URL:", err));
     }

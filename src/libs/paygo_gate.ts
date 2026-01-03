@@ -4,12 +4,12 @@ import { fetchCurrencyRates } from "@/libs/woocommerce-rest-api";
 import { CartItem } from "@/types/cart";
 import { recordTraceEvents } from 'next/dist/trace';
 
-const KEYS: Record<string, { id: string, secret: string } | undefined> ={
-    'KZT': {
+const GATE_KEYS ={
+    'main_gate': {
         'id':"148586",
         'secret':"8852c0ae0851e0d909bdcdead3defae7d9018a3e32e4dd904d3a871616d3e19e048e4f7cae25def7033b74fd84186299a81e40edb155eb0fce84b55788e9bd44"
     },
-    'RUB': {
+    'rub_gate': {
         'id':"147396",
         'secret':"0dbca7f5a15a7031feeaead7f208f1abd177f40422f653eed2001b3ad6a0f8886b68e7f25f8a189e0b9d7fb81c7a67fc2e84ca1944bd1a8d0c138e1daa8ab99a"
     },
@@ -54,7 +54,8 @@ export class Callback {
     private signature?: string;
 
     constructor(data: any) {
-        const PROJECT_SECRET = KEYS[data.payment?.currency || 'KZT']?.secret || "";
+        const {'secret':PROJECT_SECRET} = GATE_KEYS[ data.payment?.currency =='RUB'?'rub_gate':'main_gate'];
+
         this.secret = PROJECT_SECRET;
         this.callback = data;
 
@@ -169,13 +170,8 @@ export class Payment {
 
 export const pspHostGeneratePaymentURL = async (order: Order): Promise<string> => {
 
-    if (order.currency in KEYS == false)
-        throw new Error("Unsupported currency for PspHost: " + order.currency);
+    const {'id':PROJECT_ID,'secret':PROJECT_SECRET} = GATE_KEYS[ order.currency =='RUB'?'rub_gate':'main_gate'];
 
-    const PROJECT_ID = KEYS[order.currency]?.id;
-    const PROJECT_SECRET = KEYS[order.currency]?.secret;
-
-    // @ts-expect-error: Проверка выше исключает возможность undefined
     const payment = new Payment(PROJECT_ID, PROJECT_SECRET);
 
     payment.setParam('paymentAmount', (Number(order.total) * 100).toString());

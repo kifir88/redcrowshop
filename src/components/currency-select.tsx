@@ -20,6 +20,7 @@ const CurrencySelect = () => {
       <Select
         id="currencies"
         value={selectedCurrency}
+        className={'ml-2'}
         onChange={e => {
             setStoredCurrency(e.target.value as CurrencyType);
            setSelectedCurrency(e.target.value as CurrencyType);
