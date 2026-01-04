@@ -66,9 +66,11 @@ export default function NavbarDropdown({
             </MegaMenu.DropdownToggle>
           ))}
 
-          <a href={`/shop?sale=1`} className="font-bold text-red-500">
-            outlet
-          </a>
+          <button className="flex items-center">
+            <a href={`/shop?sale=1`} className="font-bold text-red-500">
+              outlet
+            </a>
+          </button>
 
         </div>
 
@@ -76,10 +78,10 @@ export default function NavbarDropdown({
           <ClientOnly>
             <ShoppingCartButton currencyRates={currencyRates} />
           </ClientOnly>
-          <div style={{ visibility: isOrderPage ? 'hidden' :'visible' }}>
+          <div style={{ visibility: isOrderPage ? 'hidden' : 'visible' }}>
             <CurrencySelect />
           </div>
-          
+
         </div>
       </Navbar.Collapse>
       <MegaMenu.Dropdown

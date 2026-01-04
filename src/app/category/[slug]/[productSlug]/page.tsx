@@ -7,7 +7,7 @@ import {
 import Breadcrumb from "@/components/breadcrumb";
 import { getCategoryHierarchyBySlug } from "@/libs/helper-functions";
 import ProductCard from "@/components/pages/category/product-card";
-import ProductImageAttribute from "@/components/pages/product/product-image-attribute";
+import ProductInfo from "@/components/pages/product/product-info";
 import { Product } from "@/types/woo-commerce/product";
 import { AppPageProps } from "@/types/next";
 import { Metadata, ResolvingMetadata } from "next";
@@ -90,7 +90,7 @@ export default async function ProductPage(props: AppPageProps<ProductPageParams>
             <Breadcrumb items={breadCrumbItems} productName={productData?.name} />
 
             <div className="lg:grid lg:auto-rows-min lg:grid-cols-12 lg:gap-x-8">
-                <ProductImageAttribute
+                <ProductInfo
                     product={productData}
                     productVariations={productVariationsData}
                     currencyRates={currencyRatesData.data}

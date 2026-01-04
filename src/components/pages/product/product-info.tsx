@@ -11,7 +11,7 @@ import {CustomCurrencyRates} from "@/types/woo-commerce/custom-currency-rates";
 
 type FormValues = Record<string, ProductAttributeTerm | null>;
 
-export default function ProductImageAttribute({
+export default function ProductInfo({
   product,
   productVariations,
   currencyRates,
@@ -75,7 +75,7 @@ export default function ProductImageAttribute({
     <>
       <div className="lg:col-span-5 lg:col-start-8">
         <div className="flex flex-col md:flex-row justify-between">
-          <h1 className="text-xl font-medium text-gray-900">{product.name}</h1>
+          <h1 className="text-xl font-medium text-gray-900 pr-2">{product.name}</h1>
           <ProductPrice
             product={product}
             currencyRates={currencyRates}
