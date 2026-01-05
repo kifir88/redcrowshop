@@ -35,6 +35,6 @@ export async function POST(req: NextRequest) {
     return new Response(JSON.stringify(response.data), { status: 200 });
   } catch (error: any) {
     console.error("Ошибка запроса к CDEK API:", error.response?.data || error.message);
-    return new Response(JSON.stringify({ error: error.message }), { status: 500 });
+    return new Response(JSON.stringify( error.response?.data ), { status: 500 });
   }
 }

@@ -25,6 +25,14 @@ export default function OrderDetailClient({ orderData, currencyRates }: OrderDet
         }
     }, [storedCurrency]);
 
+
+    let items_total = 0;
+
+    orderData.line_items.map(item=>{
+        items_total+=parseInt(item.total)
+    })
+    console.log(orderData)
+
     return (
         <section className="bg-white py-8 antialiased dark:bg-gray-900 md:py-16">
             <form action="#" className="mx-auto max-w-screen-xl px-4 2xl:px-0">
@@ -101,7 +109,7 @@ export default function OrderDetailClient({ orderData, currencyRates }: OrderDet
                                     <dl className="flex items-center justify-between gap-4">
                                         <dt className="text-gray-500 dark:text-gray-400">Стоимость товаров</dt>
                                         <dd className="text-base font-medium text-gray-900 dark:text-white">
-                                            {formatPriceToLocale(Number(orderData?.total), selectedCurrency)}
+                                            {formatPriceToLocale(Number(items_total), selectedCurrency)}
                                         </dd>
                                     </dl>
 

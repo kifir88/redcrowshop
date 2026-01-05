@@ -13,6 +13,7 @@ dayjs.extend(timezone)
 dayjs.locale('ru');
 
 export default function OrderRowItem({order, handleOpenPaymentModal}: {order: Order, handleOpenPaymentModal: () => void}) {
+  
   const formattedCreatedDate = dayjs
     .utc(order.date_created)
     .local()

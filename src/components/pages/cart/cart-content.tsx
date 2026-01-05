@@ -3,28 +3,68 @@
 import CartListItem from "@/components/pages/cart/cart-list-item";
 import { useLocalStorage } from "usehooks-ts";
 import { CartItem } from "@/types/cart";
-import { useEffect, useState, useCallback } from "react";
-import ShippingDetailsDialog from "@/components/pages/cart/shipping-details-dialog";
+import { useEffect, useState, useCallback, useMemo, useRef } from "react";
+
 import { Button } from "flowbite-react";
 import { CustomCurrencyRates } from "@/types/woo-commerce/custom-currency-rates";
 import { CurrencyType, formatCurrency } from "@/libs/currency-helper";
 import Link from "next/link";
 import ClientOnly from "@/components/client_only";
 import CartListItemSimple from "@/components/pages/cart/cart-list-item-simple";
+import ContactData from "./contact_data";
+import ShippingDialog from "./shipping_dialog";
+import { DeliveryMethod, DeliveryOption } from "@/types/delivery";
+import { Cart } from "@/libs/cart";
+import toast from "react-hot-toast";
 
 export default function CartContent({ currencyRates }: { currencyRates: CustomCurrencyRates }) {
-    const [refreshProducts, setRefreshProducts] = useState<number>(0);
-    const [productsLoading, setProductsLoading] = useState(0);
-    const [waitShippingDialog, setWaitShippingDialog] = useState(false);
+
+    const cartController = new Cart(currencyRates)
 
     const [selectedCurrency, setSelectedCurrency] = useState<CurrencyType>("KZT");
 
     const [storedCurrency] = useLocalStorage<CurrencyType>("currency", "KZT");
-    const [cartItems, setCartItems] = useLocalStorage<CartItem[]>("cartItems", []);
-    const [isShippingDialogOpened, setShippingDialogOpened] = useState<boolean>(false);
+    const [cartItems] = useLocalStorage<CartItem[]>("cartItems", []);
+
+    const [deliveryPrice, setDeliveryPrice] = useState<number>(0);
 
     // new: count active overlays
     const [activeOverlays, setActiveOverlays] = useState<number>(0);
+
+
+    // #region Check products before order create
+
+    const [waitProductsCheck, setWaitProductsCheck] = useState(false);
+    const [refreshProducts, setRefreshProducts] = useState<number>(0);
+    const [productsLoading, setProductsLoading] = useState(0);
+    const [deliveryValid, setDeliveryValid] = useState<boolean>(false)
+    const handlePushOrder = () => {
+        setProductsLoading(cartItems.length);
+        setRefreshProducts(prev => prev + 1);
+        setWaitProductsCheck(true);
+
+    };
+
+    const shippingLines = useRef<any[]>([]);
+    useEffect(() => {
+        if (waitProductsCheck && productsLoading === 0) {
+            setWaitProductsCheck(false);
+
+            if (activeOverlays == 0) {
+                if (!deliveryValid) {
+                    toast.error('Укажите способ доставки, в случае CDEK - выберите тариф')
+                } else {
+                    console.log(shippingLines)
+                    cartController.handleSubmit(shippingLines.current);
+                }
+            }
+        }
+
+    }, [waitProductsCheck, productsLoading, activeOverlays, deliveryValid]);
+
+
+    // #endregion
+
 
     useEffect(() => {
         if (storedCurrency) {
@@ -32,26 +72,42 @@ export default function CartContent({ currencyRates }: { currencyRates: CustomCu
         }
     }, [storedCurrency]);
 
-    const totalOriginalPrice = cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
+    const rawPriceFormatter = new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 
+    
+    const setShippingCost = (delivery_method: DeliveryMethod, deliveryOption: DeliveryOption | null) => {
+        if (delivery_method == 'self') {
+            setDeliveryPrice(0)
+            shippingLines.current = []
+            // cartController.shippingLines = shippingLines.current
 
-    const handleOpenShippingDialog = () => {
-        setProductsLoading(cartItems.length);
-        setRefreshProducts(prev => prev + 1);
-        setWaitShippingDialog(true);
-    };
+        } else if (delivery_method == 'cdek' && deliveryOption) {
+            setDeliveryPrice(deliveryOption.delivery_sum)
+            shippingLines.current = [
+                {
+                    "method_id": "cdek",
+                    "method_title": `[${deliveryOption?.tariff_code}] ${deliveryOption?.tariff_name}`,
+                    "total": rawPriceFormatter.format(deliveryOption.delivery_sum)
+                }
+            ];
+            // cartController.shippingLines = shippingLines.current
+        }
+        
+    }
+
+    const itemsTotalPrice = cartItems.reduce((total, item) => total + item.price * item.quantity, 0)
+    let totalOriginalPrice = itemsTotalPrice + deliveryPrice;
+
 
     useEffect(() => {
-        if (waitShippingDialog && productsLoading === 0) {
-            setShippingDialogOpened(activeOverlays > 0 ? false : true);
-            setWaitShippingDialog(false);
-        }
+        totalOriginalPrice = itemsTotalPrice + deliveryPrice;
+    }, [deliveryPrice])
 
-    }, [waitShippingDialog, productsLoading, activeOverlays]);
 
-    const handleCloseShippingDialog = () => {
-        setShippingDialogOpened(false);
-    };
+
+
+
+
 
     // overlay register/unregister helpers
     const registerOverlay = useCallback(() => {
@@ -108,6 +164,15 @@ export default function CartContent({ currencyRates }: { currencyRates: CustomCu
                                     );
                                 })}
                             </div>
+
+                            <ShippingDialog
+                                currencyRates={currencyRates}
+                                deliveryValid={deliveryValid}
+                                setDeliveryValid={setDeliveryValid}
+                                setShippingCost={setShippingCost}
+
+                            />
+                            <ContactData />
                         </div>
 
                         <div className="mx-auto mt-6 max-w-4xl flex-1 space-y-6 lg:mt-0 lg:w-full">
@@ -124,14 +189,14 @@ export default function CartContent({ currencyRates }: { currencyRates: CustomCu
                                                 Стоимость товаров
                                             </dt>
                                             <dd className="text-base font-medium text-gray-900 dark:text-white">
-                                                {formatCurrency(totalOriginalPrice, selectedCurrency, currencyRates)}
+                                                {formatCurrency(itemsTotalPrice, selectedCurrency, currencyRates)}
                                             </dd>
                                         </dl>
 
                                         <dl className="flex items-center justify-between gap-4">
                                             <dt className="text-base font-normal text-gray-500 dark:text-gray-400">Доставка</dt>
                                             <dd className="text-base font-medium text-green-600">
-                                                {formatCurrency(0, selectedCurrency, currencyRates)}
+                                                {formatCurrency(deliveryPrice, selectedCurrency, currencyRates)}
                                             </dd>
                                         </dl>
 
@@ -152,8 +217,8 @@ export default function CartContent({ currencyRates }: { currencyRates: CustomCu
                                     color="dark"
                                     size="sm"
                                     fullSized
-                                    disabled={!totalOriginalPrice || activeOverlays > 0}
-                                    onClick={handleOpenShippingDialog}
+                                    disabled={!totalOriginalPrice || !deliveryValid || activeOverlays > 0}
+                                    onClick={handlePushOrder}
                                 >
                                     Создать заказ
                                 </Button>
@@ -162,13 +227,16 @@ export default function CartContent({ currencyRates }: { currencyRates: CustomCu
                                         Для создания заказа закройте все подсказки/уведомления о стоке.
                                     </p>
                                 )}
+
                             </div>
                         </div>
 
                     </div>
+
+
+
                 </div>
 
-                <ShippingDetailsDialog isOpen={isShippingDialogOpened} closeModal={handleCloseShippingDialog} currencyRates={currencyRates} selectedCurrency={selectedCurrency} />
             </section>
         </ClientOnly>
     );

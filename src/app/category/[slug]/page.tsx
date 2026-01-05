@@ -101,8 +101,8 @@ export default async function ProductCategoryPage(props: ProductCategoryPageProp
       page: pageParam ? Number(pageParam) : 1,
       per_page: 12,
       search: searchParam ? searchParam : undefined,
-      max_price: maxPriceParam ? maxPriceParam : 10000000000,
-      min_price: minPriceParam ? minPriceParam : 0,
+      // max_price: maxPriceParam ? maxPriceParam : 10000000000,
+      // min_price: minPriceParam ? minPriceParam : 0,
       stock_status: "instock",
       ...formattedSearchParams,
       
