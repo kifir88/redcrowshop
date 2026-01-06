@@ -10,7 +10,7 @@
     "generate-types": "curl https://admin.redcrow.kz/wp-json -o schema.yaml && yarn run openapi --input ./schema.yaml --output ./src/types/generated --exportServices=false --exportCore=false --useUnionTypes"
   },
   "dependencies": {
-    "@a2seven/yoo-checkout": "^1.1.4",
+    "@a2seven/yoo-checkout": "github:svyatglukhov/yoocheckout",
     "@headlessui/react": "^2.1.2",
     "@heroicons/react": "^2.1.5",
     "@mantine/form": "^7.12.1",
@@ -35,6 +35,7 @@
     "next": "^15.2.4",
     "node-fetch": "^3.3.2",
     "node-robokassa": "^0.0.0",
+    "nodemailer": "^7.0.12",
     "npm": "^11.7.0",
     "query-string": "^9.1.0",
     "react": "^19.1.0",
@@ -56,6 +57,7 @@
     "@types/ioredis": "^5.0.0",
     "@types/leaflet": "^1.9.21",
     "@types/node": "^20",
+    "@types/nodemailer": "^7.0.4",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "@types/react-slick": "^0.23.13",
