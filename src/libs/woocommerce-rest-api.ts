@@ -10,58 +10,30 @@ import { CustomCurrencyRates } from "@/types/woo-commerce/custom-currency-rates"
 import redis from "./redis";
 
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+const endpoints = [
+  'wc/v3',
+  'custom/v1',
+  'custom-api/v1',
+  'cust_api/v1'
+]
 
-const options: IWooCommerceRestApiOptions = {
-  url: process.env.NEXT_PUBLIC_WP_URL || "https://admin.redcrow.kz/",
-  consumerKey: "ck_31ed56e528afad94e82ef3e705639a1af0b933b5",
-  consumerSecret: "cs_6f47b0927beb71748064d394afccec38bb1cdf49",
-  version: "wc/v3",
+// #TODO Надо сократить количество endpointoв, тем более они не авторизуются корректно
+export const [
+  wooCommerceApiInstance,
+  wooCommerceCustomV1ApiInstance,
+  wooCommerceCustomApiV1ApiInstance,
+  wooCommerceCustApiV1ApiInstance,
+] = endpoints.map(endpoint => new WooCommerceRestApi({
+  url: process.env.NEXT_PUBLIC_WP_URL || '',
+  consumerKey: process.env.WP_CONSUMER_KEY || '',
+  consumerSecret: process.env.WP_CONSUMER_SECRET || '',
+  version: endpoint as any,
   axiosConfig: {
     headers: {
       "Content-type": "application/json"
     }
   }
-};
-const custom_v1_options: IWooCommerceRestApiOptions = {
-  url: process.env.NEXT_PUBLIC_WP_URL || "https://admin.redcrow.kz/",
-  consumerKey: "ck_31ed56e528afad94e82ef3e705639a1af0b933b5",
-  consumerSecret: "cs_6f47b0927beb71748064d394afccec38bb1cdf49",
-  version: "custom/v1" as any,
-  axiosConfig: {
-    headers: {
-      "Content-type": "application/json"
-    }
-  }
-};
-const custom_api_v1_options: IWooCommerceRestApiOptions = {
-  url: process.env.NEXT_PUBLIC_WP_URL || "https://admin.redcrow.kz/",
-  consumerKey: "ck_31ed56e528afad94e82ef3e705639a1af0b933b5",
-  consumerSecret: "cs_6f47b0927beb71748064d394afccec38bb1cdf49",
-  version: "custom-api/v1" as any,
-  axiosConfig: {
-    headers: {
-      "Content-type": "application/json"
-    }
-  }
-
-};
-const cust_api_v1_options: IWooCommerceRestApiOptions = {
-  url: process.env.NEXT_PUBLIC_WP_URL || "https://admin.redcrow.kz/",
-  consumerKey: "ck_31ed56e528afad94e82ef3e705639a1af0b933b5",
-  consumerSecret: "cs_6f47b0927beb71748064d394afccec38bb1cdf49",
-  version: "cust_api/v1" as any,
-  axiosConfig: {
-    headers: {
-      "Content-type": "application/json"
-    }
-  }
-};
-
-export const wooCommerceApiInstance = new WooCommerceRestApi(options);
-export const wooCommerceCustomV1ApiInstance = new WooCommerceRestApi(custom_v1_options);
-export const wooCommerceCustomApiV1ApiInstance = new WooCommerceRestApi(custom_api_v1_options);
-export const wooCommerceCustApiV1ApiInstance = new WooCommerceRestApi(cust_api_v1_options);
-
+}))
 // API cust_api/v1
 
 export const fetchCurrencyRates = (): Promise<AxiosResponse<CustomCurrencyRates>> => {

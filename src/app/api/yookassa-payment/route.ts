@@ -37,7 +37,7 @@ export async function POST(req: NextRequest) {
       },
       confirmation: {
         type: "redirect",
-        return_url: `${process.env.NEXTAUTH_URL}/orders/${order.id}?paymentOption=uKassa&paymentId=${paymentId}`,
+        return_url: `${process.env.NEXT_PUBLIC_BASE_URL}/orders/${order.id}?paymentOption=uKassa&paymentId=${paymentId}`,
       },
       capture: false,
     };
