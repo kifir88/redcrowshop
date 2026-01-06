@@ -12,11 +12,8 @@ import { CurrencyType, formatCurrency } from "@/libs/currency-helper";
 import { CustomCurrencyRates } from "@/types/woo-commerce/custom-currency-rates";
 import toast from "react-hot-toast";
 import { DeliveryMethod, DeliveryOption } from "@/types/delivery";
-
-
-
-
-
+import AddressMap, { AddressResult } from "@/components/ui/address-map";
+import { LatLngExpression } from "leaflet";
 
 
 export default function ShippingDialog({
@@ -36,7 +33,6 @@ export default function ShippingDialog({
         cdek: 'CDEK'
     };
 
-    const [clientData] = useLocalStorage<ClientData>('client_data', {} as ClientData);
 
     const [storedCurrency] = useLocalStorage<CurrencyType>("currency", "KZT");
 
@@ -81,7 +77,7 @@ export default function ShippingDialog({
             'EUR': 4
         }
         try {
-            const response = await axios.post("/api/cdek", {
+            let reuqest_data = {
                 //date: new Date().toISOString(),
                 type: 1,
                 // currency: currencyCodes[storedCurrency],
@@ -93,23 +89,28 @@ export default function ShippingDialog({
                     address: 'Ракышева 3',
                 },
                 to_location: {
-                    city: clientData.city,
-                    country_code: clientData.country,
-                    address: clientData.address_1 + ' ' + clientData.address_2,
-                    region: clientData.state,
-                    postal_code: clientData.postcode,
+                    city: storedAddress?.address?.city,
+                    country_code: storedAddress?.address?.country_code,
+                    address: storedAddress.displayName,
+                    region: storedAddress.address?.state,
+                    postal_code: storedAddress.address?.postcode,
                 },
                 packages: [
                     {
-                        weight: 1000, // в граммах
+                        weight: 1500, // в граммах
                         length: 10,   // в сантиметрах
-                        width: 10,
+                        width: 15,
                         height: 10
                     }
                 ]
-            });
+            };
+            const response = await axios.post("/api/cdek", reuqest_data);
 
-            setTarifs(response.data.tariff_codes.filter((e: { delivery_mode: number; }) => e.delivery_mode == 3))
+            setTarifs(response.data.tariff_codes.filter((e: any) =>
+                [3, 4].includes(e.delivery_mode)
+                && e.tariff_code.toString().slice(0, 2) != '12'
+                && e.tariff_code.toString().slice(0, 1) != '6'
+            ))
 
         } catch (e: any) {
             let errors = e.response.data?.errors
@@ -117,6 +118,16 @@ export default function ShippingDialog({
         }
         setWaitCDEK(false)
     };
+
+    const [storedAddress, setAddress] = useLocalStorage('client_address', {} as AddressResult);
+
+    let initialMapPos = [43.2220, 76.8512] as LatLngExpression;
+    if (storedAddress?.lat && storedAddress?.lng)
+        initialMapPos = [storedAddress.lat, storedAddress.lng] as LatLngExpression;
+
+    const onAddressSelect = (address: any) => {
+        setAddress(address)
+    }
 
     return (
         <ClientOnly>
@@ -162,9 +173,18 @@ export default function ShippingDialog({
                             </div>
 
                         </fieldset>
+
+                        <div className="mt-2">
+
+                        </div>
                         <div
                             className={`${deliveryMethod == 'cdek' ? '' : 'max-h-0'} overflow-hidden transition-all duration-300 ease-in-out`}
                         >
+
+                            <AddressMap
+                                onAddressSelect={onAddressSelect}
+                                initialPosition={initialMapPos}
+                            />
                             <Button
 
                                 color="dark"
@@ -174,6 +194,9 @@ export default function ShippingDialog({
                             >
                                 Рассчитать стоимость доставки CDEK
                             </Button>
+
+
+
                             {waitCDEK && <div className="flex w-full justify-center"><Spinner /></div>}
 
                             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
@@ -189,7 +212,7 @@ export default function ShippingDialog({
                                     </tr>
                                 </thead>
                                 <tbody>
-                               
+
                                     {tarifs.map((item: any) => (
                                         <tr
                                             key={item.tariff_code}

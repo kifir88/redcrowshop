@@ -54,7 +54,6 @@ export default function CartContent({ currencyRates }: { currencyRates: CustomCu
                 if (!deliveryValid) {
                     toast.error('Укажите способ доставки, в случае CDEK - выберите тариф')
                 } else {
-                    console.log(shippingLines)
                     cartController.handleSubmit(shippingLines.current);
                 }
             }

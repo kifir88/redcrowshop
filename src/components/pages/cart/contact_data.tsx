@@ -10,6 +10,7 @@ import { useForm } from "@mantine/form";
 import { Button } from "flowbite-react";
 import PhoneInput, { formatPhoneNumberIntl } from 'react-phone-number-input';
 import { isValidPhoneNumber } from 'libphonenumber-js/max';
+import 'react-phone-number-input/style.css';
 import ru from 'react-phone-number-input/locale/ru.json';
 import { cn } from "@/libs/utils";
 
@@ -19,7 +20,7 @@ export default function ContactData({
 }: {
     }) {
 
-    const [clientData,setClientData] = useLocalStorage<ClientData>('client_data', {} as ClientData);
+    const [clientData, setClientData] = useLocalStorage<ClientData>('client_data', {} as ClientData);
 
     const [isExpanded, setIsExpanded] = useState(true);
 
@@ -27,9 +28,8 @@ export default function ContactData({
         setIsExpanded(!isExpanded);
     };
 
-    const countryData = CountryList.getData();
     const form = useForm<ClientData>({
-        initialValues:clientData,
+        initialValues: clientData,
 
         validate: {
             phone: value => !!value && isValidPhoneNumber(value)
@@ -53,10 +53,9 @@ export default function ContactData({
         <ClientOnly>
             <div className="mt-4 relative rounded-lg border border-gray-200 bg-white p-4 pt-1 shadow-sm dark:border-gray-700 dark:bg-gray-800 md:p-6 md:pt-1">
 
-
                 <div>
                     <button onClick={toggleCollapse} className="w-full flex justify-between items-center py-5 text-bold border-b border-slate-200">
-                        <span>Контакты и адрес</span>
+                        <span>Контакты</span>
                         <span id="icon-1" className={`text-slate-800 transition-transform duration-300 ${isExpanded ? 'rotate-45' : 'rotate-0'}`}>
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" className="w-4 h-4">
                                 <path d="M8.75 3.75a.75.75 0 0 0-1.5 0v3.5h-3.5a.75.75 0 0 0 0 1.5h3.5v3.5a.75.75 0 0 0 1.5 0v-3.5h3.5a.75.75 0 0 0 0-1.5h-3.5v-3.5Z" />
@@ -86,65 +85,6 @@ export default function ContactData({
                                     required
                                     className="w-full rounded-md border px-2 py-1 focus:border-black focus:outline-none"
                                     {...form.getInputProps("last_name")}
-                                />
-                            </label>
-                            <label className="block">
-                                Улица
-                                <input
-                                    type="text"
-                                    required
-                                    className="w-full rounded-md border px-2 py-1 focus:border-black focus:outline-none"
-                                    {...form.getInputProps("address_1")}
-                                />
-                            </label>
-                            <label className="block">
-                                Дом/Квартира
-                                <input
-                                    type="text"
-                                    className="w-full rounded-md border px-2 py-1 focus:border-black focus:outline-none"
-                                    {...form.getInputProps("address_2")}
-                                />
-                            </label>
-                            <label className="block">
-                                Страна
-                                <select
-                                    required
-                                    className="w-full rounded-md border px-2 py-1 focus:border-black focus:outline-none"
-                                    {...form.getInputProps("country")}
-                                >
-                                    <option value="">Выберите страну</option>
-
-                                    {countryData.map((country) => (
-                                        <option key={country.code} value={country.code}>
-                                            {country.name}
-                                        </option>
-                                    ))}
-                                </select>
-                            </label>
-                            <label className="block">
-                                Город
-                                <input
-                                    type="text"
-                                    required
-                                    className="w-full rounded-md border px-2 py-1 focus:border-black focus:outline-none"
-                                    {...form.getInputProps("city")}
-                                />
-                            </label>
-                            <label className="block">
-                                Регион
-                                <input
-                                    type="text"
-                                    className="w-full rounded-md border px-2 py-1 focus:border-black focus:outline-none"
-                                    {...form.getInputProps("state")}
-                                />
-                            </label>
-                            <label className="block">
-                                Посткод / Индекс
-                                <input
-                                    type="text"
-                                    required
-                                    className="w-full rounded-md border px-2 py-1 focus:border-black focus:outline-none"
-                                    {...form.getInputProps("postcode")}
                                 />
                             </label>
                             <label className="col-span-2 block">

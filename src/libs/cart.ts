@@ -13,6 +13,7 @@ import { Order } from "@/types/woo-commerce/order";
 
 import { formatPriceToKZT } from "./helper-functions";
 import { useRouter } from "next/navigation";
+import { AddressResult } from "@/components/ui/address-map";
 
 
 export class Cart {
@@ -23,6 +24,7 @@ export class Cart {
     #storedCurrency!: CurrencyType
     #currencyRates!: CustomCurrencyRates
     #clientData: ClientData
+    #deliveryAddress: AddressResult
     #router
 
     constructor(currencyRates: CustomCurrencyRates) {
@@ -34,6 +36,7 @@ export class Cart {
         [this.#cartItems, , this.#clearCartItems] = useLocalStorage<CartItem[]>("cartItems", [])
         this.#storedCurrency = useLocalStorage<CurrencyType>("currency", "KZT")[0];
         this.#clientData = useLocalStorage<ClientData>('client_data', {} as ClientData)[0];
+        this.#deliveryAddress = useLocalStorage<AddressResult>('client_address', {} as AddressResult)[0];
 
     }
 
@@ -48,13 +51,13 @@ export class Cart {
             return;
         }
 
-
-
         const address = {
             ...this.#clientData,
-            phone: formatPhoneNumberIntl(this.#clientData.phone as string)
-        }
+            ...this.#deliveryAddress.address,
+            phone: formatPhoneNumberIntl(this.#clientData.phone as string),
+            address_1: this.#deliveryAddress.displayName,
 
+        }
         const lineItems = this.#cartItems.map((ci: any) => (ci.productVariationId !== -1 ? {
             product_id: ci.productId,
             variation_id: ci.productVariationId,
@@ -83,7 +86,6 @@ export class Cart {
             ],
             customer_note: ""
         }
-
 
 
         this.#createOrderMutation.mutate(payload, {
