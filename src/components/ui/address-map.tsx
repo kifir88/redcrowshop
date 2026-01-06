@@ -1,22 +1,19 @@
 'use client';
 
-import { useEffect, useRef, useState, useCallback } from 'react';
-import { MapContainer, TileLayer, Marker, useMap, useMapEvents } from 'react-leaflet';
-import { LatLngExpression, Icon } from 'leaflet';
-import 'leaflet/dist/leaflet.css';
+import { useRef, useState, useCallback } from 'react';
+import dynamic from 'next/dynamic';
+import { LatLngExpression } from 'leaflet';
 import { MagnifyingGlassIcon, MapPinIcon } from '@heroicons/react/20/solid';
 
-
-// Fix for default marker icons in Leaflet with Next.js
-const fixLeafletIcons = () => {
-    // @ts-ignore
-    delete Icon.Default.prototype._getIconUrl;
-    Icon.Default.mergeOptions({
-        iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png',
-        iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png',
-        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
-    });
-};
+// Dynamic import of LeafletMap with SSR disabled to avoid window not defined error
+const LeafletMap = dynamic(() => import('./leaflet-map'), {
+    ssr: false,
+    loading: () => (
+        <div className="w-full h-full flex items-center justify-center bg-gray-100 rounded-md">
+            <div className="text-gray-500">Загрузка карты...</div>
+        </div>
+    ),
+});
 
 export interface AddressResult {
     lat: number;
@@ -57,33 +54,6 @@ interface NominatimResult {
     };
 }
 
-// Component to handle map clicks
-function MapClickHandler({
-    onLocationSelect
-}: {
-    onLocationSelect: (lat: number, lng: number) => void
-}) {
-    useMapEvents({
-        click(e) {
-            onLocationSelect(e.latlng.lat, e.latlng.lng);
-        },
-    });
-    return null;
-}
-
-// Component to update map center
-function MapUpdater({
-    center
-}: {
-    center: LatLngExpression
-}) {
-    const map = useMap();
-    useEffect(() => {
-        map.setView(center, map.getZoom());
-    }, [center, map]);
-    return null;
-}
-
 export default function AddressMap({
     onAddressSelect,
     initialPosition = [43.2220, 76.8512] as LatLngExpression, // Almaty default
@@ -95,10 +65,6 @@ export default function AddressMap({
     const [isSearching, setIsSearching] = useState(false);
     const [showResults, setShowResults] = useState(false);
     const searchInputRef = useRef<HTMLInputElement>(null);
-
-    useEffect(() => {
-        fixLeafletIcons();
-    }, []);
 
     // Reverse geocoding to get address from coordinates
     const fetchAddressFromCoords = useCallback(async (lat: number, lng: number) => {
@@ -240,19 +206,10 @@ export default function AddressMap({
             </div>
 
             {/* Map */}
-            <MapContainer
+            <LeafletMap
                 center={position}
-                zoom={13}
-                style={{ height: '100%', width: '100%', borderRadius: '0.375rem' }}
-            >
-                <TileLayer
-                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                />
-                <MapUpdater center={position} />
-                <MapClickHandler onLocationSelect={handleLocationSelect} />
-                <Marker position={position} />
-            </MapContainer>
+                onLocationSelect={handleLocationSelect}
+            />
 
             {/* Selected address display */}
             {address && (
