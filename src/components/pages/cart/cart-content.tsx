@@ -3,7 +3,7 @@
 import CartListItem from "@/components/pages/cart/cart-list-item";
 import { useLocalStorage } from "usehooks-ts";
 import { CartItem } from "@/types/cart";
-import { useEffect, useState, useCallback, useMemo, useRef } from "react";
+import { useEffect, useState, useCallback, useMemo, useRef, useTransition } from "react";
 
 import { Button } from "flowbite-react";
 import { CustomCurrencyRates } from "@/types/woo-commerce/custom-currency-rates";
@@ -16,8 +16,20 @@ import ShippingDialog from "./shipping_dialog";
 import { DeliveryMethod, DeliveryOption } from "@/types/delivery";
 import { Cart } from "@/libs/cart";
 import toast from "react-hot-toast";
+import { sendEmail } from "@/app/actions/email";
 
 export default function CartContent({ currencyRates }: { currencyRates: CustomCurrencyRates }) {
+
+
+
+    const [isPending, startTransition] = useTransition()
+
+    const handleSend = () => {
+        startTransition(async () => {
+            const result = await sendEmail('s.rijen@ya.ru', 'Test', 'This is test');
+            console.log(result)
+        })
+    }
 
     const cartController = new Cart(currencyRates)
 
@@ -71,9 +83,9 @@ export default function CartContent({ currencyRates }: { currencyRates: CustomCu
         }
     }, [storedCurrency]);
 
-    
 
-    
+
+
     const setShippingCost = (delivery_method: DeliveryMethod, deliveryOption: DeliveryOption | null) => {
         if (delivery_method == 'self') {
             setDeliveryPrice(0)
@@ -91,7 +103,7 @@ export default function CartContent({ currencyRates }: { currencyRates: CustomCu
             ];
             // cartController.shippingLines = shippingLines.current
         }
-        
+
     }
 
     const itemsTotalPrice = cartItems.reduce((total, item) => total + item.price * item.quantity, 0)
@@ -123,7 +135,11 @@ export default function CartContent({ currencyRates }: { currencyRates: CustomCu
                     <h2 className="text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl">
                         Корзина
                     </h2>
-
+                    <div>
+                        <button onClick={handleSend} disabled={isPending}>
+                            {isPending ? "Отправка..." : "Отправить почту"}
+                        </button>
+                    </div>
                     <div className="mt-6 sm:mt-8 md:gap-6 lg:flex lg:items-start xl:gap-8">
                         <div className="mx-auto w-full flex-none lg:max-w-2xl xl:max-w-4xl">
                             <div className="space-y-6">

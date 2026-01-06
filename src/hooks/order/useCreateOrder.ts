@@ -73,8 +73,6 @@ export default function useCreateOrder(): UseMutationResult<
       payload.customer_note = `${payload.customer_note || ""} [Referral=${code}]`;
     }
 
-
-
     return wooCommerceApiInstance.post("orders", payload)
   }
 

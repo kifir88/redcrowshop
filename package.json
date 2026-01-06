@@ -10,7 +10,6 @@
     "generate-types": "curl https://admin.redcrow.kz/wp-json -o schema.yaml && yarn run openapi --input ./schema.yaml --output ./src/types/generated --exportServices=false --exportCore=false --useUnionTypes"
   },
   "dependencies": {
-    "@a2seven/yoo-checkout": "github:svyatglukhov/yoocheckout",
     "@headlessui/react": "^2.1.2",
     "@heroicons/react": "^2.1.5",
     "@mantine/form": "^7.12.1",

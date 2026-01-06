@@ -1,8 +1,7 @@
+import 'server-only'
+
 import crypto from 'crypto';
 import { Order } from "@/types/woo-commerce/order";
-import { fetchCurrencyRates } from "@/libs/woocommerce-rest-api";
-import { CartItem } from "@/types/cart";
-import { recordTraceEvents } from 'next/dist/trace';
 
 const GATE_KEYS ={
     'main_gate': {
@@ -149,26 +148,7 @@ export class Payment {
     }
 }
 
-
-/*export const convertKZTtoRUB = async (amountKZT: number): Promise<number> => {
-    try {
-        const response = await fetchCurrencyRates(); // Fetch the currency rates
-        const rates = response.data; // Extract rates from the response
-
-        //console.log(response.data);
-
-        //const exchangeRate = parseFloat(rates.RUB) / parseFloat(rates.KZT); // Conversion rate from KZT to RUB
-
-        //console.log(exchangeRate);
-
-        return parseFloat((amountKZT * exchangeRate).toFixed(2)); // Convert and round to 2 decimal places
-    } catch (error) {
-        console.error("Error fetching currency rates:", error);
-        throw new Error("Failed to convert currency");
-    }
-};*/
-
-export const pspHostGeneratePaymentURL = async (order: Order): Promise<string> => {
+export const PayGoGeneratePaymentURL = async (order: Order): Promise<string> => {
 
     const {'id':PROJECT_ID,'secret':PROJECT_SECRET} = GATE_KEYS[ order.currency =='RUB'?'rub_gate':'main_gate'];
 
@@ -179,7 +159,6 @@ export const pspHostGeneratePaymentURL = async (order: Order): Promise<string> =
     payment.setParam('customerId', 1);
     payment.setParam('paymentCurrency', order.currency);
 
-    //const urlll = 'https://f485-195-7-13-231.ngrok-free.app';
     const calback_url = process.env.NEXT_PUBLIC_BASE_URL;
 
     const tokenMeta = order.meta_data.find((meta) => meta.key === "order_token");

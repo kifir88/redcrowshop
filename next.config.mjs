@@ -2,7 +2,6 @@
 
 const nextConfig = {
 
-
     allowedDevOrigins: ['localhost', '*.redcrow.kz'],
 
     webpack: (config, { isServer }) => {

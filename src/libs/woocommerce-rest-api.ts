@@ -1,4 +1,11 @@
-import WooCommerceRestApi, { type IWooCommerceRestApiOptions } from "@woocommerce/woocommerce-rest-api"; import { type AxiosResponse } from "axios";
+// import 'server-only'
+if (typeof window !== 'undefined') {
+  // #TODO ИСключить клиентские вызовы!
+  // throw new Error("ЭТОТ ФАЙЛ НЕ ДОЛЖЕН БЫТЬ НА КЛИЕНТЕ!");
+}
+
+import WooCommerceRestApi from "@woocommerce/woocommerce-rest-api";
+import { type AxiosResponse } from "axios";
 import { Product, RedisCachedProducts } from "@/types/woo-commerce/product";
 import { ProductCategory } from "@/types/woo-commerce/product-category";
 import { ProductAttribute } from "@/types/woo-commerce/product-attribute";
@@ -18,6 +25,8 @@ const endpoints = [
 ]
 
 // #TODO Надо сократить количество endpointoв, тем более они не авторизуются корректно
+
+
 export const [
   wooCommerceApiInstance,
   wooCommerceCustomV1ApiInstance,
@@ -25,8 +34,10 @@ export const [
   wooCommerceCustApiV1ApiInstance,
 ] = endpoints.map(endpoint => new WooCommerceRestApi({
   url: process.env.NEXT_PUBLIC_WP_URL || '',
-  consumerKey: process.env.WP_CONSUMER_KEY || '',
-  consumerSecret: process.env.WP_CONSUMER_SECRET || '',
+  // consumerKey: process.env.WP_CONSUMER_KEY || '',
+  // consumerSecret: process.env.WP_CONSUMER_SECRET || '',
+  consumerKey: "ck_31ed56e528afad94e82ef3e705639a1af0b933b5",
+  consumerSecret: "cs_6f47b0927beb71748064d394afccec38bb1cdf49",
   version: endpoint as any,
   axiosConfig: {
     headers: {
