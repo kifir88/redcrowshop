@@ -7,7 +7,7 @@ import { useEffect, useState, useCallback, useMemo, useRef } from "react";
 
 import { Button } from "flowbite-react";
 import { CustomCurrencyRates } from "@/types/woo-commerce/custom-currency-rates";
-import { CurrencyType, formatCurrency } from "@/libs/currency-helper";
+import { amountCurrency, CurrencyType, formatCurrency } from "@/libs/currency-helper";
 import Link from "next/link";
 import ClientOnly from "@/components/client_only";
 import CartListItemSimple from "@/components/pages/cart/cart-list-item-simple";
@@ -71,7 +71,7 @@ export default function CartContent({ currencyRates }: { currencyRates: CustomCu
         }
     }, [storedCurrency]);
 
-    const rawPriceFormatter = new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+    
 
     
     const setShippingCost = (delivery_method: DeliveryMethod, deliveryOption: DeliveryOption | null) => {
@@ -86,7 +86,7 @@ export default function CartContent({ currencyRates }: { currencyRates: CustomCu
                 {
                     "method_id": "cdek",
                     "method_title": `[${deliveryOption?.tariff_code}] ${deliveryOption?.tariff_name}`,
-                    "total": rawPriceFormatter.format(deliveryOption.delivery_sum)
+                    "total": deliveryOption.delivery_sum
                 }
             ];
             // cartController.shippingLines = shippingLines.current

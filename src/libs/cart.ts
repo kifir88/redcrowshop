@@ -14,6 +14,7 @@ import { Order } from "@/types/woo-commerce/order";
 import { formatPriceToKZT } from "./helper-functions";
 import { useRouter } from "next/navigation";
 import { AddressResult } from "@/components/ui/address-map";
+import { isNotEmpty } from "@mantine/form";
 
 
 export class Cart {
@@ -69,6 +70,14 @@ export class Cart {
             price: Math.round(amountCurrency(ci.price, this.#storedCurrency, this.#currencyRates))
         }))
 
+        const rawPriceFormatter = new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+        const shipping_lines = shippingLines.map(item => {
+            return {
+                ...item,
+                total: rawPriceFormatter.format(amountCurrency(item.total, this.#storedCurrency, this.#currencyRates))
+            }
+        })
+
         const payload = {
             payment_method: "",
             payment_method_title: "",
@@ -76,7 +85,7 @@ export class Cart {
             billing: address,
             shipping: address,
             line_items: lineItems,
-            shipping_lines: shippingLines,
+            shipping_lines: shipping_lines,
             currency: this.#storedCurrency,
             meta_data: [
                 {
@@ -86,7 +95,6 @@ export class Cart {
             ],
             customer_note: ""
         }
-
 
         this.#createOrderMutation.mutate(payload, {
             onError: (e: any) => {
