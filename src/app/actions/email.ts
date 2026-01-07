@@ -22,7 +22,7 @@ export async function sendEmail(to: string, subject: string, text: string) {
 }
 
 export async function orderEmail(order: any, res: any) {
-    console.log(res);
+
     const text = generateOrderCreatedEmailText(order, res);
     await sendEmail(order.billing.email, `Ваш заказ #${res.id} создан и ожидает оплату!`, text)
 }

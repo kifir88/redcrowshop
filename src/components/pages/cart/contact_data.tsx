@@ -45,8 +45,6 @@ export default function ContactData({
             phone: formatPhoneNumberIntl(formValues.phone as string)
         }
 
-        console.log(address)
-        console.log(clientData)
     }
 
     return (
