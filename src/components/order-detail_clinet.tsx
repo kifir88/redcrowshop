@@ -31,7 +31,6 @@ export default function OrderDetailClient({ orderData, currencyRates }: OrderDet
     orderData.line_items.map(item=>{
         items_total+=parseInt(item.total)
     })
-    console.log(orderData)
 
     return (
         <section className="bg-white py-8 antialiased dark:bg-gray-900 md:py-16">

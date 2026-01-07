@@ -103,11 +103,16 @@ export function useCart({ currencyRates }: UseCartProps) {
         if (!deliveryValid) {
           // Error is handled by component
         } else {
-          handleSubmit(shippingLines);
+          const prices = {
+            items_total: formatCurrency(itemsTotalPrice, storedCurrency, currencyRates),
+            shipping_total: formatCurrency(deliveryPrice, storedCurrency, currencyRates),
+            total: formatCurrency(totalPrice, storedCurrency, currencyRates)
+          }
+          handleSubmit(shippingLines, prices);
         }
       }
     }
-  }, [waitProductsCheck, productsLoading, activeOverlays, deliveryValid, shippingLines, handleSubmit, setWaitProductsCheck]);
+  }, [waitProductsCheck, productsLoading, activeOverlays, deliveryValid, shippingLines, deliveryPrice, itemsTotalPrice, totalPrice, handleSubmit, setWaitProductsCheck]);
 
   return {
     // Data

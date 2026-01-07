@@ -52,7 +52,6 @@ export default function CartContent({ currencyRates }: CartContentProps) {
 
   // Handle product check completion
   useEffect(() => {
-    console.log(waitProductsCheck,productsLoading)
     if (waitProductsCheck && productsLoading === 0) {
       handleProductsCheckComplete();
     }

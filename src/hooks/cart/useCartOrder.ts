@@ -17,6 +17,7 @@ import { Order } from "@/types/woo-commerce/order";
 import { wooCommerceApiInstance } from "@/libs/woocommerce-rest-api";
 import { v4 as uuidv4 } from "uuid";
 import { error } from "console";
+import { createOrder } from "@/app/actions/order";
 
 interface OrderCreate {
   payment_method: string;
@@ -30,6 +31,11 @@ interface OrderCreate {
   meta_data?: OrderMetaData[];
   currency: CurrencyType;
   order_token?: string;
+  prices: {
+    items_total: string,
+    shipping_total: string,
+    total: string
+  }
 }
 
 interface Address {
@@ -46,6 +52,7 @@ interface Address {
 }
 
 interface LineItem {
+  name:string;
   product_id: number;
   variation_id?: number;
   quantity: number;
@@ -77,7 +84,7 @@ export function useCartOrder({
   const router = useRouter();
 
   const createOrderMutation = useMutation({
-    mutationFn: (payload: OrderCreate) => {
+    mutationFn: async (payload: OrderCreate) => {
       const orderToken = payload.order_token || uuidv4();
       const storedData = localStorage.getItem("referral_code");
 
@@ -104,36 +111,34 @@ export function useCartOrder({
         ];
       }
 
-      return wooCommerceApiInstance.post("orders", payload);
+      const result = await createOrder(payload);
+      if (!result.success) throw new Error(result.error);
+      return result;
     },
     onError: (error: any) => {
-      console.error(error, "create-order-error");
-      toast.error(`${error.response?.data || "Ошибка при создании заказа"}`);
+      console.error("Create order error:", error);
+
+
+      toast.error(error.message || "Ошибка при создании заказа");
     },
     onSuccess: async (res: any, variables: OrderCreate) => {
       clearCartItems();
 
-      const orderId = res.data.id;
       const orderToken = variables.order_token;
 
-      try {
-        await axios.post(
-          `${process.env.NEXT_PUBLIC_WP_URL}/wp-json/custom/v1/reduce-stock`,
-          { orderId }
-        );
-      } catch (err) {
-        console.error("Failed to reduce stock", err);
-      }
+      const order_page = `/orders/${res.data.id}?order_token=${orderToken}`;
 
-      router.push(`/orders/${res.data.id}?order_token=${orderToken}`);
-      toast.success("Заказ успешно создан");
+      router.push(order_page);
+      toast.success(`Заказ успешно создан, переадресация на страницу оплаты`, {
+        duration: 1000 * 10
+      });
     },
   });
 
   const handleSubmit = useCallback(
-    async (shippingLines: ShippingLine[]) => {
+    async (shippingLines: ShippingLine[], prices: any) => {
       const orderToken = uuidv4();
-      
+
       const address = {
         ...clientData,
         ...deliveryAddress.address,
@@ -144,6 +149,7 @@ export function useCartOrder({
       const lineItems = cartItems.map((ci) =>
         ci.productVariationId !== -1
           ? {
+            name:ci.name,
             product_id: ci.productId,
             variation_id: ci.productVariationId,
             quantity: ci.quantity,
@@ -152,6 +158,7 @@ export function useCartOrder({
             ),
           }
           : {
+            name:ci.name,
             product_id: ci.productId,
             quantity: ci.quantity,
             price: Math.round(
@@ -187,6 +194,7 @@ export function useCartOrder({
         currency: storedCurrency,
         customer_note: "",
         order_token: orderToken,
+        prices
       };
 
       createOrderMutation.mutate(payload);
