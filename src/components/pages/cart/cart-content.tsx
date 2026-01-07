@@ -1,258 +1,201 @@
 "use client";
 
-import CartListItem from "@/components/pages/cart/cart-list-item";
-import { useLocalStorage } from "usehooks-ts";
-import { CartItem } from "@/types/cart";
-import { useEffect, useState, useCallback, useMemo, useRef, useTransition } from "react";
-
+import { useEffect } from "react";
 import { Button } from "flowbite-react";
-import { CustomCurrencyRates } from "@/types/woo-commerce/custom-currency-rates";
-import { amountCurrency, CurrencyType, formatCurrency } from "@/libs/currency-helper";
 import Link from "next/link";
 import ClientOnly from "@/components/client_only";
+import CartListItem from "@/components/pages/cart/cart-list-item";
 import CartListItemSimple from "@/components/pages/cart/cart-list-item-simple";
 import ContactData from "./contact_data";
 import ShippingDialog from "./shipping_dialog";
-import { DeliveryMethod, DeliveryOption } from "@/types/delivery";
-import { Cart } from "@/libs/cart";
+import { useCart } from "@/hooks/cart";
+import { CustomCurrencyRates } from "@/types/woo-commerce/custom-currency-rates";
 import toast from "react-hot-toast";
-import { sendEmail } from "@/app/actions/email";
 
-export default function CartContent({ currencyRates }: { currencyRates: CustomCurrencyRates }) {
+interface CartContentProps {
+  currencyRates: CustomCurrencyRates;
+}
 
+export default function CartContent({ currencyRates }: CartContentProps) {
+  const {
+    cartItems,
+    isCartEmpty,
+    deliveryPrice,
+    deliveryValid,
+    setDeliveryValid,
+    setShippingCost,
+    totalPrice,
+    formatCurrency,
+    shippingLines,
+    handlePushOrder,
+    handleProductsCheckComplete,
+    isOrderLoading,
+    storedCurrency,
+    setStoredCurrency,
+    refreshProducts,
+    setRefreshProducts,
+    productsLoading,
+    setProductsLoading,
+    waitProductsCheck,
+    setWaitProductsCheck,
+    activeOverlays,
+    registerOverlay,
+    unregisterOverlay,
+  } = useCart({ currencyRates });
 
-
-    const [isPending, startTransition] = useTransition()
-
-    const handleSend = () => {
-        startTransition(async () => {
-            const result = await sendEmail('s.rijen@ya.ru', 'Test', 'This is test');
-            console.log(result)
-        })
+  // Sync currency with localStorage on mount
+  useEffect(() => {
+    if (storedCurrency) {
+      setStoredCurrency(storedCurrency);
     }
+  }, [storedCurrency, setStoredCurrency]);
 
-    const cartController = new Cart(currencyRates)
-
-    const [selectedCurrency, setSelectedCurrency] = useState<CurrencyType>("KZT");
-
-    const [storedCurrency] = useLocalStorage<CurrencyType>("currency", "KZT");
-    const [cartItems] = useLocalStorage<CartItem[]>("cartItems", []);
-
-    const [deliveryPrice, setDeliveryPrice] = useState<number>(0);
-
-    // new: count active overlays
-    const [activeOverlays, setActiveOverlays] = useState<number>(0);
-
-
-    // #region Check products before order create
-
-    const [waitProductsCheck, setWaitProductsCheck] = useState(false);
-    const [refreshProducts, setRefreshProducts] = useState<number>(0);
-    const [productsLoading, setProductsLoading] = useState(0);
-    const [deliveryValid, setDeliveryValid] = useState<boolean>(false)
-    const handlePushOrder = () => {
-        setProductsLoading(cartItems.length);
-        setRefreshProducts(prev => prev + 1);
-        setWaitProductsCheck(true);
-
-    };
-
-    const shippingLines = useRef<any[]>([]);
-    useEffect(() => {
-        if (waitProductsCheck && productsLoading === 0) {
-            setWaitProductsCheck(false);
-
-            if (activeOverlays == 0) {
-                if (!deliveryValid) {
-                    toast.error('Укажите способ доставки, в случае CDEK - выберите тариф')
-                } else {
-                    cartController.handleSubmit(shippingLines.current);
-                }
-            }
-        }
-
-    }, [waitProductsCheck, productsLoading, activeOverlays, deliveryValid]);
-
-
-    // #endregion
-
-
-    useEffect(() => {
-        if (storedCurrency) {
-            setSelectedCurrency(storedCurrency);
-        }
-    }, [storedCurrency]);
-
-
-
-
-    const setShippingCost = (delivery_method: DeliveryMethod, deliveryOption: DeliveryOption | null) => {
-        if (delivery_method == 'self') {
-            setDeliveryPrice(0)
-            shippingLines.current = []
-            // cartController.shippingLines = shippingLines.current
-
-        } else if (delivery_method == 'cdek' && deliveryOption) {
-            setDeliveryPrice(deliveryOption.delivery_sum)
-            shippingLines.current = [
-                {
-                    "method_id": "cdek",
-                    "method_title": `[${deliveryOption?.tariff_code}] ${deliveryOption?.tariff_name}`,
-                    "total": deliveryOption.delivery_sum
-                }
-            ];
-            // cartController.shippingLines = shippingLines.current
-        }
-
+  // Handle product check completion
+  useEffect(() => {
+    console.log(waitProductsCheck,productsLoading)
+    if (waitProductsCheck && productsLoading === 0) {
+      handleProductsCheckComplete();
     }
+  }, [waitProductsCheck, productsLoading, handleProductsCheckComplete]);
 
-    const itemsTotalPrice = cartItems.reduce((total, item) => total + item.price * item.quantity, 0)
-    let totalOriginalPrice = itemsTotalPrice + deliveryPrice;
+  // Reset refresh trigger after validation
+  useEffect(() => {
+    if (refreshProducts > 0) {
+      setRefreshProducts(0);
+    }
+  }, [refreshProducts, setRefreshProducts]);
 
+  return (
+    <ClientOnly>
+      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 md:py-16">
+        <div className="mx-auto max-w-screen-xl px-4 2xl:px-0">
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl">
+            Корзина
+          </h2>
 
-    useEffect(() => {
-        totalOriginalPrice = itemsTotalPrice + deliveryPrice;
-    }, [deliveryPrice])
-
-
-
-
-
-
-
-    // overlay register/unregister helpers
-    const registerOverlay = useCallback(() => {
-        setActiveOverlays(prev => prev + 1);
-    }, []);
-    const unregisterOverlay = useCallback(() => {
-        setActiveOverlays(prev => Math.max(prev - 1, 0));
-    }, []);
-
-    return (
-        <ClientOnly>
-            <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 md:py-16">
-                <div className="mx-auto max-w-screen-xl px-4 2xl:px-0">
-                    <h2 className="text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl">
-                        Корзина
-                    </h2>
-                    <div>
-                        <button onClick={handleSend} disabled={isPending}>
-                            {isPending ? "Отправка..." : "Отправить почту"}
-                        </button>
+          <div className="mt-6 sm:mt-8 md:gap-6 lg:flex lg:items-start xl:gap-8">
+            {/* Left column - Cart items */}
+            <div className="mx-auto w-full flex-none lg:max-w-2xl xl:max-w-4xl">
+              <div className="space-y-6">
+                {isCartEmpty ? (
+                  <div className="flex flex-col items-start gap-4">
+                    <h6 className="text-xl text-gray-700">
+                      Ваша корзина пуста
+                    </h6>
+                    <Button as={Link} href="/shop" color="dark">
+                      Продолжить покупки
+                    </Button>
+                  </div>
+                ) : (
+                  cartItems.map((ct) => (
+                    <div
+                      key={
+                        ct.productVariationId === -1
+                          ? ct.productId
+                          : ct.productVariationId
+                      }
+                    >
+                      {ct.productVariationId === -1 ? (
+                        <CartListItemSimple
+                          cartItem={ct}
+                          currencyRates={currencyRates}
+                          onOverlayOpen={registerOverlay}
+                          onOverlayClose={unregisterOverlay}
+                          refreshProducts={refreshProducts}
+                          setProductsLoading={setProductsLoading}
+                        />
+                      ) : (
+                        <CartListItem
+                          cartItem={ct}
+                          currencyRates={currencyRates}
+                          onOverlayOpen={registerOverlay}
+                          onOverlayClose={unregisterOverlay}
+                          refreshProducts={refreshProducts}
+                          setProductsLoading={setProductsLoading}
+                        />
+                      )}
                     </div>
-                    <div className="mt-6 sm:mt-8 md:gap-6 lg:flex lg:items-start xl:gap-8">
-                        <div className="mx-auto w-full flex-none lg:max-w-2xl xl:max-w-4xl">
-                            <div className="space-y-6">
-                                {!cartItems.length && (
-                                    <div className="flex flex-col items-start gap-4">
-                                        <h6 className="text-xl text-gray-700">
-                                            Ваша корзина пуста
-                                        </h6>
-                                        <Button as={Link} href="/shop" color="dark">
-                                            Продолжить покупки
-                                        </Button>
-                                    </div>
-                                )}
-                                {cartItems.map((ct) => {
-                                    return ct.productVariationId === -1 ? (
-                                        <div key={ct.productId}>
-                                            <CartListItemSimple
-                                                cartItem={ct}
-                                                currencyRates={currencyRates}
-                                                onOverlayOpen={registerOverlay}
-                                                onOverlayClose={unregisterOverlay}
-                                                refreshProducts={refreshProducts}
-                                                setProductsLoading={setProductsLoading}
-                                            />
-                                        </div>
-                                    ) : (
-                                        <div key={ct.productVariationId}>
-                                            <CartListItem
-                                                cartItem={ct}
-                                                currencyRates={currencyRates}
-                                                onOverlayOpen={registerOverlay}
-                                                onOverlayClose={unregisterOverlay}
-                                                refreshProducts={refreshProducts}
-                                                setProductsLoading={setProductsLoading}
-                                            />
-                                        </div>
-                                    );
-                                })}
-                            </div>
+                  ))
+                )}
+              </div>
 
-                            <ShippingDialog
-                                currencyRates={currencyRates}
-                                deliveryValid={deliveryValid}
-                                setDeliveryValid={setDeliveryValid}
-                                setShippingCost={setShippingCost}
+              <ShippingDialog
+                currencyRates={currencyRates}
+                deliveryValid={deliveryValid}
+                setDeliveryValid={setDeliveryValid}
+                setShippingCost={setShippingCost}
+              />
+              <ContactData />
+            </div>
 
-                            />
-                            <ContactData />
-                        </div>
+            {/* Right column - Order summary */}
+            <div className="mx-auto mt-6 max-w-4xl flex-1 space-y-6 lg:mt-0 lg:w-full">
+              <div className="space-y-4 rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800 sm:p-6">
+                <p className="text-xl font-semibold text-gray-900 dark:text-white">
+                  Описание заказа
+                </p>
 
-                        <div className="mx-auto mt-6 max-w-4xl flex-1 space-y-6 lg:mt-0 lg:w-full">
-                            <div
-                                className="space-y-4 rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800 sm:p-6">
-                                <p className="text-xl font-semibold text-gray-900 dark:text-white">
-                                    Описание заказа
-                                </p>
+                <div className="space-y-4">
+                  {/* Items total */}
+                  <div className="space-y-2">
+                    <dl className="flex items-center justify-between gap-4">
+                      <dt className="text-base font-normal text-gray-500 dark:text-gray-400">
+                        Стоимость товаров
+                      </dt>
+                      <dd className="text-base font-medium text-gray-900 dark:text-white">
+                        {formatCurrency(
+                          cartItems.reduce(
+                            (total, item) => total + item.price * item.quantity,
+                            0
+                          )
+                        )}
+                      </dd>
+                    </dl>
 
-                                <div className="space-y-4">
-                                    <div className="space-y-2">
-                                        <dl className="flex items-center justify-between gap-4">
-                                            <dt className="text-base font-normal text-gray-500 dark:text-gray-400">
-                                                Стоимость товаров
-                                            </dt>
-                                            <dd className="text-base font-medium text-gray-900 dark:text-white">
-                                                {formatCurrency(itemsTotalPrice, selectedCurrency, currencyRates)}
-                                            </dd>
-                                        </dl>
+                    {/* Delivery */}
+                    <dl className="flex items-center justify-between gap-4">
+                      <dt className="text-base font-normal text-gray-500 dark:text-gray-400">
+                        Доставка
+                      </dt>
+                      <dd className="text-base font-medium text-green-600">
+                        {formatCurrency(deliveryPrice)}
+                      </dd>
+                    </dl>
+                  </div>
 
-                                        <dl className="flex items-center justify-between gap-4">
-                                            <dt className="text-base font-normal text-gray-500 dark:text-gray-400">Доставка</dt>
-                                            <dd className="text-base font-medium text-green-600">
-                                                {formatCurrency(deliveryPrice, selectedCurrency, currencyRates)}
-                                            </dd>
-                                        </dl>
-
-                                    </div>
-
-                                    <dl
-                                        className="flex items-center justify-between gap-4 border-t border-gray-200 pt-2 dark:border-gray-700">
-                                        <dt className="text-base font-bold text-gray-900 dark:text-white">
-                                            Сумма
-                                        </dt>
-                                        <dd className="text-base font-bold text-gray-900 dark:text-white">
-                                            {formatCurrency(totalOriginalPrice, selectedCurrency, currencyRates)}
-                                        </dd>
-                                    </dl>
-                                </div>
-
-                                <Button
-                                    color="dark"
-                                    size="sm"
-                                    fullSized
-                                    disabled={!totalOriginalPrice || !deliveryValid || activeOverlays > 0}
-                                    onClick={handlePushOrder}
-                                >
-                                    Создать заказ
-                                </Button>
-                                {activeOverlays > 0 && (
-                                    <p className="text-sm text-gray-500 mt-2">
-                                        Для создания заказа закройте все подсказки/уведомления о стоке.
-                                    </p>
-                                )}
-
-                            </div>
-                        </div>
-
-                    </div>
-
-
-
+                  {/* Total */}
+                  <dl className="flex items-center justify-between gap-4 border-t border-gray-200 pt-2 dark:border-gray-700">
+                    <dt className="text-base font-bold text-gray-900 dark:text-white">
+                      Сумма
+                    </dt>
+                    <dd className="text-base font-bold text-gray-900 dark:text-white">
+                      {formatCurrency(totalPrice)}
+                    </dd>
+                  </dl>
                 </div>
 
-            </section>
-        </ClientOnly>
-    );
+                <Button
+                  color="dark"
+                  size="sm"
+                  fullSized
+                  disabled={!totalPrice || !deliveryValid || activeOverlays > 0 || isOrderLoading}
+                  onClick={handlePushOrder}
+                >
+                  {isOrderLoading ? "Создание заказа..." : "Создать заказ"}
+                </Button>
+
+                {activeOverlays > 0 && (
+                  <p className="text-sm text-gray-500 mt-2">
+                    Для создания заказа закройте все подсказки/уведомления о
+                    стоке.
+                  </p>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </ClientOnly>
+  );
 }
+

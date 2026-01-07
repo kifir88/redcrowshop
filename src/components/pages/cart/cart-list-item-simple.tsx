@@ -65,7 +65,15 @@ export default function CartListItemSimple({
     });
 
     const wasLoading = useRef(false);
+    const prevRefreshProducts = useRef(refreshProducts);
+    
     useEffect(() => {
+        // Reset wasLoading when refreshProducts changes to handle re-clicks
+        if (refreshProducts !== prevRefreshProducts.current) {
+            prevRefreshProducts.current = refreshProducts;
+            wasLoading.current = true;
+        }
+        
         if (!setProductsLoading) return;
         if (isLoading) {
             wasLoading.current = true;
@@ -73,7 +81,7 @@ export default function CartListItemSimple({
             setProductsLoading(prev => Math.max(prev - 1, 0));
             wasLoading.current = false;
         }
-    }, [isLoading]);
+    }, [isLoading, refreshProducts, setProductsLoading]);
 
     useEffect(() => {
         if (isError) handleRemove();
