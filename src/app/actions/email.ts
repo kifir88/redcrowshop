@@ -1,7 +1,6 @@
 'use server'
 import { formatPriceToLocale } from "@/libs/helper-functions";
 import { transporter } from "@/libs/mail";
-import { Order } from "@/types/woo-commerce/order";
 
 export async function sendEmail(to: string, subject: string, text: string) {
     try {

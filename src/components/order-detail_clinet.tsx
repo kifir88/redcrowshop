@@ -144,7 +144,10 @@ export default function OrderDetailClient({ orderData, currencyRates }: OrderDet
                                 </dl>
                             </div>
 
-                            <OrderPaymentButton order={orderData} disabled={!orderData?.total} />
+                            <OrderPaymentButton 
+                            order={orderData} 
+                            disabled={!orderData?.total}
+                            currencyRates={currencyRates} />
                         </div>
                     </div>
                 </div>

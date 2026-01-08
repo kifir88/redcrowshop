@@ -1,19 +1,25 @@
-// import 'server-only'
+import 'server-only'
 
 import crypto from 'crypto';
-import { Order } from "@/types/woo-commerce/order";
+import { CurrencyType } from './currency-helper';
 
-const GATE_KEYS ={
+const GATE_KEYS = {
     'main_gate': {
-        'id':"148586",
-        'secret':"8852c0ae0851e0d909bdcdead3defae7d9018a3e32e4dd904d3a871616d3e19e048e4f7cae25def7033b74fd84186299a81e40edb155eb0fce84b55788e9bd44"
+        'id': "148586",
+        'secret': "8852c0ae0851e0d909bdcdead3defae7d9018a3e32e4dd904d3a871616d3e19e048e4f7cae25def7033b74fd84186299a81e40edb155eb0fce84b55788e9bd44"
     },
     'rub_gate': {
-        'id':"147396",
-        'secret':"0dbca7f5a15a7031feeaead7f208f1abd177f40422f653eed2001b3ad6a0f8886b68e7f25f8a189e0b9d7fb81c7a67fc2e84ca1944bd1a8d0c138e1daa8ab99a"
+        'id': "147396",
+        'secret': "0dbca7f5a15a7031feeaead7f208f1abd177f40422f653eed2001b3ad6a0f8886b68e7f25f8a189e0b9d7fb81c7a67fc2e84ca1944bd1a8d0c138e1daa8ab99a"
     },
 }
-
+export interface createOrderPayload {
+    id: number;
+    token: string;
+    currency: string;
+    total: number;
+    customer_id: number;
+}
 
 const ignoredParams = ['frame_mode'];
 
@@ -53,7 +59,7 @@ export class Callback {
     private signature?: string;
 
     constructor(data: any) {
-        const {'secret':PROJECT_SECRET} = GATE_KEYS[ data.payment?.currency =='RUB'?'rub_gate':'main_gate'];
+        const { 'secret': PROJECT_SECRET } = GATE_KEYS[data.payment?.currency == 'RUB' ? 'rub_gate' : 'main_gate'];
 
         this.secret = PROJECT_SECRET;
         this.callback = data;
@@ -148,22 +154,20 @@ export class Payment {
     }
 }
 
-export const PayGoGeneratePaymentURL = async (order: Order): Promise<string> => {
+export const PayGoGeneratePaymentURL = async (payload: createOrderPayload): Promise<string> => {
 
-    const {'id':PROJECT_ID,'secret':PROJECT_SECRET} = GATE_KEYS[ order.currency =='RUB'?'rub_gate':'main_gate'];
+    const { 'id': PROJECT_ID, 'secret': PROJECT_SECRET } = GATE_KEYS[payload.currency == 'RUB' ? 'rub_gate' : 'main_gate'];
 
     const payment = new Payment(PROJECT_ID, PROJECT_SECRET);
 
-    payment.setParam('paymentAmount', (Number(order.total) * 100).toString());
-    payment.setParam('paymentId', order.id);
-    payment.setParam('customerId', 1);
-    payment.setParam('paymentCurrency', order.currency);
+    payment.setParam('paymentAmount', payload.total);
+    payment.setParam('paymentId', payload.id);
+    payment.setParam('customerId', payload.customer_id);
+    payment.setParam('paymentCurrency', payload.currency);
 
-    const calback_url = process.env.NEXT_PUBLIC_BASE_URL;
+    const calback_url = process.env.BASE_URL;
 
-    const tokenMeta = order.meta_data.find((meta) => meta.key === "order_token");
-
-    payment.setParam('redirect_success_url', calback_url + '/payment-success-psp?InvId=' + order.id + '&order_token=' + tokenMeta?.value);
+    payment.setParam('redirect_success_url', calback_url + '/payment-success-psp?InvId=' + payload.id + '&order_token=' + payload?.token);
     payment.setParam('merchant_callback_url', calback_url + '/api/order-result-psp');
 
     return payment.getUrl();
