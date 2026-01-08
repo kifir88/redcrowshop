@@ -101,8 +101,8 @@ export default async function ProductCategoryPage(props: ProductCategoryPageProp
       page: pageParam ? Number(pageParam) : 1,
       per_page: 12,
       search: searchParam ? searchParam : undefined,
-      // max_price: maxPriceParam ? maxPriceParam : 10000000000,
-      // min_price: minPriceParam ? minPriceParam : 0,
+      max_price: maxPriceParam ? maxPriceParam : 10000000000,
+      min_price: minPriceParam ? minPriceParam : 0,
       stock_status: "instock",
       ...formattedSearchParams,
       
@@ -130,11 +130,11 @@ export default async function ProductCategoryPage(props: ProductCategoryPageProp
         <Breadcrumb items={breadCrumbItems} />
       </div>
 
-      <div className="flex items-baseline justify-between pb-6 pt-10">
+      {/* <div className="flex items-baseline justify-between pb-6 pt-10">
         <h1 className="text-4xl font-bold tracking-tight text-gray-900">
           {currentProductCategory?.name}
         </h1>
-      </div>
+      </div> */}
 
       <section aria-labelledby="products-heading" className="pb-24 pt-6">
         <h2 id="products-heading" className="sr-only">
