@@ -28,9 +28,6 @@ export default function ContactData({
     const [isExpanded, setIsExpanded] = useState(true);
 
 
-    if (clientData.email)
-        setCustomerValid(true)
-
     const toggleCollapse = () => {
         setIsExpanded(!isExpanded);
     };
@@ -54,10 +51,9 @@ export default function ContactData({
 
     const handleSubmit = (formValues: ClientData) => {
         setClientData(formValues)
-        const address = {
-            ...formValues,
-            phone: formatPhoneNumberIntl(formValues.phone as string)
-        }
+
+        if (clientData.email)
+            setCustomerValid(true)
 
     }
 

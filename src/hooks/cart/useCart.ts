@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useMemo, useTransition } from "react";
+import { useState, useCallback, useMemo, useTransition, useEffect } from "react";
 import { CartItem, DeliveryMethod, DeliveryOption, ShippingLine } from "@/types/cart";
 import { CustomCurrencyRates } from "@/types/woo-commerce/custom-currency-rates";
 import { CurrencyType, formatCurrency, amountCurrency } from "@/libs/currency-helper";
@@ -58,6 +58,15 @@ export function useCart({ currencyRates }: UseCartProps) {
     () => itemsTotalPrice + deliveryPrice,
     [itemsTotalPrice, deliveryPrice]
   );
+
+
+
+  useEffect(() => {
+
+    if (clientData.email)
+      setCustomerValid(true)
+
+  }, [clientData, setCustomerValid]);
 
   // Overlay registration
   const registerOverlay = useCallback(() => {
