@@ -10,7 +10,7 @@ import CategoryListPagination from "@/components/pages/category/category-list-pa
 import { Product } from "@/types/woo-commerce/product";
 import { cn } from "@/libs/utils";
 import MobileFilters from "@/components/pages/category/mobile-filters";
-import CurrencySelect from "@/components/currency-select";
+import CurrencySelect from "@/components/layout/navbar/components/currency-select";
 
 export default async function ProductCategoryPage({
                                                       searchParams,

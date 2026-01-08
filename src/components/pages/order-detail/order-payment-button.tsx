@@ -31,11 +31,6 @@ export default function OrderPaymentButton({ order, disabled }: { order: Order; 
         </Button>
       )}
 
-      {/* <OrderPaymentDialog
-        isOpen={isPaymentModalOpened}
-        order={order}
-        onClose={handleClosePaymentModal}
-      /> */}
     </>
   )
 }

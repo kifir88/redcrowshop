@@ -16,6 +16,8 @@ interface OrderDetailClientProps {
 }
 
 export default function OrderDetailClient({ orderData, currencyRates }: OrderDetailClientProps) {
+
+    //NOTE: Заказы хранятся в тенге
     const [selectedCurrency, setSelectedCurrency] = useState<CurrencyType>("KZT");
     const [storedCurrency] = useLocalStorage<CurrencyType>("currency", "KZT");
 
@@ -92,7 +94,7 @@ export default function OrderDetailClient({ orderData, currencyRates }: OrderDet
                                         </td>
 
                                         <td className="p-4 text-right text-base font-bold text-gray-900 dark:text-white">
-                                            {formatPriceToLocale(Number(li.total), selectedCurrency)}
+                                            {formatCurrency(Number(li.total), selectedCurrency,currencyRates)}
                                         </td>
                                     </tr>
                                 ))}
@@ -108,28 +110,28 @@ export default function OrderDetailClient({ orderData, currencyRates }: OrderDet
                                     <dl className="flex items-center justify-between gap-4">
                                         <dt className="text-gray-500 dark:text-gray-400">Стоимость товаров</dt>
                                         <dd className="text-base font-medium text-gray-900 dark:text-white">
-                                            {formatPriceToLocale(Number(items_total), selectedCurrency)}
+                                            {formatCurrency(Number(items_total), selectedCurrency,currencyRates)}
                                         </dd>
                                     </dl>
 
                                     <dl className="flex items-center justify-between gap-4">
                                         <dt className="text-gray-500 dark:text-gray-400">Скидка</dt>
                                         <dd className="text-base font-medium text-green-500">
-                                            {`- ${formatPriceToLocale(Number(orderData?.discount_total), selectedCurrency)}`}
+                                            {`- ${formatCurrency(Number(orderData?.discount_total), selectedCurrency,currencyRates)}`}
                                         </dd>
                                     </dl>
 
                                     <dl className="flex items-center justify-between gap-4">
                                         <dt className="text-gray-500 dark:text-gray-400">Доставка</dt>
                                         <dd className="text-base font-medium text-gray-900 dark:text-white">
-                                            {formatPriceToLocale(Number(orderData?.shipping_total), selectedCurrency)}
+                                            {formatCurrency(Number(orderData?.shipping_total), selectedCurrency,currencyRates)}
                                         </dd>
                                     </dl>
 
                                     <dl className="flex items-center justify-between gap-4">
                                         <dt className="text-gray-500 dark:text-gray-400">Налоги</dt>
                                         <dd className="text-base font-medium text-gray-900 dark:text-white">
-                                            {formatPriceToLocale(Number(orderData?.total_tax), selectedCurrency)}
+                                            {formatCurrency(Number(orderData?.total_tax), selectedCurrency,currencyRates)}
                                         </dd>
                                     </dl>
                                 </div>
@@ -137,7 +139,7 @@ export default function OrderDetailClient({ orderData, currencyRates }: OrderDet
                                 <dl className="flex items-center justify-between gap-4 border-t border-gray-200 pt-2 dark:border-gray-700">
                                     <dt className="text-lg font-bold text-gray-900 dark:text-white">Конечная цена</dt>
                                     <dd className="text-lg font-bold text-gray-900 dark:text-white">
-                                        {formatPriceToLocale(Number(orderData?.total), selectedCurrency)}
+                                        {formatCurrency(Number(orderData?.total), selectedCurrency,currencyRates)}
                                     </dd>
                                 </dl>
                             </div>

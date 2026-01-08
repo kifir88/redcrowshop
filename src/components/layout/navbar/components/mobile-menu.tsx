@@ -10,8 +10,8 @@ import Subcategory from "@/components/layout/navbar/components/subcategory";
 import Link from "next/link";
 import { CustomCurrencyRates } from "@/types/woo-commerce/custom-currency-rates";
 import ClientOnly from "@/components/client_only";
-import CurrencySelect from "@/components/currency-select";
-import { usePathname } from "next/navigation";
+import CurrencySelect from "@/components/layout/navbar/components/currency-select";
+
 
 export default function MobileMenu({
   productCategories,
@@ -25,9 +25,6 @@ export default function MobileMenu({
   const handleOpen = () => setIsOpen(true);
   const handleClose = () => setIsOpen(false);
 
-  const pathname = usePathname();
-  const isHomePage = pathname === '/';
-  const isOrderPage = pathname.includes('/orders/')
   const parentCategories = useMemo(() => {
     // ID 320 - Номенклатура
     return productCategories.filter(pc => pc.parent === 378).filter(pc => pc.slug !== 'musor')
@@ -60,7 +57,7 @@ export default function MobileMenu({
 
         </ClientOnly>
       </div>
-      <div style={{ visibility: (isHomePage||isOrderPage) ? 'hidden' :'visible' }} className="flex justify-end max-w-7xl mx-auto md:hidden px-4 sm:px-6 lg:px-8">
+      <div className="flex justify-end max-w-7xl mx-auto md:hidden px-4 sm:px-6 lg:px-8">
         <CurrencySelect />
       </div>
 

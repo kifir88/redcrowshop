@@ -154,7 +154,7 @@ export function useCartOrder({
             variation_id: ci.productVariationId,
             quantity: ci.quantity,
             price: Math.round(
-              amountCurrency(ci.price, storedCurrency, currencyRates)
+              amountCurrency(ci.price, 'KZT', currencyRates)
             ),
           }
           : {
@@ -162,7 +162,7 @@ export function useCartOrder({
             product_id: ci.productId,
             quantity: ci.quantity,
             price: Math.round(
-              amountCurrency(ci.price, storedCurrency, currencyRates)
+              amountCurrency(ci.price, 'KZT', currencyRates)
             ),
           }
       );
@@ -177,7 +177,7 @@ export function useCartOrder({
         total: rawPriceFormatter.format(
           amountCurrency(
             typeof item.total === "string" ? parseFloat(item.total) : item.total,
-            storedCurrency,
+            'KZT',
             currencyRates
           )
         ),
@@ -191,7 +191,7 @@ export function useCartOrder({
         shipping: address,
         line_items: lineItems,
         shipping_lines: shipping_lines,
-        currency: storedCurrency,
+        currency: 'KZT',
         customer_note: "",
         order_token: orderToken,
         prices

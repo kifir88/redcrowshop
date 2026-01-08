@@ -31,6 +31,14 @@ export const CURRENCIES: CurrencyItem[] = [
   },
 ];
 
+/**
+ * Конвертация валют без форматироания
+ * @param value Сумма
+ * @param selectedCurrency Выбранная валюта
+ * @param currRates Курсы валют
+ * @returns number
+ * Возвращает число
+ */
 export const amountCurrency = (
   value: number,
   selectedCurrency: CurrencyType | null,
@@ -64,6 +72,14 @@ export const amountCurrency = (
   return amount;
 };
 
+/**
+ * Форматирование валюты с конвертированием для отображения
+ * @param value Сумма
+ * @param selectedCurrency Выбранная валюта
+ * @param currRates Курсы валют
+ * @param convert Выполнять конвертацию?
+ * @returns 
+ */
 export const formatCurrency = (
   value: number,
   selectedCurrency: CurrencyType | null,

@@ -13,7 +13,7 @@ import {ProductCategory} from "@/types/woo-commerce/product-category";
 import {Product} from "@/types/woo-commerce/product";
 import {cn} from "@/libs/utils";
 import MobileFilters from "@/components/pages/category/mobile-filters";
-import CurrencySelect from "@/components/currency-select";
+import CurrencySelect from "@/components/layout/navbar/components/currency-select";
 import {Metadata, ResolvingMetadata} from "next";
 
 interface ProductCategoryPageProps {
