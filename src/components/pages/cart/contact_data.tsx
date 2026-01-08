@@ -16,13 +16,20 @@ import { cn } from "@/libs/utils";
 
 
 export default function ContactData({
-
+    customerValid,
+    setCustomerValid
 }: {
-    }) {
+    customerValid: boolean,
+    setCustomerValid: (state: boolean) => void;
+}) {
 
     const [clientData, setClientData] = useLocalStorage<ClientData>('client_data', {} as ClientData);
 
     const [isExpanded, setIsExpanded] = useState(true);
+
+
+    if (clientData.email)
+        setCustomerValid(true)
 
     const toggleCollapse = () => {
         setIsExpanded(!isExpanded);
@@ -37,6 +44,13 @@ export default function ContactData({
                 : "Не валидный номер телефона",
         }
     })
+
+    const handleBlur = (e: React.FocusEvent<HTMLFormElement>) => {
+        // Check if the focus has actually left the form, not just moved between fields
+        if (!e.currentTarget.contains(e.relatedTarget)) {
+            e.currentTarget.requestSubmit();
+        }
+    };
 
     const handleSubmit = (formValues: ClientData) => {
         setClientData(formValues)
@@ -65,6 +79,7 @@ export default function ContactData({
 
                         <form
                             onSubmit={form.onSubmit(handleSubmit)}
+                            onBlur={handleBlur}
                             className="grid grid-cols-2 gap-4"
                         >
                             <label className="block">
@@ -108,16 +123,6 @@ export default function ContactData({
                                     {...form.getInputProps("phone")}
                                 />
                             </label>
-                            <div className="col-span-2">
-                                <Button
-                                    type="submit"
-                                    color="dark"
-                                    fullSized
-                                >
-                                    Сохранить
-                                </Button>
-
-                            </div>
                         </form>
                     </div>
                 </div>

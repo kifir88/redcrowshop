@@ -22,6 +22,7 @@ export function useCart({ currencyRates }: UseCartProps) {
   const { clientData, setClientData } = useClientDataStorage();
   const { deliveryAddress, setDeliveryAddress } = useDeliveryAddressStorage();
   const { storedCurrency, setStoredCurrency } = useCurrencyStorage();
+  const [customerValid, setCustomerValid] = useState<boolean>(false);
 
   // Delivery state
   const [deliveryPrice, setDeliveryPrice] = useState<number>(0);
@@ -154,6 +155,8 @@ export function useCart({ currencyRates }: UseCartProps) {
     activeOverlays,
     registerOverlay,
     unregisterOverlay,
+    customerValid,
+    setCustomerValid,
   };
 }
 

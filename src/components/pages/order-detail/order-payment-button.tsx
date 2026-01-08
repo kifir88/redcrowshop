@@ -28,8 +28,6 @@ export default function OrderPaymentButton({ order, disabled, currencyRates }: {
       token,
       customer_id: order.customer_id,
     }
-    console.log(order, payload)
-
 
     startTransition(async () => {
       try {

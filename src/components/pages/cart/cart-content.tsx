@@ -41,6 +41,8 @@ export default function CartContent({ currencyRates }: CartContentProps) {
     activeOverlays,
     registerOverlay,
     unregisterOverlay,
+    customerValid,
+    setCustomerValid
   } = useCart({ currencyRates });
 
   // Sync currency with localStorage on mount
@@ -117,6 +119,10 @@ export default function CartContent({ currencyRates }: CartContentProps) {
                   ))
                 )}
               </div>
+              <ContactData
+                customerValid={customerValid}
+                setCustomerValid={setCustomerValid}
+              />
 
               <ShippingDialog
                 currencyRates={currencyRates}
@@ -124,7 +130,7 @@ export default function CartContent({ currencyRates }: CartContentProps) {
                 setDeliveryValid={setDeliveryValid}
                 setShippingCost={setShippingCost}
               />
-              <ContactData />
+
             </div>
 
             {/* Right column - Order summary */}
@@ -177,7 +183,7 @@ export default function CartContent({ currencyRates }: CartContentProps) {
                   color="dark"
                   size="sm"
                   fullSized
-                  disabled={!totalPrice || !deliveryValid || activeOverlays > 0 || isOrderLoading}
+                  disabled={!totalPrice || !deliveryValid || activeOverlays > 0 || isOrderLoading || !customerValid}
                   onClick={handlePushOrder}
                 >
                   {isOrderLoading ? "Создание заказа..." : "Создать заказ"}
@@ -185,8 +191,7 @@ export default function CartContent({ currencyRates }: CartContentProps) {
 
                 {activeOverlays > 0 && (
                   <p className="text-sm text-gray-500 mt-2">
-                    Для создания заказа закройте все подсказки/уведомления о
-                    стоке.
+                    Для создания заказа исправьте все подсказки/уведомления для товаров.
                   </p>
                 )}
               </div>
