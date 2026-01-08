@@ -14,11 +14,11 @@ import toast from "react-hot-toast";
 type FormValues = Record<string, ProductAttributeTerm | null>;
 
 export default function ProductDetailAttributesForm({
-                                                      form,
-                                                      product,
-                                                      selectedProductVariation,
-                                                      productVariations,
-                                                    }: {
+  form,
+  product,
+  selectedProductVariation,
+  productVariations,
+}: {
   form: UseFormReturnType<FormValues>;
   product: Product;
   selectedProductVariation?: ProductVariation;
@@ -28,43 +28,43 @@ export default function ProductDetailAttributesForm({
 
   const isOutOfStock = product.stock_status === "outofstock";
 
-    const simpleOutOfStock =
-        product.type === "simple" &&
-        (product.stock_quantity ?? 0) < 1;
+  const simpleOutOfStock =
+    product.type === "simple" &&
+    (product.stock_quantity ?? 0) < 1;
 
-    const variationOutOfStock =
-        product.type === "variable" &&
-        (!selectedProductVariation || (selectedProductVariation.stock_quantity ?? 0) < 1);
+  const variationOutOfStock =
+    product.type === "variable" &&
+    (!selectedProductVariation || (selectedProductVariation.stock_quantity ?? 0) < 1);
 
-    const isAddToCartButtonDisabled =
-        simpleOutOfStock ||
-        isOutOfStock ||
-        variationOutOfStock ||
-        Object.keys(form.values).length !== product.attributes.length;
+  const isAddToCartButtonDisabled =
+    simpleOutOfStock ||
+    isOutOfStock ||
+    variationOutOfStock ||
+    Object.keys(form.values).length !== product.attributes.length;
 
   const order: Record<string, number> = { 'Размер': 1, 'Цвет': 2 };
 
   const sorted = [...product.attributes].sort((a, b) => {
-        const aOrder = order[a.name] ?? 999;
-        const bOrder = order[b.name] ?? 999;
+    const aOrder = order[a.name] ?? 999;
+    const bOrder = order[b.name] ?? 999;
 
-        if (aOrder !== bOrder) return aOrder - bOrder;
-        return a.name.localeCompare(b.name);
-    });
+    if (aOrder !== bOrder) return aOrder - bOrder;
+    return a.name.localeCompare(b.name);
+  });
 
   const showSuccessCartToast = () => {
     toast.custom((t) => (
-        <Toast className={`${t.visible ? 'animate-enter' : 'animate-leave'}`}>
-          <div className="text-sm font-normal">Товар добавлен в корзину.</div>
-          <div className="ml-auto flex items-center space-x-2">
-            <div>
-              <Button as={Link} href="/cart" size="sm" color="dark" onClick={() => toast.dismiss(t.id)}>
-                Перейти
-              </Button>
-            </div>
-            <Toast.Toggle onClick={() => toast.dismiss(t.id)}/>
+      <Toast className={`${t.visible ? 'animate-enter' : 'animate-leave'}`}>
+        <div className="text-sm font-normal">Товар добавлен в корзину.</div>
+        <div className="ml-auto flex items-center space-x-2">
+          <div>
+            <Button as={Link} href="/cart" size="sm" color="dark" onClick={() => toast.dismiss(t.id)}>
+              Перейти
+            </Button>
           </div>
-        </Toast>
+          <Toast.Toggle onClick={() => toast.dismiss(t.id)} />
+        </div>
+      </Toast>
     ));
   };
 
@@ -80,19 +80,18 @@ export default function ProductDetailAttributesForm({
 
           if (newQuantity <= stockQuantity) {
             setCartValues((prevValue) =>
-                prevValue.map((item) =>
-                    item.productId === product.id ? {...item, quantity: newQuantity} : item
-                )
+              prevValue.map((item) =>
+                item.productId === product.id ? { ...item, quantity: newQuantity } : item
+              )
             );
             showSuccessCartToast();
           } else {
             toast.error(
-                `Товара с названием ${product.name} в наличии только ${stockQuantity}`
+              `Товара с названием ${product.name} в наличии только ${stockQuantity}`
             );
           }
         }
-        else
-        {
+        else {
           if (stockQuantity > 0) {
             const newCartItem = {
               productId: product.id,
@@ -119,28 +118,26 @@ export default function ProductDetailAttributesForm({
     }
     // Handle adding a variable product to the cart
     const productVariationFromCart = cartValues.find(
-        (cv) => cv.productVariationId === selectedProductVariation.id
+      (cv) => cv.productVariationId === selectedProductVariation.id
     );
     const stockQuantity = selectedProductVariation.stock_quantity || 0;
 
-    if (productVariationFromCart)
-    {
+    if (productVariationFromCart) {
       const newQuantity = productVariationFromCart.quantity + 1;
 
       if (newQuantity <= stockQuantity) {
         setCartValues((prevValue) =>
-            prevValue.map((item) =>
-                item.productVariationId === selectedProductVariation.id
-                    ? {...item, quantity: newQuantity}
-                    : item
-            )
+          prevValue.map((item) =>
+            item.productVariationId === selectedProductVariation.id
+              ? { ...item, quantity: newQuantity }
+              : item
+          )
         );
         showSuccessCartToast();
       } else {
         toast.error(
-            `Товара с названием ${product.name} и аттрибутами ${productVariationFromCart.attributes.join(", ")} в наличии только ${
-                selectedProductVariation.stock_quantity || 0
-            }`
+          `Товара с названием ${product.name} и аттрибутами ${productVariationFromCart.attributes.join(", ")} в наличии только ${selectedProductVariation.stock_quantity || 0
+          }`
         );
       }
     } else {
@@ -165,36 +162,36 @@ export default function ProductDetailAttributesForm({
       }
       else {
         toast.error(
-            `Товара с названием ${product.name} нет в наличии`
+          `Товара с названием ${product.name} нет в наличии`
         );
       }
     }
   }
 
-    return (
-        <form onSubmit={form.onSubmit(handleSubmit)}>
-          {isOutOfStock && <p className="text-xl text-gray-900">Товара нет в наличии</p>}
+  return (
+    <form onSubmit={form.onSubmit(handleSubmit)}>
+      {isOutOfStock && <p className="text-xl text-gray-900">Товара нет в наличии</p>}
 
-          {sorted.map((a) => {
-            return (
-                <div key={a.id} className="mt-6">
-                  <AttributeAutoComplete
-                      label={a.name}
-                      attribute={a}
-                      value={form.values[a.id]}
-                      productVariations={productVariations}
-                      onChange={(value) => {
-                        form.setFieldValue(String(a.id), value);
-                      }}
-                      form={form}
-                  />
-                </div>
-            );
-          })}
+      {sorted.map((a) => {
+        return (
+          <div key={a.id} className="mt-6">
+            <AttributeAutoComplete
+              label={a.name}
+              attribute={a}
+              value={form.values[a.id]}
+              productVariations={productVariations}
+              onChange={(value) => {
+                form.setFieldValue(String(a.id), value);
+              }}
+              form={form}
+            />
+          </div>
+        );
+      })}
 
-          <Button type="submit" className="mt-8" color="dark" disabled={isAddToCartButtonDisabled} fullSized>
-            Добавить в корзину
-          </Button>
-        </form>
-    );
-  }
+      <Button type="submit" className="mt-8" color="dark" disabled={isAddToCartButtonDisabled} fullSized>
+        Добавить в корзину
+      </Button>
+    </form>
+  );
+}

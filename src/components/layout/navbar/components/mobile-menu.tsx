@@ -42,7 +42,8 @@ export default function MobileMenu({
           color="white"
           size="xs"
         >
-          <MenuIcon className="h-5 w-5" />
+          Меню
+          {/* <MenuIcon className="h-5 w-5" /> */}
         </Button>
 
         <Link href="/">

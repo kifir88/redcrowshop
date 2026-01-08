@@ -2,12 +2,12 @@
 
 import ProductImagesCarousel from "@/components/pages/product/product-images-carousel";
 import ProductDetailAttributesForm from "@/components/pages/product/product-detail-attributes-form";
-import {Image, Product} from "@/types/woo-commerce/product";
-import {ProductVariation} from "@/types/woo-commerce/product-variation";
-import {useForm} from "@mantine/form";
-import {ProductAttributeTerm} from "@/types/woo-commerce/product-attribute-term";
+import { Image, Product } from "@/types/woo-commerce/product";
+import { ProductVariation } from "@/types/woo-commerce/product-variation";
+import { useForm } from "@mantine/form";
+import { ProductAttributeTerm } from "@/types/woo-commerce/product-attribute-term";
 import ProductPrice from "@/components/pages/product/product-price";
-import {CustomCurrencyRates} from "@/types/woo-commerce/custom-currency-rates";
+import { CustomCurrencyRates } from "@/types/woo-commerce/custom-currency-rates";
 
 type FormValues = Record<string, ProductAttributeTerm | null>;
 
@@ -31,42 +31,40 @@ export default function ProductInfo({
 
   var equalBaseImage = false;
 
-  if (selectedProductVariation)
-  {
+  if (selectedProductVariation) {
     equalBaseImage = product.images.find((gg) => selectedProductVariation?.image?.src == gg.src) != null;
   }
 
   var variationProductWithImage = null;
-    // Если точного совпадения нет, ищем вариацию с изображением, игнорируя "Размер", но проверяя остальные атрибуты
-    if (selectedProductVariation?.image == null || equalBaseImage) {
-      variationProductWithImage = productVariations.find(pv =>
-          pv.image != null && product.images.find((gg) => pv?.image?.src == gg.src) == null &&
-          pv.attributes
-              .every(attribute => attribute.name.toLowerCase() == "размер" || (
-                  form.values[attribute.id] && form.values[attribute.id]?.name === attribute.option)
-              )
-      );
-    }
+  // Если точного совпадения нет, ищем вариацию с изображением, игнорируя "Размер", но проверяя остальные атрибуты
+  if (selectedProductVariation?.image == null || equalBaseImage) {
+    variationProductWithImage = productVariations.find(pv =>
+      pv.image != null && product.images.find((gg) => pv?.image?.src == gg.src) == null &&
+      pv.attributes
+        .every(attribute => attribute.name.toLowerCase() == "размер" || (
+          form.values[attribute.id] && form.values[attribute.id]?.name === attribute.option)
+        )
+    );
+  }
 
 
   const selectedProductVariationImage: Image | null = variationProductWithImage != null ? variationProductWithImage.image
-                                                          : (selectedProductVariation?.image || null);
+    : (selectedProductVariation?.image || null);
 
   const productVariationImages =
-      productVariations.filter(i =>
-          (i!==null && i.stock_quantity!==0))?.map(i => i.image)
-    ?.filter(i => i !== null && product.images.find((gg) => i.src == gg.src) == null);
+    productVariations.filter(i =>
+      (i !== null && i.stock_quantity !== 0))?.map(i => i.image)
+      ?.filter(i => i !== null && product.images.find((gg) => i.src == gg.src) == null);
 
   const productImages = product.images
-      ?.map(i => i)
-      ?.filter(i => i !== null);
+    ?.map(i => i)
+    ?.filter(i => i !== null);
 
 
   const allProductImages = [...(productImages ?? []), ...(productVariationImages ?? [])].filter((img): img is Image => img !== null);
 
   var idx = null;
-  if (selectedProductVariationImage!=null)
-  {
+  if (selectedProductVariationImage != null) {
     idx = allProductImages.indexOf(selectedProductVariationImage);
 
   }
@@ -86,7 +84,7 @@ export default function ProductInfo({
       </div>
 
       {/* Image gallery */}
-      <ProductImagesCarousel images={allProductImages} productImageIndex={idx}/>
+      <ProductImagesCarousel images={allProductImages} productImageIndex={idx} />
 
       <div className="mt-8 lg:col-span-5">
         {/* Attribute pickers  */}
@@ -103,7 +101,7 @@ export default function ProductInfo({
 
           <div
             className="prose prose-sm mt-4 text-gray-500"
-            dangerouslySetInnerHTML={{__html: product.description || "Нет описания."}}
+            dangerouslySetInnerHTML={{ __html: product.description || "Нет описания." }}
           />
         </div>
       </div>
