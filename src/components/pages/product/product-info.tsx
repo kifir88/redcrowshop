@@ -8,6 +8,7 @@ import { useForm } from "@mantine/form";
 import { ProductAttributeTerm } from "@/types/woo-commerce/product-attribute-term";
 import ProductPrice from "@/components/pages/product/product-price";
 import { CustomCurrencyRates } from "@/types/woo-commerce/custom-currency-rates";
+import { useMemo } from "react";
 
 type FormValues = Record<string, ProductAttributeTerm | null>;
 
@@ -26,19 +27,21 @@ export default function ProductInfo({
   const form = useForm<FormValues>({
     initialValues: {}
   })
-  var selectedProductVariation = productVariations
-    .find(pv => pv.attributes.every((attribute) => {
+
+  const selectedProductVariation = useMemo(() => {
+    return productVariations.find(pv => pv.attributes.every((attribute) => {
       return form.values[attribute.id] && form.values[attribute.id]?.name === attribute.option;
     }));
+  }, [productVariations, form.values]);
 
-
-  const selectedProductVariationImage: Image | null = (selectedProductVariation?.image || null);
-
-  var idx = null;
-  if (selectedProductVariationImage != null) {
-    idx = allProductImages.indexOf(selectedProductVariationImage);
-
-  }
+  const idx = useMemo(() => {
+    if (!selectedProductVariation?.image) {
+      return null;
+    }
+    const image = selectedProductVariation?.image || null;
+    const imageIdx = image !== null ? allProductImages.indexOf(image) : null;
+    return imageIdx;
+  }, [selectedProductVariation, allProductImages]);
 
   return (
     <>

@@ -3,23 +3,22 @@
 import { Product } from "@/types/woo-commerce/product";
 import { useLocalStorage } from "usehooks-ts";
 import { CurrencyType, formatCurrency } from "@/libs/currency-helper";
-import { useMemo } from "react";
+import { useMemo, memo } from "react";
 import { CustomCurrencyRates } from "@/types/woo-commerce/custom-currency-rates";
 import { ProductVariation } from "@/types/woo-commerce/product-variation";
 
-export default function ProductPrice({
-                                         product,
-                                         currencyRates,
-                                         selectedProductVariation,
-                                         variationBase
-                                     }: {
+function ProductPriceInner({
+    product,
+    currencyRates,
+    selectedProductVariation,
+    variationBase
+}: {
     product: Product;
     currencyRates: CustomCurrencyRates;
     selectedProductVariation?: ProductVariation;
-    variationBase? : ProductVariation
+    variationBase?: ProductVariation
 }) {
     const [selectedCurrency] = useLocalStorage<CurrencyType>("currency", "KZT");
-
     // Получаем regular_price: если у продукта его нет, берём из первой вариации
     const productRegularPrice = product.regular_price || (variationBase?.regular_price || product.regular_price);
 
@@ -48,3 +47,6 @@ export default function ProductPrice({
         </div>
     );
 }
+
+// Оборачиваем в React.memo для предотвращения лишних рендеров
+export default memo(ProductPriceInner);

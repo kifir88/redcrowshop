@@ -79,7 +79,6 @@ export default async function ProductPage(props: AppPageProps<ProductPageParams>
             per_page: 50,
         }, false),
     ]);
-    console.log('zazza')
 
     //если у вариации нет изображения, подставляем из другого размера.
     productVariationsData.map(variation => {
@@ -95,7 +94,6 @@ export default async function ProductPage(props: AppPageProps<ProductPageParams>
                         v_color === attribute.option)
                     )
             );
-            // console.log('vimg',variationProductWithImage)
             if (variationProductWithImage) {
                 variation.image = variationProductWithImage.image
             }

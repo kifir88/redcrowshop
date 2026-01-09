@@ -2,7 +2,7 @@
 
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, memo } from "react";
 import Slider from "react-slick";
 import { Image as ProductImage, Product } from "@/types/woo-commerce/product";
 import Image from "next/image";
@@ -58,12 +58,16 @@ interface Props {
   productImageIndex: number | null;
 }
 
-export default function ProductImagesCarousel({ images, productImageIndex }: Props) {
+function ProductImagesCarouselInner({ images, productImageIndex }: Props) {
   const [activeSlider, setActiveSlider] = useState(0);
   const sliderRef = useRef<Slider>(null);
 
+  // Храним предыдущий индекс, чтобы избежать лишних переходов слайдера
+  const prevProductImageIndex = useRef<number | null>(null);
+
   useEffect(() => {
-    if (productImageIndex !== null) {
+    if (productImageIndex !== null && productImageIndex !== prevProductImageIndex.current) {
+      prevProductImageIndex.current = productImageIndex;
       sliderRef.current?.slickGoTo(productImageIndex);
     }
   }, [productImageIndex]);
@@ -76,8 +80,8 @@ export default function ProductImagesCarousel({ images, productImageIndex }: Pro
     slidesToShow: 1,
     slidesToScroll: 1,
     accessibility: false,
-    nextArrow: <NextArrow disabled={activeSlider === images.length - 1} />, // Disable next on last slide
-    prevArrow: <PrevArrow disabled={activeSlider === 0} />, // Disable prev on first slide
+    nextArrow: <NextArrow key="next" disabled={activeSlider === images.length - 1} />, // Disable next on last slide
+    prevArrow: <PrevArrow key="prev" disabled={activeSlider === 0} />, // Disable prev on first slide
     afterChange: (current: number) => setActiveSlider(current),
   };
 
@@ -87,9 +91,8 @@ export default function ProductImagesCarousel({ images, productImageIndex }: Pro
         <div className="aspect-3/4 lg:col-span-2 max-h-[1509px]">
           <Slider ref={sliderRef} {...settings}>
             {images.map((img, index) => (
-              <div className="relative aspect-[2/3] w-full overflow-hidden">
+              <div key={img?.id || index} className="relative aspect-[2/3] w-full overflow-hidden">
                 <Image
-                  key={img?.id || index}
                   src={img?.src}
                   alt={img?.alt || "placeholder"}
                   width={696}
@@ -104,4 +107,7 @@ export default function ProductImagesCarousel({ images, productImageIndex }: Pro
     </div>
   );
 }
+
+// Оборачиваем в React.memo для предотвращения лишних рендеров
+export default memo(ProductImagesCarouselInner);
 
