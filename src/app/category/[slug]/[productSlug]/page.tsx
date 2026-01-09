@@ -126,7 +126,7 @@ export default async function ProductPage(props: AppPageProps<ProductPageParams>
         ?.filter(i => i !== null);
 
 
-    const allProductImages = [...(productImages ?? []), ...(productVariationImages ?? [])].filter((img): img is Image => img !== null);
+    const allProductImages = [...(productImages ?? []), ...(productVariationImages ?? [])].filter((img):any => img !== null);
 
 
 
