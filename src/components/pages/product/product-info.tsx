@@ -15,53 +15,24 @@ export default function ProductInfo({
   product,
   productVariations,
   currencyRates,
+  allProductImages,
 }: {
   product: Product;
   productVariations: ProductVariation[];
-  currencyRates: CustomCurrencyRates
+  currencyRates: CustomCurrencyRates;
+  allProductImages: any;
 }) {
+
   const form = useForm<FormValues>({
     initialValues: {}
   })
-
   var selectedProductVariation = productVariations
     .find(pv => pv.attributes.every((attribute) => {
       return form.values[attribute.id] && form.values[attribute.id]?.name === attribute.option;
     }));
 
-  var equalBaseImage = false;
 
-  if (selectedProductVariation) {
-    equalBaseImage = product.images.find((gg) => selectedProductVariation?.image?.src == gg.src) != null;
-  }
-
-  var variationProductWithImage = null;
-  // Если точного совпадения нет, ищем вариацию с изображением, игнорируя "Размер", но проверяя остальные атрибуты
-  if (selectedProductVariation?.image == null || equalBaseImage) {
-    variationProductWithImage = productVariations.find(pv =>
-      pv.image != null && product.images.find((gg) => pv?.image?.src == gg.src) == null &&
-      pv.attributes
-        .every(attribute => attribute.name.toLowerCase() == "размер" || (
-          form.values[attribute.id] && form.values[attribute.id]?.name === attribute.option)
-        )
-    );
-  }
-
-
-  const selectedProductVariationImage: Image | null = variationProductWithImage != null ? variationProductWithImage.image
-    : (selectedProductVariation?.image || null);
-
-  const productVariationImages =
-    productVariations.filter(i =>
-      (i !== null && i.stock_quantity !== 0))?.map(i => i.image)
-      ?.filter(i => i !== null && product.images.find((gg) => i.src == gg.src) == null);
-
-  const productImages = product.images
-    ?.map(i => i)
-    ?.filter(i => i !== null);
-
-
-  const allProductImages = [...(productImages ?? []), ...(productVariationImages ?? [])].filter((img): img is Image => img !== null);
+  const selectedProductVariationImage: Image | null = (selectedProductVariation?.image || null);
 
   var idx = null;
   if (selectedProductVariationImage != null) {

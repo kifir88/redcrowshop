@@ -50,13 +50,9 @@ export default function ContactData({
     };
 
     const handleSubmit = (formValues: ClientData) => {
-        formValues.phone = formatPhoneNumberIntl(formValues.phone as string)
         setClientData(formValues)
-
         if (clientData.email)
             setCustomerValid(true)
-
-
     }
 
     return (

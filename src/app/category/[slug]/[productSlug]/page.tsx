@@ -72,13 +72,65 @@ export default async function ProductPage(props: AppPageProps<ProductPageParams>
             stock_status: "instock",
         }, false),
         fetchProductCategories({
-            exclude: [378],per_page: 50
+            exclude: [378], per_page: 50
         }),
         fetchProductVariations(productData.id, {
             parent: productData.id,
             per_page: 50,
         }, false),
     ]);
+    console.log('zazza')
+
+    //если у вариации нет изображения, подставляем из другого размера.
+    productVariationsData.map(variation => {
+        let v_color = variation.attributes.find(a => a.name == 'Цвет')?.option
+        let hasImage = variation?.image != null
+        let equalBaseImage = productData.images.find((gg) => variation?.image?.src == gg.src) != null;
+        let variationProductWithImage = null;
+        if ((!hasImage || equalBaseImage) && v_color) {
+            variationProductWithImage = productVariationsData.find(pv =>
+                pv.image != null && productData.images.find((gg) => pv?.image?.src == gg.src) == null &&
+                pv.attributes
+                    .every(attribute => attribute.name.toLowerCase() == "размер" || (
+                        v_color === attribute.option)
+                    )
+            );
+            // console.log('vimg',variationProductWithImage)
+            if (variationProductWithImage) {
+                variation.image = variationProductWithImage.image
+            }
+        }
+    })
+    //Исключаем out-of-stock вариации
+    const filteredProductVariations = productVariationsData.filter(i => i.stock_quantity != 0)
+
+
+    //Исключаем дубли в рамках цвета, предполагается что для каждого цвета есть фото.
+    const productVariationImages = Object.values(
+        filteredProductVariations.reduce((acc, pv) => {
+            const color = pv.attributes.find(
+                attr => attr.name.toLowerCase() === "цвет"
+            );
+            if (color && pv.image?.src) {
+                const key = `${color.option}_${pv.image.src}`;
+                if (!acc[key]) {
+                    acc[key] = pv.image;
+                }
+            }
+
+            return acc;
+        }, {} as Record<string, any>)
+    );
+
+
+    const productImages = productData.images
+        ?.map(i => i)
+        ?.filter(i => i !== null);
+
+
+    const allProductImages = [...(productImages ?? []), ...(productVariationImages ?? [])].filter((img): img is Image => img !== null);
+
+
 
     const breadCrumbItems = getCategoryHierarchyBySlug(
         productCategoriesData?.data,
@@ -92,8 +144,9 @@ export default async function ProductPage(props: AppPageProps<ProductPageParams>
             <div className="lg:grid lg:auto-rows-min lg:grid-cols-12 lg:gap-x-8">
                 <ProductInfo
                     product={productData}
-                    productVariations={productVariationsData}
+                    productVariations={filteredProductVariations}
                     currencyRates={currencyRatesData.data}
+                    allProductImages={allProductImages}
                 />
             </div>
 

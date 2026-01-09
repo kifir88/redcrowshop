@@ -194,6 +194,11 @@ export default function CartContent({ currencyRates }: CartContentProps) {
                     Для создания заказа исправьте все подсказки/уведомления для товаров.
                   </p>
                 )}
+                {!customerValid && (
+                  <p className="text-sm text-gray-500 mt-2">
+                    Укажите ваши контактные данные
+                  </p>
+                )}
               </div>
             </div>
           </div>
