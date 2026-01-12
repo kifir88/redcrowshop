@@ -10,7 +10,7 @@ import { getCities } from '@/app/actions/cdek'
 export interface CityComboboxProps {
     items: any[],
     value: string
-    onChange: (value: string) => void
+    onChange: (value: any) => void
     label?: string
     placeholder?: string
     className?: string
