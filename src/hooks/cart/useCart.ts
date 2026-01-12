@@ -1,9 +1,10 @@
 "use client";
 
 import { useState, useCallback, useMemo, useTransition, useEffect } from "react";
-import { CartItem, DeliveryMethod, DeliveryOption, ShippingLine } from "@/types/cart";
+import { CartItem, DeliveryOption, ShippingLine } from "@/types/cart";
 import { CustomCurrencyRates } from "@/types/woo-commerce/custom-currency-rates";
 import { CurrencyType, formatCurrency, amountCurrency } from "@/libs/currency-helper";
+import { DeliveryMethod } from '@/types/delivery'
 import {
   useCartStorage,
   useClientDataStorage,
@@ -80,19 +81,30 @@ export function useCart({ currencyRates }: UseCartProps) {
   // Delivery methods
   const setShippingCost = useCallback(
     (method: DeliveryMethod, option: DeliveryOption | null) => {
-      if (method === "self") {
-        setDeliveryPrice(0);
-        setShippingLines([]);
-      } else if (method === "cdek" && option) {
-        setDeliveryPrice(option.delivery_sum);
-        setShippingLines([
-          {
-            method_id: "cdek",
-            method_title: `[${option.tariff_code}] ${option.tariff_name}`,
-            total: option.delivery_sum,
-          },
-        ]);
+      switch (method) {
+
+        case 'cdek':
+          if (option) {
+            setDeliveryPrice(option.delivery_sum);
+            setShippingLines([
+              {
+                method_id: "cdek",
+                method_title: `[${option.tariff_code}] ${option.tariff_name}`,
+                total: option.delivery_sum,
+              },
+            ]);
+          }
+          break;
+
+        // case 'self_showroom':
+        // case 'self_storage':
+        // case 'dhl':
+        default:
+          setDeliveryPrice(0);
+          setShippingLines([]);
+          break;
       }
+
     },
     []
   );

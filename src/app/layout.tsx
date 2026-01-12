@@ -46,8 +46,9 @@ export default function RootLayout({
           </main>
         </Providers>
         {/* Яндекс Метрика */}
+
         <Script id="yandex-metrika" strategy="afterInteractive">
-          {`
+          {process.env.PROJECT_ENV!='staging' && `
                (function(m,e,t,r,i,k,a){
         m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
         m[i].l=1*new Date();

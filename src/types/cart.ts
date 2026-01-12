@@ -27,7 +27,6 @@ export interface DeliveryOption {
   tariff_name: string;
 }
 
-export type DeliveryMethod = "self" | "cdek";
 
 // Типы для оформления заказа
 export interface ShippingLine {

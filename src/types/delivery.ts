@@ -13,4 +13,4 @@ export interface DeliveryOption {
     tariff_description: string;
     tariff_name: string;
 }
-export type DeliveryMethod = 'self' | 'cdek';
+export type DeliveryMethod = 'self_storage' | 'self_showroom' | 'cdek' | 'dhl';

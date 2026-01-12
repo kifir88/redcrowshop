@@ -1,19 +1,19 @@
 "use client";
 
 
-import { ClientData } from "@/types/client_data";
+
 import { useLocalStorage } from "usehooks-ts";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import ClientOnly from "@/components/client_only";
-import { useForm } from "@mantine/form";
+
 import { Button, Radio, Label, Spinner } from "flowbite-react";
-import axios from "axios";
+
 import { CurrencyType, formatCurrency } from "@/libs/currency-helper";
 import { CustomCurrencyRates } from "@/types/woo-commerce/custom-currency-rates";
 import toast from "react-hot-toast";
 import { DeliveryMethod, DeliveryOption } from "@/types/delivery";
-import AddressMap, { AddressResult } from "@/components/ui/address-map";
-import { LatLngExpression } from "leaflet";
+import CDEKAdress from "@/components/address/cdek_address";
+import { tariffList } from "@/app/actions/cdek";
 
 
 export default function ShippingDialog({
@@ -29,14 +29,16 @@ export default function ShippingDialog({
 }) {
 
     const deliveryMethods: Record<DeliveryMethod, string> = {
-        self: 'Самовывоз',
-        cdek: 'CDEK'
+        self_storage: 'Самовывоз со склада',
+        self_showroom: 'Самовывоз из шоурума',
+        cdek: 'CDEK',
+        dhl: 'DHL',
     };
 
 
     const [storedCurrency] = useLocalStorage<CurrencyType>("currency", "KZT");
 
-    const [deliveryMethod, setDeliveryMethod] = useState<DeliveryMethod>('self');
+    const [deliveryMethod, setDeliveryMethod] = useState<DeliveryMethod>('self_storage');
     const [tarifs, setTarifs] = useState<DeliveryOption[]>([]);
     const [selectedCode, setSelectedCode] = useState(null);
 
@@ -47,24 +49,39 @@ export default function ShippingDialog({
     };
 
     useEffect(() => {
-        if (deliveryMethod == 'cdek') {
-            let selectedOption: DeliveryOption | undefined = tarifs.find((item: any) => item.tariff_code == selectedCode)
-            if (selectedOption !== undefined) {
-                setShippingCost(deliveryMethod, selectedOption)
+
+        switch (deliveryMethod) {
+            case 'self_showroom':
+            case 'self_storage':
+            case 'dhl':
+                setShippingCost(deliveryMethod, null)
                 setDeliveryValid(true)
-            } else {
+                setSelectedCode(null)
+                break;
+            case 'cdek':
+                let selectedOption: DeliveryOption | undefined = tarifs.find((item: any) => item.tariff_code == selectedCode)
+                if (selectedOption !== undefined) {
+                    setShippingCost(deliveryMethod, selectedOption)
+                    setDeliveryValid(true)
+                } else {
+                    setDeliveryValid(false)
+                }
+                break;
+            default:
                 setDeliveryValid(false)
-            }
-        } else if (deliveryMethod == 'self') {
-            setSelectedCode(null)
-            setShippingCost('self', null)
-            setDeliveryValid(true)
-        } else {
-            setDeliveryValid(false)
+                setSelectedCode(null)
         }
+
     }, [deliveryMethod, selectedCode])
 
     const [waitCDEK, setWaitCDEK] = useState<boolean>(false)
+
+    const [storedAddress, setAddress] = useLocalStorage('customer_address', {} as any);
+
+
+    const onAddressSelect = (address: any) => {
+        setAddress(address)
+    }
 
     const calculatePrice = async () => {
         setWaitCDEK(true)
@@ -89,11 +106,10 @@ export default function ShippingDialog({
                     address: 'Ракышева 3',
                 },
                 to_location: {
-                    city: storedAddress?.address?.city,
-                    country_code: storedAddress?.address?.country_code,
-                    address: storedAddress.displayName,
-                    region: storedAddress.address?.state,
-                    postal_code: storedAddress.address?.postcode,
+                    code: storedAddress.city.code,
+                    country_code: storedAddress.country.code,
+                    address: storedAddress.street,
+                    postal_code: storedAddress.postcode,
                 },
                 packages: [
                     {
@@ -104,30 +120,25 @@ export default function ShippingDialog({
                     }
                 ]
             };
-            const response = await axios.post("/api/cdek", reuqest_data);
 
-            setTarifs(response.data.tariff_codes.filter((e: any) =>
-                [3, 4].includes(e.delivery_mode)
-                && e.tariff_code.toString().slice(0, 2) != '12'
-                && e.tariff_code.toString().slice(0, 1) != '6'
-            ))
+            const response = await tariffList(reuqest_data);
+            if (response.success) {
+                setTarifs(response.data.tariff_codes.filter((e: any) =>
+                    [3, 4].includes(e.delivery_mode)
+                    && e.tariff_code.toString().slice(0, 2) != '12'
+                    && e.tariff_code.toString().slice(0, 1) != '6'
+                ))
+            } else {
+                toast.error(response.error)
+            }
 
         } catch (e: any) {
-            let errors = e.response.data?.errors
-            toast.error('Ошибка CDEK: ' + errors[0]?.message)
+            console.log(e)
         }
         setWaitCDEK(false)
     };
 
-    const [storedAddress, setAddress] = useLocalStorage('client_address', {} as AddressResult);
 
-    let initialMapPos = [43.2220, 76.8512] as LatLngExpression;
-    if (storedAddress?.lat && storedAddress?.lng)
-        initialMapPos = [storedAddress.lat, storedAddress.lng] as LatLngExpression;
-
-    const onAddressSelect = (address: any) => {
-        setAddress(address)
-    }
 
     return (
         <ClientOnly>
@@ -151,42 +162,50 @@ export default function ShippingDialog({
 
                     <div id="content-1" className={`${isExpanded ? '' : 'max-h-0'} overflow-hidden transition-all duration-300 ease-in-out`}>
 
-                        <fieldset className="flex max-w-md flex-col gap-4">
+                        <fieldset className="flex flex-col gap-4">
                             <legend className="mb-4">
                                 Выберите способ доставки
                             </legend>
 
+                            <ul className="items-center w-full text-sm font-medium text-heading bg-neutral-primary-soft border border-default rounded-lg sm:flex">
 
-                            <div className="flex items-center gap-4 p-2">
                                 {(Object.keys(deliveryMethods) as DeliveryMethod[]).map((key) => (
-                                    <div key={key} >
-                                        <Radio
-                                            id={`delivery_${key}`}
-                                            checked={deliveryMethod === key}
-                                            onChange={() => setDeliveryMethod(key)}
-                                        />
-                                        <Label htmlFor={`delivery_${key}`} className="pl-2">
-                                            {deliveryMethods[key]}
-                                        </Label>
-                                    </div>
-                                ))}
-                            </div>
+                                    <li key={key}
+                                        className="w-full border-b border-default sm:border-b-0 sm:border-r">
+                                        <div className="flex items-center ps-3">
+                                            <Radio id={`delivery_${key}`} value="" name="list-radio" className="w-4 h-4 text-neutral-primary border-default-medium bg-neutral-secondary-medium rounded-full checked:border-brand focus:ring-2 focus:outline-none focus:ring-brand-subtle border border-default appearance-none"
+                                                checked={deliveryMethod === key}
+                                                onChange={() => setDeliveryMethod(key)}
+                                            />
+                                            <label htmlFor={`delivery_${key}`} className="w-full py-3 select-none ms-2 text-sm font-medium text-heading"> {deliveryMethods[key]}</label>
+                                        </div>
+                                    </li>
 
+                                ))}
+                            </ul>
                         </fieldset>
 
-                        <div className="mt-2">
-
-                        </div>
                         <div
-                            className={`${deliveryMethod == 'cdek' ? '' : 'max-h-0'} overflow-hidden transition-all duration-300 ease-in-out`}
+                            className={`${deliveryMethod == 'cdek' ? 'min-h-[1000px]' : 'max-h-0'} overflow-hidden transition-all duration-300 ease-in-out`}
                         >
 
-                            <AddressMap
-                                onAddressSelect={onAddressSelect}
-                                initialPosition={initialMapPos}
-                            />
-                            <Button
+                            {!selectedCode &&
+                                <div className="bg-rose-200 my-2 p-4 rounded-md border border-solid border-red-600">
+                                    <div className="text-red-700 text-md">Необходимо выбрать тариф</div>
+                                    <ul className="text-sm text-red-600">
+                                        <li>Укажите адрес</li>
+                                        <li>Выберите тариф из списка</li>
+                                    </ul>
+                                </div>
+                            }
 
+                            <CDEKAdress
+                                storedAddress={storedAddress}
+                                onAddressSelect={onAddressSelect}
+                            />
+
+                            <Button
+                                className="mt-4"
                                 color="dark"
                                 size="sm"
                                 disabled={waitCDEK}

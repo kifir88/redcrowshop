@@ -82,7 +82,7 @@ export function useClientDataStorage(): ClientDataStorage {
 
 export function useDeliveryAddressStorage(): AddressStorage {
   const [deliveryAddress, setDeliveryAddress] =
-    useLocalStorage<AddressResult>("client_address", {} as AddressResult);
+    useLocalStorage<AddressResult>("customer_address", {} as AddressResult);
 
   return { deliveryAddress, setDeliveryAddress };
 }

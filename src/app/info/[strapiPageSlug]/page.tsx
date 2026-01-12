@@ -8,15 +8,15 @@ interface InfoStrapiPageParams {
 }
 
 export default async function InfoStrapiPage({
-                                                 params,
-                                             }: {
+    params,
+}: {
     params: Promise<InfoStrapiPageParams>;
 }) {
     // Await the promise
     const { strapiPageSlug } = await params;
 
     const pageId = config.PAGES[strapiPageSlug] ?? 0;
-
+    console.log(`${process.env.NEXT_PUBLIC_WP_URL}/wp-json/wp/v2/posts/${pageId}?v=${new Date().getTime()}`);
     const [strapiFooterPages, strapiPageData] = await Promise.all([
         fetchFooterPages(),
         fetch(

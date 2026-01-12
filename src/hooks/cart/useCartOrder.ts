@@ -52,7 +52,7 @@ interface Address {
 }
 
 interface LineItem {
-  name:string;
+  name: string;
   product_id: number;
   variation_id?: number;
   quantity: number;
@@ -67,7 +67,7 @@ interface OrderMetaData {
 interface UseCartOrderProps {
   cartItems: CartItem[];
   clientData: ClientData;
-  deliveryAddress: AddressResult;
+  deliveryAddress: any;
   storedCurrency: CurrencyType;
   currencyRates: CustomCurrencyRates;
   clearCartItems: () => void;
@@ -139,17 +139,25 @@ export function useCartOrder({
     async (shippingLines: ShippingLine[], prices: any) => {
       const orderToken = uuidv4();
 
+
+      const address_info = {
+        city: deliveryAddress.city.name,
+        state: deliveryAddress.region.name,
+        country: deliveryAddress.country.name,
+        postcode: deliveryAddress.postcode,
+      }
+
       const address = {
         ...clientData,
-        ...deliveryAddress.address,
+        ...address_info,
         phone: formatPhoneNumberIntl(clientData.phone as string),
-        address_1: deliveryAddress.displayName,
+        address_1: deliveryAddress.street,
       };
 
       const lineItems = cartItems.map((ci) =>
         ci.productVariationId !== -1
           ? {
-            name:ci.name,
+            name: ci.name,
             product_id: ci.productId,
             variation_id: ci.productVariationId,
             quantity: ci.quantity,
@@ -158,7 +166,7 @@ export function useCartOrder({
             ),
           }
           : {
-            name:ci.name,
+            name: ci.name,
             product_id: ci.productId,
             quantity: ci.quantity,
             price: Math.round(
@@ -196,7 +204,6 @@ export function useCartOrder({
         order_token: orderToken,
         prices
       };
-
       createOrderMutation.mutate(payload);
     },
     [

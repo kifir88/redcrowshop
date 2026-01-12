@@ -1,17 +1,17 @@
-import {fetchPage} from "@/libs/strapi-rest-api";
-import {fetchOrder} from "@/libs/woocommerce-rest-api";
-import {formatPriceToKZT} from "@/libs/helper-functions";
+import { fetchPage } from "@/libs/strapi-rest-api";
+import { fetchOrder } from "@/libs/woocommerce-rest-api";
+import { formatPriceToKZT } from "@/libs/helper-functions";
 import ReactMarkdown from "react-markdown";
 import config from "@/config"
 
 export default async function PaymentErrorPage({
-                                                   searchParams
-                                               }: {
+    searchParams
+}: {
     searchParams: Promise<Record<string, string>>
 }) {
 
 
-    const {InvId, order_token} = await searchParams
+    const { InvId, order_token } = await searchParams
 
     // Check if the environment variable is loaded and has the key
     const pageId = config.PAGES && config.PAGES['payment_error']
@@ -24,7 +24,7 @@ export default async function PaymentErrorPage({
         orderData,
     ] = await Promise.all([
         //fetchPage("payment-error"),
-        fetch(`${process.env.NEXT_PUBLIC_WP_URL}/wp-json/wp/v2/posts/${pageId}?v=${new Date().getTime()}`,{
+        fetch(`${process.env.NEXT_PUBLIC_WP_URL}/wp-json/wp/v2/posts/${pageId}?v=${new Date().getTime()}`, {
             method: 'GET', // or 'POST'
             headers: {
                 'Cache-Control': 'no-cache, no-store, must-revalidate', // Instructs the browser to not store the cache
