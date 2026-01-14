@@ -13,8 +13,8 @@ import MobileFilters from "@/components/pages/category/mobile-filters";
 import CurrencySelect from "@/components/layout/navbar/components/currency-select";
 
 export default async function ProductCategoryPage({
-                                                      searchParams,
-                                                  }: {
+    searchParams,
+}: {
     searchParams: Promise<Record<string, string | undefined>>;
 }) {
     const {
@@ -26,14 +26,18 @@ export default async function ProductCategoryPage({
         orderby: orderbySearchParam,
         ...attributeSearchParams
     } = await searchParams;
-
-    const formattedSearchParams = Object.entries(attributeSearchParams).reduce(
-        (acc, [key, value]) => {
-            if (value) acc[`attr-${key}`] = value;
-            return acc;
-        },
-        {} as Record<string, string>
-    );
+    
+    const allowedSearchParams = ['razmer', 'tsvet', 'sale']
+    const formattedSearchParams = Object
+        .entries(attributeSearchParams)
+        .filter(([key]) => allowedSearchParams.includes(key))
+        .reduce(
+            (acc, [key, value]) => {
+                if (value) acc[`attr-${key}`] = value;
+                return acc;
+            },
+            {} as Record<string, string>
+        );
 
     const orderFiltersExist = orderSearchParam && orderbySearchParam;
 
@@ -100,7 +104,7 @@ export default async function ProductCategoryPage({
                         >
                             <div className="flex justify-between w-full h-min">
                                 <CategoryListSortMenu />
-                      
+
                             </div>
 
                             <MobileFilters

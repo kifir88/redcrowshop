@@ -26,13 +26,19 @@ export default async function Home({
         ...attributeSearchParams
     } = await searchParams;
 
-    const formattedSearchParams = Object.entries(attributeSearchParams).reduce(
-        (acc, [key, value]) => {
-            if (value) acc[`attr-${key}`] = value;
-            return acc;
-        },
-        {} as Record<string, string>
-    );
+    
+    const allowedSearchParams = ['razmer', 'tsvet', 'sale']
+    const formattedSearchParams = Object
+        .entries(attributeSearchParams)
+        .filter(([key]) => allowedSearchParams.includes(key))
+        .reduce(
+            (acc, [key, value]) => {
+                if (value) acc[`attr-${key}`] = value;
+                return acc;
+            },
+            {} as Record<string, string>
+        );
+
 
     const orderFiltersExist = orderSearchParam && orderbySearchParam;
 

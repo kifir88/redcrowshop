@@ -6,86 +6,88 @@ import {
 } from "@/libs/woocommerce-rest-api";
 import ProductCard from "@/components/pages/category/product-card";
 import Breadcrumb from "@/components/breadcrumb";
-import {getCategoryHierarchyBySlug} from "@/libs/helper-functions";
+import { getCategoryHierarchyBySlug } from "@/libs/helper-functions";
 import Filters from "@/components/pages/category/filters";
 import CategoryListPagination from "@/components/pages/category/category-list-pagination";
-import {ProductCategory} from "@/types/woo-commerce/product-category";
-import {Product} from "@/types/woo-commerce/product";
-import {cn} from "@/libs/utils";
+import { ProductCategory } from "@/types/woo-commerce/product-category";
+import { Product } from "@/types/woo-commerce/product";
+import { cn } from "@/libs/utils";
 import MobileFilters from "@/components/pages/category/mobile-filters";
 import CurrencySelect from "@/components/layout/navbar/components/currency-select";
-import {Metadata, ResolvingMetadata} from "next";
+import { Metadata, ResolvingMetadata } from "next";
+import { Key } from "lucide-react";
 
 interface ProductCategoryPageProps {
-    params: Promise<{ slug: string }>;
-    searchParams: Promise<Record<string, string>>;
+  params: Promise<{ slug: string }>;
+  searchParams: Promise<Record<string, string>>;
 }
 
 export async function generateMetadata(
-    props: ProductCategoryPageProps,
-    parent: ResolvingMetadata
+  props: ProductCategoryPageProps,
+  parent: ResolvingMetadata
 ): Promise<Metadata> {
-    const { params } = props;
-    const { slug } = await params;   // ✅ await
+  const { params } = props;
+  const { slug } = await params;   // ✅ await
 
-    const productCategoryData = await fetchProductCategories({ slug });
-    const productCategory = productCategoryData.data[0];
+  const productCategoryData = await fetchProductCategories({ slug });
+  const productCategory = productCategoryData.data[0];
 
-    const productAttributesData = await fetchCustomProductAttributes({
-        category_name: productCategory.slug,
-    });
+  const productAttributesData = await fetchCustomProductAttributes({
+    category_name: productCategory.slug,
+  });
 
-    const formattedAttributes = productAttributesData
-        .map(pa => `${pa.name}: ${pa.options.map(a => a.name).join(" и ")}`)
-        .join(", ");
+  const formattedAttributes = productAttributesData
+    .map(pa => `${pa.name}: ${pa.options.map(a => a.name).join(" и ")}`)
+    .join(", ");
 
-    const formattedAttributesForDescription = productAttributesData
-        .map(pa => `${pa.name.toLowerCase()} ${pa.options.map(a => a.name.toLowerCase()).join(" и ")}`)
-        .join(", ");
+  const formattedAttributesForDescription = productAttributesData
+    .map(pa => `${pa.name.toLowerCase()} ${pa.options.map(a => a.name.toLowerCase()).join(" и ")}`)
+    .join(", ");
 
-    return {
-        title: `REDCROW Казахстан ${productCategory.name} - ${formattedAttributes}`,
-        description: `Откройте для себя ${productCategory.name.toLowerCase()} ${formattedAttributesForDescription}. Идеальный выбор для стильного образа.`,
-        keywords: [
-            "REDCROW Казахстан",
-            productCategory.name,
-            productCategory.name.toLowerCase(),
-            productCategory.description,
-            productCategory.description.toLowerCase(),
-        ]
-    };
+  return {
+    title: `REDCROW Казахстан ${productCategory.name} - ${formattedAttributes}`,
+    description: `Откройте для себя ${productCategory.name.toLowerCase()} ${formattedAttributesForDescription}. Идеальный выбор для стильного образа.`,
+    keywords: [
+      "REDCROW Казахстан",
+      productCategory.name,
+      productCategory.name.toLowerCase(),
+      productCategory.description,
+      productCategory.description.toLowerCase(),
+    ]
+  };
 }
 
 
 export default async function ProductCategoryPage(props: ProductCategoryPageProps) {
-    const { params, searchParams } = props;
-    const { slug } = await params;                 // ✅ await params
-    const resolvedSearchParams = await searchParams; // ✅ await searchParams
+  const { params, searchParams } = props;
+  const { slug } = await params;                 // ✅ await params
+  const resolvedSearchParams = await searchParams; // ✅ await searchParams
 
-    const productCategoriesData = await fetchProductCategories({
-        exclude: [378],per_page: 50
-    });
-    const currentProductCategory = productCategoriesData?.data.find(
-        (pc: ProductCategory) => pc.slug === slug
-    );
+  const productCategoriesData = await fetchProductCategories({
+    exclude: [378], per_page: 50
+  });
+  const currentProductCategory = productCategoriesData?.data.find(
+    (pc: ProductCategory) => pc.slug === slug
+  );
+  console.log(resolvedSearchParams)
+  const {
+    search: searchParam,
+    max_price: maxPriceParam,
+    min_price: minPriceParam,
+    page: pageParam,
+    order: orderSearchParam,
+    orderby: orderbySearchParam,
+    ...attributeSearchParams
+  } = resolvedSearchParams;
 
-    const {
-        search: searchParam,
-        max_price: maxPriceParam,
-        min_price: minPriceParam,
-        page: pageParam,
-        order: orderSearchParam,
-        orderby: orderbySearchParam,
-        ...attributeSearchParams
-    } = resolvedSearchParams;
-
+  const allowedSearchParams = ['razmer', 'tsvet', 'sale']
   const formattedSearchParams = Object
     .entries(attributeSearchParams)
+    .filter(([key]) => allowedSearchParams.includes(key))
     .reduce((acc, [key, value]) => {
       acc[`attr-${key}`] = value;
       return acc;
     }, {} as Record<string, string>);
-
   const orderFiltersExist = orderSearchParam && orderbySearchParam;
 
   const [
@@ -105,7 +107,7 @@ export default async function ProductCategoryPage(props: ProductCategoryPageProp
       min_price: minPriceParam ? minPriceParam : 0,
       stock_status: "instock",
       ...formattedSearchParams,
-      
+
     }),
     fetchProducts({
       category: currentProductCategory?.id,
@@ -122,7 +124,7 @@ export default async function ProductCategoryPage(props: ProductCategoryPageProp
   const totalPages: string = productsData?.totalPages
 
   const breadCrumbItems = getCategoryHierarchyBySlug(productCategoriesData?.data, slug)
-    .map(pc => ({name: pc.name, href: `/category/${pc.slug}`}))
+    .map(pc => ({ name: pc.name, href: `/category/${pc.slug}` }))
 
   return (
     <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -160,7 +162,7 @@ export default async function ProductCategoryPage(props: ProductCategoryPageProp
               <div className="flex justify-between w-full h-min">
                 <CategoryListSortMenu />
 
-                
+
               </div>
 
               <MobileFilters
@@ -193,7 +195,7 @@ export default async function ProductCategoryPage(props: ProductCategoryPageProp
             </div>
           </div>
 
-          <div/>
+          <div />
 
           <CategoryListPagination
             currentPage={pageParam || "1"}
