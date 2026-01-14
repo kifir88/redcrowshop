@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo, useRef, useEffect } from 'react'
+import { useState, useMemo, useRef, useEffect, useTransition } from 'react'
 import { getRegions } from '@/app/actions/cdek'
 import Combobox from './components/combobox'
 
@@ -27,17 +27,22 @@ export default function RegionCombobox({
 
 
   const [allRegions, setAllRegions] = useState<any[]>([]);
+  const [isPending, startTransition] = useTransition();
 
   useEffect(() => {
     let isMounted = true;
 
     const fetchRegions = async () => {
-      try {
+      if (!country) return;
 
-        if (isMounted) {
+      startTransition(async () => {
+        try {
           const res = await getRegions({
             country_codes: country
           });
+
+          if (!isMounted || !res) return;
+
           const regions = res.map((item: { region: string; region_code: any }) => {
             return {
               'code': item.region_code.toString(),
@@ -45,10 +50,10 @@ export default function RegionCombobox({
             }
           }).filter((item: { name: string }) => !item.name.includes('удален'))
           setAllRegions(regions || []);
+        } catch (error) {
+          console.error("Ошибка при загрузке:", error);
         }
-      } catch (error) {
-        console.error("Ошибка при загрузке:", error);
-      }
+      });
     };
 
     fetchRegions();
@@ -67,7 +72,9 @@ export default function RegionCombobox({
         placeholder='Выберите область/регион'
         search_placeholder='Поиск области/региона...'
         returnFullObject={true}
+        disabled={isPending}
       />
+      {isPending && <div className="text-sm text-blue-600">Загрузка списка регионов...</div>}
     </div>
   )
 }

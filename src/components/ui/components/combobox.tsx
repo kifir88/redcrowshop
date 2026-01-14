@@ -16,6 +16,7 @@ export interface CityComboboxProps {
     className?: string
     search_placeholder?: string
     returnFullObject?: boolean
+    disabled?: boolean
 }
 
 interface CityItem {
@@ -32,6 +33,7 @@ export default function Combobox({
     className,
     search_placeholder = "Поиск населённого пункта...",
     returnFullObject = false,
+    disabled = false,
 }: CityComboboxProps) {
     const [searchQuery, setSearchQuery] = useState('')
     const inputRef = useRef<HTMLInputElement>(null)
@@ -80,12 +82,14 @@ export default function Combobox({
             <Listbox value={value} onChange={handleChange}>
                 <div className="relative mt-1">
                     <ListboxButton
+                        disabled={disabled}
                         className={cn(
                             'relative w-full cursor-default rounded-md bg-white py-2 pl-3 pr-10 text-left shadow-sm ring-1 ring-inset ring-gray-300',
                             'focus:outline-none focus:ring-2 focus:ring-indigo-600 sm:text-sm',
-                            'text-gray-900'
+                            'text-gray-900',
+                            disabled && 'opacity-50 cursor-not-allowed bg-gray-50'
                         )}
-                        onClick={handleButtonClick}
+                        onClick={disabled ? undefined : handleButtonClick}
                     >
                         <span className={cn('block truncate', !value && 'text-gray-400')}>
                             {selectedItem?.name || placeholder}
@@ -97,7 +101,10 @@ export default function Combobox({
 
                     <ListboxOptions
                         transition
-                        className="absolute z-50 mt-1 max-h-72 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none data-[closed]:data-[leave]:opacity-0 data-[leave]:transition data-[leave]:duration-100 data-[leave]:ease-in sm:text-sm"
+                        className={cn(
+                            "absolute z-50 mt-1 max-h-72 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none data-[closed]:data-[leave]:opacity-0 data-[leave]:transition data-[leave]:duration-100 data-[leave]:ease-in sm:text-sm",
+                            disabled && "hidden"
+                        )}
                     >
                         {/* Поиск */}
                         <div className="sticky top-0 bg-white p-2 border-b border-gray-100 z-10">

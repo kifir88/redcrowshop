@@ -84,8 +84,9 @@ export default function CityCombobox({
         placeholder='Выберите город/населённый пункт'
         search_placeholder='Поиск города/населённого пункта...'
         returnFullObject={true}
+        disabled={isPending}
       />
-      {isPending && <div className="text-sm">Загрузка списка городов...</div>}
+      {isPending && <div className="text-sm text-blue-600">Загрузка списка городов...</div>}
     </div>
   )
 }

@@ -74,9 +74,9 @@ export default function PostCodeCombobox({
         label="Почтовый индекс"
         placeholder='Выберите почтовый индекс'
         search_placeholder='Поиск почтового индекса...'
-
+        disabled={isPending}
       />
-      {isPending && <div className="text-sm">Загрузка списка индексов...</div>}
+      {isPending && <div className="text-sm text-blue-600">Загрузка списка индексов...</div>}
     </div>
   )
 }

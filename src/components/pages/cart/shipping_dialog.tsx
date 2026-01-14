@@ -75,6 +75,7 @@ export default function ShippingDialog({
     }, [deliveryMethod, selectedCode])
 
     const [waitCDEK, setWaitCDEK] = useState<boolean>(false)
+    const [addressValid, setAddressValid] = useState<boolean>(false)
 
     const [storedAddress, setAddress] = useLocalStorage('customer_address', {} as any);
 
@@ -186,7 +187,7 @@ export default function ShippingDialog({
                         </fieldset>
 
                         <div
-                            className={`${deliveryMethod == 'cdek' ? 'min-h-[1000px]' : 'max-h-0'} overflow-hidden transition-all duration-300 ease-in-out`}
+                            className={`${deliveryMethod == 'cdek' ? '' : 'max-h-0 overflow-hidden'} transition-all duration-300 ease-in-out`}
                         >
 
                             {!selectedCode &&
@@ -202,13 +203,14 @@ export default function ShippingDialog({
                             <CDEKAdress
                                 storedAddress={storedAddress}
                                 onAddressSelect={onAddressSelect}
+                                onAddressValidChange={setAddressValid}
                             />
 
                             <Button
                                 className="mt-4"
                                 color="dark"
                                 size="sm"
-                                disabled={waitCDEK}
+                                disabled={waitCDEK || !addressValid}
                                 onClick={calculatePrice}
                             >
                                 Рассчитать стоимость доставки CDEK
