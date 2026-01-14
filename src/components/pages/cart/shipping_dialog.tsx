@@ -15,6 +15,12 @@ import { DeliveryMethod, DeliveryOption } from "@/types/delivery";
 import CDEKAdress from "@/components/address/cdek_address";
 import { tariffList } from "@/app/actions/cdek";
 
+export const deliveryMethods: Record<DeliveryMethod, string> = {
+    self_storage: 'Самовывоз со склада',
+    self_showroom: 'Самовывоз из шоурума',
+    cdek: 'CDEK',
+    dhl: 'DHL',
+};
 
 export default function ShippingDialog({
     currencyRates,
@@ -28,12 +34,6 @@ export default function ShippingDialog({
     setShippingCost: (method: DeliveryMethod, option: DeliveryOption | null) => void;
 }) {
 
-    const deliveryMethods: Record<DeliveryMethod, string> = {
-        self_storage: 'Самовывоз со склада',
-        self_showroom: 'Самовывоз из шоурума',
-        cdek: 'CDEK',
-        dhl: 'DHL',
-    };
 
 
     const [storedCurrency] = useLocalStorage<CurrencyType>("currency", "KZT");
@@ -185,6 +185,22 @@ export default function ShippingDialog({
                                 ))}
                             </ul>
                         </fieldset>
+
+                        <div
+                            className={`${deliveryMethod == 'self_storage' ? '' : 'max-h-0 overflow-hidden'} transition-all duration-300 ease-in-out`}
+                        >
+                            ...
+                        </div>
+                        <div
+                            className={`${deliveryMethod == 'self_showroom' ? '' : 'max-h-0 overflow-hidden'} transition-all duration-300 ease-in-out`}
+                        >
+                            ...
+                        </div>
+                        <div
+                            className={`${deliveryMethod == 'dhl' ? '' : 'max-h-0 overflow-hidden'} transition-all duration-300 ease-in-out`}
+                        >
+                            Рассчитывается индивидуально
+                        </div>
 
                         <div
                             className={`${deliveryMethod == 'cdek' ? '' : 'max-h-0 overflow-hidden'} transition-all duration-300 ease-in-out`}

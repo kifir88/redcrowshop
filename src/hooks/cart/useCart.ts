@@ -12,6 +12,7 @@ import {
   useCurrencyStorage,
 } from "./useCartStorage";
 import { useCartOrder } from "./useCartOrder";
+import { deliveryMethods } from "@/components/pages/cart/shipping_dialog";
 
 interface UseCartProps {
   currencyRates: CustomCurrencyRates;
@@ -96,9 +97,18 @@ export function useCart({ currencyRates }: UseCartProps) {
           }
           break;
 
-        // case 'self_showroom':
-        // case 'self_storage':
-        // case 'dhl':
+        case 'self_showroom':
+        case 'self_storage':
+        case 'dhl':
+          setDeliveryPrice(0);
+          setShippingLines([
+            {
+              method_id: method,
+              method_title: deliveryMethods[method],
+              total: '0.00'
+            },
+          ]);
+          break;
         default:
           setDeliveryPrice(0);
           setShippingLines([]);
