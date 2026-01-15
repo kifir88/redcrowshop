@@ -17,8 +17,8 @@ import { tariffList } from "@/app/actions/cdek";
 
 export const deliveryMethods: Record<DeliveryMethod, string> = {
     self_storage: 'Самовывоз со склада',
-    self_showroom: 'Самовывоз из шоурума',
-    cdek: 'CDEK',
+    self_showroom: 'Самовывоз из шоу-рума',
+    cdek: 'СДЭК',
     dhl: 'DHL',
 };
 

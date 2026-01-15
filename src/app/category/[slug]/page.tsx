@@ -69,7 +69,7 @@ export default async function ProductCategoryPage(props: ProductCategoryPageProp
   const currentProductCategory = productCategoriesData?.data.find(
     (pc: ProductCategory) => pc.slug === slug
   );
-  console.log(resolvedSearchParams)
+
   const {
     search: searchParam,
     max_price: maxPriceParam,

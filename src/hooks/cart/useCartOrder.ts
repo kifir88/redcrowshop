@@ -18,6 +18,7 @@ import { wooCommerceApiInstance } from "@/libs/woocommerce-rest-api";
 import { v4 as uuidv4 } from "uuid";
 import { error } from "console";
 import { createOrder } from "@/app/actions/order";
+import { deliveryMethods } from "@/components/pages/cart/shipping_dialog";
 
 interface OrderCreate {
   payment_method: string;
@@ -96,19 +97,21 @@ export function useCartOrder({
         }
       }
 
+
+
+
+      payload.meta_data = [
+        ...(payload.meta_data || []),
+        { key: "order_token", value: orderToken },
+        { key: "shipping_method", value: deliveryMethods[payload.shipping_lines[0].method_id] },
+      ];
+
       if (code) {
         payload.meta_data = [
           ...(payload.meta_data || []),
           { key: "referral_code", value: code },
-          { key: "order_token", value: orderToken },
         ];
-
         payload.customer_note = `${payload.customer_note || ""} [Referral=${code}]`;
-      } else {
-        payload.meta_data = [
-          ...(payload.meta_data || []),
-          { key: "order_token", value: orderToken },
-        ];
       }
 
       const result = await createOrder(payload);
