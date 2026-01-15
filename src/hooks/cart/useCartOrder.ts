@@ -19,6 +19,7 @@ import { v4 as uuidv4 } from "uuid";
 import { error } from "console";
 import { createOrder } from "@/app/actions/order";
 import { deliveryMethods } from "@/components/pages/cart/shipping_dialog";
+import { DeliveryMethod } from "@/types/delivery";
 
 interface OrderCreate {
   payment_method: string;
@@ -100,10 +101,11 @@ export function useCartOrder({
 
 
 
+      const methodId = payload.shipping_lines[0].method_id as DeliveryMethod;
       payload.meta_data = [
         ...(payload.meta_data || []),
         { key: "order_token", value: orderToken },
-        { key: "shipping_method", value: deliveryMethods[payload.shipping_lines[0].method_id] },
+        { key: "shipping_method", value: deliveryMethods[methodId] },
       ];
 
       if (code) {
