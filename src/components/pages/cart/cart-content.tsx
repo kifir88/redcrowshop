@@ -10,61 +10,47 @@ import ContactData from "./contact_data";
 import ShippingDialog from "./shipping_dialog";
 import { useCart } from "@/hooks/cart";
 import { CustomCurrencyRates } from "@/types/woo-commerce/custom-currency-rates";
-import toast from "react-hot-toast";
 
 interface CartContentProps {
   currencyRates: CustomCurrencyRates;
 }
 
 export default function CartContent({ currencyRates }: CartContentProps) {
+  // Используем сгруппированный API
   const {
-    cartItems,
-    isCartEmpty,
-    deliveryPrice,
-    deliveryValid,
-    setDeliveryValid,
-    setShippingCost,
-    totalPrice,
-    formatCurrency,
-    shippingLines,
-    handlePushOrder,
-    handleProductsCheckComplete,
-    isOrderLoading,
-    storedCurrency,
-    setStoredCurrency,
-    refreshProducts,
-    setRefreshProducts,
-    productsLoading,
-    setProductsLoading,
-    waitProductsCheck,
-    setWaitProductsCheck,
-    activeOverlays,
-    registerOverlay,
-    unregisterOverlay,
-    customerValid,
-    setCustomerValid
+    cart,
+    client,
+    totals,
+    delivery,
+    validation,
+    overlays,
+    checkout,
   } = useCart({ currencyRates });
 
   // Sync currency with localStorage on mount
   useEffect(() => {
-    if (storedCurrency) {
-      setStoredCurrency(storedCurrency);
+    if (client.currency) {
+      client.setCurrency(client.currency);
     }
-  }, [storedCurrency, setStoredCurrency]);
+  }, [client.currency, client.setCurrency]);
 
   // Handle product check completion
   useEffect(() => {
-    if (waitProductsCheck && productsLoading === 0) {
-      handleProductsCheckComplete();
+    if (validation.waitProductsCheck && validation.productsLoading === 0) {
+      checkout.handleProductsCheckComplete();
     }
-  }, [waitProductsCheck, productsLoading, handleProductsCheckComplete]);
+  }, [
+    validation.waitProductsCheck,
+    validation.productsLoading,
+    checkout.handleProductsCheckComplete,
+  ]);
 
   // Reset refresh trigger after validation
   useEffect(() => {
-    if (refreshProducts > 0) {
-      setRefreshProducts(0);
+    if (validation.refreshProducts > 0) {
+      validation.setRefreshProducts(() => 0);
     }
-  }, [refreshProducts, setRefreshProducts]);
+  }, [validation.refreshProducts, validation.setRefreshProducts]);
 
   return (
     <ClientOnly>
@@ -78,7 +64,7 @@ export default function CartContent({ currencyRates }: CartContentProps) {
             {/* Left column - Cart items */}
             <div className="mx-auto w-full flex-none lg:max-w-2xl xl:max-w-4xl">
               <div className="space-y-6">
-                {isCartEmpty ? (
+                {totals.isCartEmpty ? (
                   <div className="flex flex-col items-start gap-4">
                     <h6 className="text-xl text-gray-700">
                       Ваша корзина пуста
@@ -88,7 +74,7 @@ export default function CartContent({ currencyRates }: CartContentProps) {
                     </Button>
                   </div>
                 ) : (
-                  cartItems.map((ct) => (
+                  cart.items.map((ct) => (
                     <div
                       key={
                         ct.productVariationId === -1
@@ -100,37 +86,37 @@ export default function CartContent({ currencyRates }: CartContentProps) {
                         <CartListItemSimple
                           cartItem={ct}
                           currencyRates={currencyRates}
-                          onOverlayOpen={registerOverlay}
-                          onOverlayClose={unregisterOverlay}
-                          refreshProducts={refreshProducts}
-                          setProductsLoading={setProductsLoading}
+                          onOverlayOpen={overlays.registerOverlay}
+                          onOverlayClose={overlays.unregisterOverlay}
+                          refreshProducts={validation.refreshProducts}
+                          setProductsLoading={validation.setProductsLoading}
                         />
                       ) : (
                         <CartListItem
                           cartItem={ct}
                           currencyRates={currencyRates}
-                          onOverlayOpen={registerOverlay}
-                          onOverlayClose={unregisterOverlay}
-                          refreshProducts={refreshProducts}
-                          setProductsLoading={setProductsLoading}
+                          onOverlayOpen={overlays.registerOverlay}
+                          onOverlayClose={overlays.unregisterOverlay}
+                          refreshProducts={validation.refreshProducts}
+                          setProductsLoading={validation.setProductsLoading}
                         />
                       )}
                     </div>
                   ))
                 )}
               </div>
+
               <ContactData
-                customerValid={customerValid}
-                setCustomerValid={setCustomerValid}
+                customerValid={validation.customerValid}
+                setCustomerValid={validation.setCustomerValid}
               />
 
               <ShippingDialog
                 currencyRates={currencyRates}
-                deliveryValid={deliveryValid}
-                setDeliveryValid={setDeliveryValid}
-                setShippingCost={setShippingCost}
+                deliveryValid={delivery.deliveryValid}
+                setDeliveryValid={delivery.setDeliveryValid}
+                setShippingCost={delivery.setShippingCost}
               />
-
             </div>
 
             {/* Right column - Order summary */}
@@ -148,12 +134,7 @@ export default function CartContent({ currencyRates }: CartContentProps) {
                         Стоимость товаров
                       </dt>
                       <dd className="text-base font-medium text-gray-900 dark:text-white">
-                        {formatCurrency(
-                          cartItems.reduce(
-                            (total, item) => total + item.price * item.quantity,
-                            0
-                          )
-                        )}
+                        {totals.formatPrice(totals.itemsTotalPrice)}
                       </dd>
                     </dl>
 
@@ -163,7 +144,7 @@ export default function CartContent({ currencyRates }: CartContentProps) {
                         Доставка
                       </dt>
                       <dd className="text-base font-medium text-green-600">
-                        {formatCurrency(deliveryPrice)}
+                        {totals.formatPrice(delivery.deliveryPrice)}
                       </dd>
                     </dl>
                   </div>
@@ -174,7 +155,7 @@ export default function CartContent({ currencyRates }: CartContentProps) {
                       Сумма
                     </dt>
                     <dd className="text-base font-bold text-gray-900 dark:text-white">
-                      {formatCurrency(totalPrice)}
+                      {totals.formatPrice(totals.totalPrice)}
                     </dd>
                   </dl>
                 </div>
@@ -183,18 +164,24 @@ export default function CartContent({ currencyRates }: CartContentProps) {
                   color="dark"
                   size="sm"
                   fullSized
-                  disabled={!totalPrice || !deliveryValid || activeOverlays > 0 || isOrderLoading || !customerValid}
-                  onClick={handlePushOrder}
+                  disabled={
+                    !totals.totalPrice ||
+                    !delivery.deliveryValid ||
+                    overlays.activeOverlays > 0 ||
+                    checkout.isOrderLoading ||
+                    !validation.customerValid
+                  }
+                  onClick={checkout.handlePushOrder}
                 >
-                  {isOrderLoading ? "Создание заказа..." : "Создать заказ"}
+                  {checkout.isOrderLoading ? "Создание заказа..." : "Создать заказ"}
                 </Button>
 
-                {activeOverlays > 0 && (
+                {overlays.activeOverlays > 0 && (
                   <p className="text-sm text-gray-500 mt-2">
                     Для создания заказа исправьте все подсказки/уведомления для товаров.
                   </p>
                 )}
-                {!customerValid && (
+                {!validation.customerValid && (
                   <p className="text-sm text-gray-500 mt-2">
                     Укажите ваши контактные данные
                   </p>

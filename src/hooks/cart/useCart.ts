@@ -1,193 +1,268 @@
+/**
+ * Main Cart Hook
+ * Компонует все вспомогательные хуки корзины
+ * 
+ * @example
+ * const {
+ *   cart,
+ *   totals,
+ *   delivery,
+ *   validation,
+ *   checkout,
+ *   overlays
+ * } = useCart({ currencyRates });
+ */
+
 "use client";
 
-import { useState, useCallback, useMemo, useTransition, useEffect } from "react";
-import { CartItem, DeliveryOption, ShippingLine } from "@/types/cart";
+import { useCallback, useTransition } from "react";
 import { CustomCurrencyRates } from "@/types/woo-commerce/custom-currency-rates";
-import { CurrencyType, formatCurrency, amountCurrency } from "@/libs/currency-helper";
-import { DeliveryMethod } from '@/types/delivery'
-import {
-  useCartStorage,
-  useClientDataStorage,
-  useDeliveryAddressStorage,
-  useCurrencyStorage,
-} from "./useCartStorage";
+import { CurrencyType } from "@/libs/currency-helper";
+import { ShippingLine } from "@/types/cart";
+
+import { useCartStorage } from "./useCartStorage";
+import { useClientDataStorage } from "./useCartStorage";
+import { useDeliveryAddressStorage } from "./useCartStorage";
+import { useCurrencyStorage } from "./useCartStorage";
+
+import { useCartTotals } from "./useCartTotals";
+import { useCartDelivery } from "./useCartDelivery";
+import { useCartValidation } from "./useCartValidation";
+import { useCartOverlays } from "./useCartOverlays";
 import { useCartOrder } from "./useCartOrder";
-import { deliveryMethods } from "@/components/pages/cart/shipping_dialog";
 
 interface UseCartProps {
   currencyRates: CustomCurrencyRates;
 }
 
-export function useCart({ currencyRates }: UseCartProps) {
+// Результат основного хука - сгруппированные возвращаемые значения
+export interface UseCartResult {
+  // Cart data
+  cart: {
+    items: ReturnType<typeof useCartStorage>["cartItems"];
+    clearCart: ReturnType<typeof useCartStorage>["clearCartItems"];
+    setCartItems: ReturnType<typeof useCartStorage>["setCartItems"];
+  };
+  
+  // Client data
+  client: {
+    data: ReturnType<typeof useClientDataStorage>["clientData"];
+    setData: ReturnType<typeof useClientDataStorage>["setClientData"];
+    address: ReturnType<typeof useDeliveryAddressStorage>["deliveryAddress"];
+    setAddress: ReturnType<typeof useDeliveryAddressStorage>["setDeliveryAddress"];
+    currency: CurrencyType;
+    setCurrency: ReturnType<typeof useCurrencyStorage>["setStoredCurrency"];
+  };
+  
+  // Totals and prices
+  totals: {
+    itemsTotalPrice: number;
+    totalPrice: number;
+    formatPrice: (amount: number) => string;
+    isCartEmpty: boolean;
+  };
+  
+  // Delivery
+  delivery: {
+    deliveryPrice: number;
+    deliveryValid: boolean;
+    setDeliveryValid: (valid: boolean) => void;
+    setShippingCost: (method: any, option: any) => void;
+    shippingLines: ShippingLine[];
+  };
+  
+  // Validation
+  validation: {
+    customerValid: boolean;
+    setCustomerValid: (valid: boolean) => void;
+    refreshProducts: number;
+    setRefreshProducts: (fn: (prev: number) => number) => void;
+    productsLoading: number;
+    setProductsLoading: (fn: (prev: number) => number) => void;
+    waitProductsCheck: boolean;
+    setWaitProductsCheck: (value: boolean) => void;
+  };
+  
+  // Overlays
+  overlays: {
+    activeOverlays: number;
+    registerOverlay: () => void;
+    unregisterOverlay: () => void;
+    hasActiveOverlays: boolean;
+  };
+  
+  // Checkout
+  checkout: {
+    handlePushOrder: () => void;
+    handleSubmit: (lines: ShippingLine[], prices: any) => void;
+    handleProductsCheckComplete: () => void;
+    isOrderLoading: boolean;
+    isPending: boolean;
+  };
+  
+  // Direct access to raw hooks (for backwards compatibility)
+  _hooks: {
+    cartStorage: ReturnType<typeof useCartStorage>;
+    clientStorage: ReturnType<typeof useClientDataStorage>;
+    addressStorage: ReturnType<typeof useDeliveryAddressStorage>;
+    currencyStorage: ReturnType<typeof useCurrencyStorage>;
+    totals: ReturnType<typeof useCartTotals>;
+    delivery: ReturnType<typeof useCartDelivery>;
+    validation: ReturnType<typeof useCartValidation>;
+    overlays: ReturnType<typeof useCartOverlays>;
+    order: ReturnType<typeof useCartOrder>;
+  };
+}
+
+export function useCart({ currencyRates }: UseCartProps): UseCartResult {
   // Storage hooks
-  const { cartItems, clearCartItems } = useCartStorage();
-  const { clientData, setClientData } = useClientDataStorage();
-  const { deliveryAddress, setDeliveryAddress } = useDeliveryAddressStorage();
-  const { storedCurrency, setStoredCurrency } = useCurrencyStorage();
-  const [customerValid, setCustomerValid] = useState<boolean>(false);
-
-  // Delivery state
-  const [deliveryPrice, setDeliveryPrice] = useState<number>(0);
-  const [deliveryValid, setDeliveryValid] = useState<boolean>(false);
-  const [shippingLines, setShippingLines] = useState<ShippingLine[]>([]);
-
-  // Product validation state
-  const [refreshProducts, setRefreshProducts] = useState<number>(0);
-  const [productsLoading, setProductsLoading] = useState<number>(0);
-  const [waitProductsCheck, setWaitProductsCheck] = useState<boolean>(false);
-
-  // Overlay state for stock notifications
-  const [activeOverlays, setActiveOverlays] = useState<number>(0);
-  const [isPending, startTransition] = useTransition();
-
-  // Order hook
-  const { handleSubmit, isLoading: isOrderLoading } = useCartOrder({
-    cartItems,
-    clientData,
-    deliveryAddress,
-    storedCurrency,
+  const cartStorage = useCartStorage();
+  const clientStorage = useClientDataStorage();
+  const addressStorage = useDeliveryAddressStorage();
+  const currencyStorage = useCurrencyStorage();
+  
+  // Feature hooks
+  const delivery = useCartDelivery();
+  
+  const validation = useCartValidation({
+    cartItems: cartStorage.cartItems,
+  });
+  
+  const overlays = useCartOverlays();
+  
+  const [isPending] = useTransition();
+  
+  // Update totals with actual delivery price
+  const totalsWithDelivery = useCartTotals({
+    cartItems: cartStorage.cartItems,
+    storedCurrency: currencyStorage.storedCurrency,
     currencyRates,
-    clearCartItems,
+    deliveryPrice: delivery.deliveryPrice,
+  });
+  
+  // Order hook
+  const order = useCartOrder({
+    cartItems: cartStorage.cartItems,
+    clientData: clientStorage.clientData,
+    deliveryAddress: addressStorage.deliveryAddress,
+    storedCurrency: currencyStorage.storedCurrency,
+    currencyRates,
+    clearCartItems: cartStorage.clearCartItems,
   });
 
-  // Calculate totals
-  const itemsTotalPrice = useMemo(
-    () => cartItems.reduce((total, item) => total + item.price * item.quantity, 0),
-    [cartItems]
-  );
-
-  const totalPrice = useMemo(
-    () => itemsTotalPrice + deliveryPrice,
-    [itemsTotalPrice, deliveryPrice]
-  );
-
-
-
-  useEffect(() => {
-
-    if (clientData.email)
-      setCustomerValid(true)
-
-  }, [clientData, setCustomerValid]);
-
-  // Overlay registration
-  const registerOverlay = useCallback(() => {
-    setActiveOverlays((prev) => prev + 1);
-  }, []);
-
-  const unregisterOverlay = useCallback(() => {
-    setActiveOverlays((prev) => Math.max(prev - 1, 0));
-  }, []);
-
-  // Delivery methods
-  const setShippingCost = useCallback(
-    (method: DeliveryMethod, option: DeliveryOption | null) => {
-      switch (method) {
-
-        case 'cdek':
-          if (option) {
-            setDeliveryPrice(option.delivery_sum);
-            setShippingLines([
-              {
-                method_id: "cdek",
-                method_title: `[${option.tariff_code}] ${option.tariff_name}`,
-                total: option.delivery_sum,
-              },
-            ]);
-          }
-          break;
-
-        case 'self_showroom':
-        case 'self_storage':
-        case 'dhl':
-          setDeliveryPrice(0);
-          setShippingLines([
-            {
-              method_id: method,
-              method_title: deliveryMethods[method],
-              total: '0.00'
-            },
-          ]);
-          break;
-        default:
-          setDeliveryPrice(0);
-          setShippingLines([]);
-          break;
-      }
-
-    },
-    []
-  );
-
-  // Order creation
+  // Handle order creation
   const handlePushOrder = useCallback(() => {
-    setProductsLoading(cartItems.length);
-    setRefreshProducts((prev) => prev + 1);
-    setWaitProductsCheck(true);
-  }, [cartItems.length]);
+    validation.setProductsLoading((prev) => prev + cartStorage.cartItems.length);
+    validation.setRefreshProducts((prev) => prev + 1);
+    validation.setWaitProductsCheck(true);
+  }, [cartStorage.cartItems.length, validation]);
 
-  // Handle product check completion
+  // Handle product check completion - used by cart-content
   const handleProductsCheckComplete = useCallback(() => {
-    if (waitProductsCheck && productsLoading === 0) {
-      setWaitProductsCheck(false);
+    if (validation.waitProductsCheck && validation.productsLoading === 0) {
+      validation.setWaitProductsCheck(false);
 
-      if (activeOverlays === 0) {
-        if (!deliveryValid) {
+      if (overlays.activeOverlays === 0) {
+        if (!delivery.deliveryValid) {
           // Error is handled by component
         } else {
           const prices = {
-            items_total: formatCurrency(itemsTotalPrice, storedCurrency, currencyRates),
-            shipping_total: formatCurrency(deliveryPrice, storedCurrency, currencyRates),
-            total: formatCurrency(totalPrice, storedCurrency, currencyRates)
-          }
-          handleSubmit(shippingLines, prices);
+            items_total: totalsWithDelivery.formatPrice(totalsWithDelivery.itemsTotalPrice),
+            shipping_total: totalsWithDelivery.formatPrice(delivery.deliveryPrice),
+            total: totalsWithDelivery.formatPrice(totalsWithDelivery.totalPrice),
+          };
+          order.handleSubmit(delivery.shippingLines, prices);
         }
       }
     }
-  }, [waitProductsCheck, productsLoading, activeOverlays, deliveryValid, shippingLines, deliveryPrice, itemsTotalPrice, totalPrice, handleSubmit, setWaitProductsCheck]);
+  }, [
+    validation.waitProductsCheck,
+    validation.productsLoading,
+    overlays.activeOverlays,
+    delivery.deliveryValid,
+    delivery.shippingLines,
+    delivery.deliveryPrice,
+    totalsWithDelivery,
+    order.handleSubmit,
+    validation.setWaitProductsCheck,
+  ]);
 
   return {
-    // Data
-    cartItems,
-    clientData,
-    deliveryAddress,
-    storedCurrency,
-    currencyRates,
-    // Delivery
-    deliveryPrice,
-    deliveryValid,
-    setDeliveryValid,
-    setShippingCost,
-    shippingLines,
+    // Cart data
+    cart: {
+      items: cartStorage.cartItems,
+      clearCart: cartStorage.clearCartItems,
+      setCartItems: cartStorage.setCartItems,
+    },
+    
+    // Client data
+    client: {
+      data: clientStorage.clientData,
+      setData: clientStorage.setClientData,
+      address: addressStorage.deliveryAddress,
+      setAddress: addressStorage.setDeliveryAddress,
+      currency: currencyStorage.storedCurrency,
+      setCurrency: currencyStorage.setStoredCurrency,
+    },
+    
     // Totals
-    itemsTotalPrice,
-    totalPrice,
-    formatCurrency: (amount: number) =>
-      formatCurrency(amount, storedCurrency, currencyRates),
-    // Actions
-    clearCartItems,
-    setClientData,
-    setDeliveryAddress,
-    setStoredCurrency,
-    handlePushOrder,
-    handleSubmit,
-    handleProductsCheckComplete,
-    isOrderLoading,
-    isPending,
-    isCartEmpty: cartItems.length === 0,
-    // Product validation
-    refreshProducts,
-    setRefreshProducts,
-    productsLoading,
-    setProductsLoading,
-    waitProductsCheck,
-    setWaitProductsCheck,
+    totals: {
+      itemsTotalPrice: totalsWithDelivery.itemsTotalPrice,
+      totalPrice: totalsWithDelivery.totalPrice,
+      formatPrice: totalsWithDelivery.formatPrice,
+      isCartEmpty: totalsWithDelivery.isCartEmpty,
+    },
+    
+    // Delivery
+    delivery: {
+      deliveryPrice: delivery.deliveryPrice,
+      deliveryValid: delivery.deliveryValid,
+      setDeliveryValid: delivery.setDeliveryValid,
+      setShippingCost: delivery.setShippingCost,
+      shippingLines: delivery.shippingLines,
+    },
+    
+    // Validation
+    validation: {
+      customerValid: validation.customerValid,
+      setCustomerValid: validation.setCustomerValid,
+      refreshProducts: validation.refreshProducts,
+      setRefreshProducts: validation.setRefreshProducts,
+      productsLoading: validation.productsLoading,
+      setProductsLoading: validation.setProductsLoading,
+      waitProductsCheck: validation.waitProductsCheck,
+      setWaitProductsCheck: validation.setWaitProductsCheck,
+    },
+    
     // Overlays
-    activeOverlays,
-    registerOverlay,
-    unregisterOverlay,
-    customerValid,
-    setCustomerValid,
+    overlays: {
+      activeOverlays: overlays.activeOverlays,
+      registerOverlay: overlays.registerOverlay,
+      unregisterOverlay: overlays.unregisterOverlay,
+      hasActiveOverlays: overlays.hasActiveOverlays,
+    },
+    
+    // Checkout
+    checkout: {
+      handlePushOrder,
+      handleSubmit: order.handleSubmit,
+      handleProductsCheckComplete,
+      isOrderLoading: order.isLoading,
+      isPending,
+    },
+    
+    // Raw hooks (for migration and advanced use cases)
+    _hooks: {
+      cartStorage,
+      clientStorage,
+      addressStorage,
+      currencyStorage,
+      totals: totalsWithDelivery,
+      delivery,
+      validation,
+      overlays,
+      order,
+    },
   };
 }
 

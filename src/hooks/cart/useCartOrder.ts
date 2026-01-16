@@ -3,7 +3,6 @@
 import { useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useMutation } from "@tanstack/react-query";
-import axios from "axios";
 import { CartItem } from "@/types/cart";
 import { ClientData } from "@/types/client_data";
 import { CurrencyType } from "@/libs/currency-helper";
@@ -13,10 +12,7 @@ import { AddressResult } from "@/components/ui/address-map";
 import { formatPhoneNumberIntl } from "react-phone-number-input";
 import { amountCurrency } from "@/libs/currency-helper";
 import toast from "react-hot-toast";
-import { Order } from "@/types/woo-commerce/order";
-import { wooCommerceApiInstance } from "@/libs/woocommerce-rest-api";
 import { v4 as uuidv4 } from "uuid";
-import { error } from "console";
 import { createOrder } from "@/app/actions/order";
 import { deliveryMethods } from "@/components/pages/cart/shipping_dialog";
 import { DeliveryMethod } from "@/types/delivery";
